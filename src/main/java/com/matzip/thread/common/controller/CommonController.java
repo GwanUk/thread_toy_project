@@ -9,15 +9,15 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequestMapping
-public class CommonController {
+class CommonController {
 
     @GetMapping("/")
-    public String home() {
+    String home() {
         return "Home 화면 입니다.";
     }
 
     @GetMapping("/test")
-    public String test() {
+    String test() {
         return "success test!";
     }
 
