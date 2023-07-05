@@ -23,8 +23,8 @@ public class ApiLoginProcessingFilter extends AbstractAuthenticationProcessingFi
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    protected ApiLoginProcessingFilter(String defaultFilterProcessesUrl) {
-        super(new AntPathRequestMatcher("/api/login"));
+    public ApiLoginProcessingFilter() {
+        super(new AntPathRequestMatcher("/api/users/login"));
     }
 
     /**
