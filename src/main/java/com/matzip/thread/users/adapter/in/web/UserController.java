@@ -11,4 +11,5 @@ import org.springframework.web.bind.annotation.RestController;
 class UserController {
 
     private final UserUseCase userUseCase;
+
 }

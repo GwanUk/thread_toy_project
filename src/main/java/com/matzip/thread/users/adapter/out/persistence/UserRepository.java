@@ -10,6 +10,7 @@ import java.util.List;
 @Repository
 @RequiredArgsConstructor
 class UserRepository implements UserGateWay {
+
     private final UserJpaRepository userJpaRepository;
 
     @Override
