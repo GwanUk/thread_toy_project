@@ -42,23 +42,26 @@ class UserControllerTest {
     void login() throws Exception {
         // given
         ObjectNode jsonNodes = objectMapper.createObjectNode()
+                .put("userId", "user")
                 .put("username", "kim")
-                .put("password", "1234");
+                .put("password", "1234")
+                .put("role", "USER");
 
-        // expected
+        // when
         mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sing_in")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonNodes.toString()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
 
+        // then
     }
 
     @Test
     @DisplayName("회원 가입 요청")
     void signUp() throws Exception {
         // given
-        String json = objectMapper.writeValueAsString(new SignUpRequest("kim", "1234", Role.USER));
+        String json = objectMapper.writeValueAsString(new SignUpRequest("user", "kim", "1234", Role.USER));
 
         BDDMockito.given(passwordEncoder.encode(ArgumentMatchers.any(CharSequence.class))).willReturn("1234");
 
@@ -71,13 +74,11 @@ class UserControllerTest {
 
         // then
         ArgumentCaptor<SignUpRequest> signUpRequestArgumentCaptor = ArgumentCaptor.forClass(SignUpRequest.class);
-
         BDDMockito.then(userUseCase).should(Mockito.times(1)).signUp(signUpRequestArgumentCaptor.capture());
         SignUpRequest signUpRequestArgumentCaptorValue = signUpRequestArgumentCaptor.getValue();
-
+        BDDAssertions.then(signUpRequestArgumentCaptorValue.getUserId()).isEqualTo("user");
         BDDAssertions.then(signUpRequestArgumentCaptorValue.getUsername()).isEqualTo("kim");
         BDDAssertions.then(signUpRequestArgumentCaptorValue.getPassword()).isEqualTo("1234");
         BDDAssertions.then(signUpRequestArgumentCaptorValue.getRole()).isEqualTo(Role.USER);
     }
-
 }
