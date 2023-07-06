@@ -36,24 +36,167 @@ class UserControllerTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-
-
     @Test
     @DisplayName("로그인 요청 성공")
-    void login() throws Exception {
+    void login_success() throws Exception {
         // given
         String json = objectMapper.writeValueAsString(new User("user", "kim", "1234", Role.ROLE_USER));
         User userEncoded = new User("user", "kim", passwordEncoder.encode("1234"), Role.ROLE_USER);
         BDDMockito.given(userUseCase.getByUsername(Mockito.anyString())).willReturn(userEncoded);
 
-        // when
+        // expected
         mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sing_in")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.username").value("user"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.nickname").value("kim"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.role").value(Role.ROLE_USER.name()))
                 .andDo(MockMvcResultHandlers.print());
+    }
 
-        // then
+    @Test
+    @DisplayName("로그인 요청 실패: The user does not exist: user")
+    void login_failure_username() throws Exception {
+        // given
+        String json = objectMapper.writeValueAsString(new User("user", "kim", "1234", Role.ROLE_USER));
+        BDDMockito.given(userUseCase.getByUsername(Mockito.anyString())).willReturn(null);
+
+        // expected
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sing_in")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+                .andExpect(MockMvcResultMatchers.content().string("The user does not exist: user"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("로그인 요청 실패: Invalid password")
+    void login_failure_password() throws Exception {
+        // given
+        String json = objectMapper.writeValueAsString(new User("user", "kim", "1234_fail", Role.ROLE_USER));
+        User userEncoded = new User("user", "kim", passwordEncoder.encode("1234"), Role.ROLE_USER);
+        BDDMockito.given(userUseCase.getByUsername(Mockito.anyString())).willReturn(userEncoded);
+
+        // expected
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sing_in")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+                .andExpect(MockMvcResultMatchers.content().string("Invalid password"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("로그인 요청 실패: HTTP Method")
+    void login_failure_http_method() throws Exception {
+        // given
+        String json = objectMapper.writeValueAsString(new User("user", "kim", "1234", Role.ROLE_USER));
+        User userEncoded = new User("user", "kim", passwordEncoder.encode("1234"), Role.ROLE_USER);
+        BDDMockito.given(userUseCase.getByUsername(Mockito.anyString())).willReturn(userEncoded);
+
+        // expected
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/users/sing_in")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content().string("Supports only POST HTTP Method and application/json Content-Type"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("로그인 요청 실패: Content Type")
+    void login_failure_content_type() throws Exception {
+        // given
+        String json = objectMapper.writeValueAsString(new User("user", "kim", "1234", Role.ROLE_USER));
+        User userEncoded = new User("user", "kim", passwordEncoder.encode("1234"), Role.ROLE_USER);
+        BDDMockito.given(userUseCase.getByUsername(Mockito.anyString())).willReturn(userEncoded);
+
+        // expected
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sing_in")
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content().string("Supports only POST HTTP Method and application/json Content-Type"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("로그인 요청 실패: username empty")
+    void login_failure_username_empty() throws Exception {
+        // given
+        String json = objectMapper.writeValueAsString(new User("", "kim", "1234", Role.ROLE_USER));
+        User userEncoded = new User("user", "kim", passwordEncoder.encode("1234"), Role.ROLE_USER);
+        BDDMockito.given(userUseCase.getByUsername(Mockito.anyString())).willReturn(userEncoded);
+
+        // expected
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sing_in")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content().string("username or Password is required value"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("로그인 요청 실패: username blank")
+    void login_failure_username_blank() throws Exception {
+        // given
+        String json = objectMapper.writeValueAsString(new User(" ", "kim", "1234", Role.ROLE_USER));
+        User userEncoded = new User("user", "kim", passwordEncoder.encode("1234"), Role.ROLE_USER);
+        BDDMockito.given(userUseCase.getByUsername(Mockito.anyString())).willReturn(userEncoded);
+
+        // expected
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sing_in")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content().string("username or Password is required value"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("로그인 요청 실패: password empty")
+    void login_failure_password_empty() throws Exception {
+        // given
+        String json = objectMapper.writeValueAsString(new User("user", "kim", "", Role.ROLE_USER));
+        User userEncoded = new User("user", "kim", passwordEncoder.encode("1234"), Role.ROLE_USER);
+        BDDMockito.given(userUseCase.getByUsername(Mockito.anyString())).willReturn(userEncoded);
+
+        // expected
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sing_in")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content().string("username or Password is required value"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("로그인 요청 실패: password blank")
+    void login_failure_password_blank() throws Exception {
+        // given
+        String json = objectMapper.writeValueAsString(new User("user", "kim", " ", Role.ROLE_USER));
+        User userEncoded = new User("user", "kim", passwordEncoder.encode("1234"), Role.ROLE_USER);
+        BDDMockito.given(userUseCase.getByUsername(Mockito.anyString())).willReturn(userEncoded);
+
+        // expected
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sing_in")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content().string("username or Password is required value"))
+                .andDo(MockMvcResultHandlers.print());
     }
 
     @Test
