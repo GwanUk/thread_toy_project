@@ -1,8 +1,9 @@
-package com.matzip.thread.security.filter;
+package com.matzip.thread.users.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.matzip.thread.security.token.ApiAuthenticationToken;
+import com.matzip.thread.users.security.token.ApiAuthenticationToken;
 import com.matzip.thread.users.domain.User;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -10,21 +11,20 @@ import org.springframework.security.web.authentication.AbstractAuthenticationPro
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.util.StringUtils;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Objects;
 
 /**
- * application/json 요청 인증처리를 담당하는 필터
+ * POST, application/json 요청 인증처리를 담당하는 필터
  */
 public class ApiLoginProcessingFilter extends AbstractAuthenticationProcessingFilter {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public ApiLoginProcessingFilter() {
-        super(new AntPathRequestMatcher("/api/users/login"));
+        super(new AntPathRequestMatcher("/api/users/sing_in"));
     }
 
     /**
@@ -33,16 +33,16 @@ public class ApiLoginProcessingFilter extends AbstractAuthenticationProcessingFi
      * @param response the response, which may be needed if the implementation has to do a
      * redirect as part of a multi-stage authentication process (such as OpenID).
      * @return Authentication
-     * @throws AuthenticationException
-     * @throws IOException
-     * @throws ServletException
+     * @throws AuthenticationException spring security RuntimeException
+     * @throws IOException io Exception
      */
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException {
 
         if (!isApiRequest(request)) {
             throw new IllegalStateException("Authentication is not supported");
         }
+
 
         User user = objectMapper.readValue(request.getReader(), User.class);
         if (!(StringUtils.hasText(user.getUsername()) && StringUtils.hasText(user.getPassword()))) {
@@ -55,6 +55,7 @@ public class ApiLoginProcessingFilter extends AbstractAuthenticationProcessingFi
     }
 
     private boolean isApiRequest(HttpServletRequest request) {
-        return Objects.equals(request.getContentType(), MediaType.APPLICATION_JSON_VALUE);
+        return Objects.equals(request.getMethod(), HttpMethod.POST.toString())
+                && Objects.equals(request.getContentType(), MediaType.APPLICATION_JSON_VALUE);
     }
 }
