@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.matzip.thread.security.token.ApiAuthenticationToken;
 import com.matzip.thread.users.domain.User;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -39,23 +40,49 @@ public class ApiLoginProcessingFilter extends AbstractAuthenticationProcessingFi
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException {
 
-        if (!isApiRequest(request)) {
-            throw new IllegalStateException("Authentication is not supported"); // TODO: chane exception
+        if (!isPostAndJson(request, response)) {
+            return null;
         }
 
-
         User user = objectMapper.readValue(request.getReader(), User.class);
-        if (!(StringUtils.hasText(user.getUsername()) && StringUtils.hasText(user.getPassword()))) {
-            throw new IllegalArgumentException("username or Password is required value"); // TODO: chane exception
+
+        if (!hasText(user, response)) {
+            return null;
         }
 
         ApiAuthenticationToken authenticationToken = new ApiAuthenticationToken(user.getUsername(), user.getPassword());
-
         return getAuthenticationManager().authenticate(authenticationToken);
     }
 
-    private boolean isApiRequest(HttpServletRequest request) {
-        return Objects.equals(request.getMethod(), HttpMethod.POST.toString())
-                && Objects.equals(request.getContentType(), MediaType.APPLICATION_JSON_VALUE);
+    private boolean isPostAndJson(HttpServletRequest request, HttpServletResponse response) {
+        if (Objects.equals(request.getMethod(), HttpMethod.POST.toString())
+                && Objects.equals(request.getContentType(), MediaType.APPLICATION_JSON_VALUE)) {
+
+            return true;
+        }
+
+        try {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.getWriter().print("Supports only POST HTTP Method and application/json Content-Type");
+            return false;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private boolean hasText(User user, HttpServletResponse response) {
+        if (StringUtils.hasText(user.getUsername())
+                && StringUtils.hasText(user.getPassword())) {
+
+            return true;
+        }
+
+        try {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.getWriter().print("username or Password is required value");
+            return false;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
