@@ -1,6 +1,6 @@
 package com.matzip.thread.common.controller;
 
-import com.matzip.thread.security.configs.SecurityConfig;
+import com.matzip.thread.users.UserControllerTestContextConfiguration;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @WebMvcTest(controllers = CommonController.class)
-@Import(SecurityConfig.class)
+@Import(UserControllerTestContextConfiguration.class)
 class CommonControllerTest {
 
     @Autowired
