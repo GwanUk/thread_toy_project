@@ -40,13 +40,13 @@ public class ApiLoginProcessingFilter extends AbstractAuthenticationProcessingFi
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException {
 
         if (!isApiRequest(request)) {
-            throw new IllegalStateException("Authentication is not supported");
+            throw new IllegalStateException("Authentication is not supported"); // TODO: chane exception
         }
 
 
         User user = objectMapper.readValue(request.getReader(), User.class);
         if (!(StringUtils.hasText(user.getUsername()) && StringUtils.hasText(user.getPassword()))) {
-            throw new IllegalArgumentException("username or Password is required value");
+            throw new IllegalArgumentException("username or Password is required value"); // TODO: chane exception
         }
 
         ApiAuthenticationToken authenticationToken = new ApiAuthenticationToken(user.getUsername(), user.getPassword());
