@@ -15,9 +15,9 @@ import java.io.IOException;
 public class ApiAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     ObjectMapper objectMapper = new ObjectMapper();
-    
+
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         User user= (User) authentication.getPrincipal();
 
         response.setStatus(HttpStatus.OK.value());

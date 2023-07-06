@@ -54,35 +54,27 @@ public class ApiLoginProcessingFilter extends AbstractAuthenticationProcessingFi
         return getAuthenticationManager().authenticate(authenticationToken);
     }
 
-    private boolean isPostAndJson(HttpServletRequest request, HttpServletResponse response) {
+    private boolean isPostAndJson(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (Objects.equals(request.getMethod(), HttpMethod.POST.toString())
                 && Objects.equals(request.getContentType(), MediaType.APPLICATION_JSON_VALUE)) {
 
             return true;
         }
 
-        try {
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            response.getWriter().print("Supports only POST HTTP Method and application/json Content-Type");
-            return false;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        response.setStatus(HttpStatus.BAD_REQUEST.value());
+        response.getWriter().print("Supports only POST HTTP Method and application/json Content-Type");
+        return false;
     }
 
-    private boolean hasText(User user, HttpServletResponse response) {
+    private boolean hasText(User user, HttpServletResponse response) throws IOException {
         if (StringUtils.hasText(user.getUsername())
                 && StringUtils.hasText(user.getPassword())) {
 
             return true;
         }
 
-        try {
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            response.getWriter().print("username or Password is required value");
-            return false;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        response.setStatus(HttpStatus.BAD_REQUEST.value());
+        response.getWriter().print("username or Password is required value");
+        return false;
     }
 }
