@@ -18,7 +18,7 @@ public class ApiAuthenticationToken extends AbstractAuthenticationToken {
     /**
      * 인증을 받기전, 사용자가 입력한 유저 아이디와 비밀번호 담는 생성자
      * @param principal 유저 아이디
-     * @param credentials 비밀번
+     * @param credentials 비밀번호
      */
     public ApiAuthenticationToken(Object principal, Object credentials) {
         super(null);
@@ -30,8 +30,8 @@ public class ApiAuthenticationToken extends AbstractAuthenticationToken {
     /**
      * 인증 이후에, 인증에 성공한 결과를 담는 생성자
      * @param principal 유저 객체
-     * @param credentials 비밀번호
-     * @param authorities 권한 정보
+     * @param credentials null
+     * @param authorities Role 권한 정보
      */
     public ApiAuthenticationToken(Object principal, Object credentials,
                                                Collection<? extends GrantedAuthority> authorities) {
@@ -46,6 +46,10 @@ public class ApiAuthenticationToken extends AbstractAuthenticationToken {
         return this.credentials;
     }
 
+    /**
+     * return User Domain Entity
+     * @return User
+     */
     @Override
     public Object getPrincipal() {
         return this.principal;
