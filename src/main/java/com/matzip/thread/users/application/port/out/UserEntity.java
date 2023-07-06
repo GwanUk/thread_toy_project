@@ -19,12 +19,13 @@ public class UserEntity {
 
     @Id @GeneratedValue
     private  Long id;
+    private String userId;
     private  String username;
     private  String password;
     private Role role;
 
-    public UserEntity(Long id, String username, String password, Role role) {
-        this.id = id;
+    public UserEntity(String userId, String username, String password, Role role) {
+        this.userId = userId;
         this.username = username;
         this.password = password;
         this.role = role;
@@ -32,7 +33,7 @@ public class UserEntity {
 
     public User toDomainEntity() {
         return new User(
-                id,
+                userId,
                 username,
                 password,
                 role
@@ -41,7 +42,7 @@ public class UserEntity {
 
     public static UserEntity formDomainEntity(User user) {
         return new UserEntity(
-                user.getId(),
+                user.getUserId(),
                 user.getUsername(),
                 user.getPassword(),
                 user.getRole()
