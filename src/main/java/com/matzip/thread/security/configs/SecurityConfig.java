@@ -1,17 +1,18 @@
-package com.matzip.thread.users.security.configs;
+package com.matzip.thread.security.configs;
 
+import com.matzip.thread.security.filter.ApiLoginProcessingFilter;
+import com.matzip.thread.security.provider.ApiAuthenticationProvider;
+import com.matzip.thread.security.service.CustomUserDetailsService;
 import com.matzip.thread.users.application.port.in.UserUseCase;
-import com.matzip.thread.users.security.filter.ApiLoginProcessingFilter;
-import com.matzip.thread.users.security.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,7 +24,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final AuthenticationConfiguration authConfiguration;
+    private final AuthenticationConfiguration authenticationConfiguration;
 
     private final UserUseCase userUseCase;
 
@@ -37,31 +38,38 @@ public class SecurityConfig {
 
         http.addFilterBefore(apiLoginProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
 
-        http.userDetailsService(userDetailsService());
-
         http.csrf().disable();
 
         return http.build();
     }
 
-    public ApiLoginProcessingFilter apiLoginProcessingFilter() {
+    public ApiLoginProcessingFilter apiLoginProcessingFilter() throws Exception {
         ApiLoginProcessingFilter apiLoginProcessingFilter = new ApiLoginProcessingFilter();
-        apiLoginProcessingFilter.setAuthenticationManager(authenticationManager());
+        apiLoginProcessingFilter.setAuthenticationManager(authenticationConfiguration.getAuthenticationManager());
+//        apiLoginProcessingFilter.setAuthenticationManager(authenticationManager());
         return apiLoginProcessingFilter;
+    }
+
+//    @Bean
+//    public AuthenticationManager authenticationManager() {
+//        ProviderManager authenticationManager = null;
+//        try {
+//            authenticationManager = (ProviderManager) authenticationConfiguration.getAuthenticationManager();
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//        authenticationManager.getProviders().add(authenticationProvider());
+//        return authenticationManager;
+//    }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        return new ApiAuthenticationProvider(userDetailsService(), passwordEncoder());
     }
 
     @Bean
     public UserDetailsService userDetailsService() {
         return new CustomUserDetailsService(userUseCase);
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager() {
-        try {
-            return authConfiguration.getAuthenticationManager();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Bean
