@@ -7,22 +7,22 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Getter
 public class SignUpRequest {
-    private final String userId;
     private final String username;
+    private final String nickname;
     private final String password;
     private final Role role;
 
-    public SignUpRequest(String userId, String username, String password, Role role) {
-        this.userId = userId;
+    public SignUpRequest(String username, String nickname, String password, Role role) {
         this.username = username;
+        this.nickname = nickname;
         this.password = password;
         this.role = role;
     }
 
     public User toDomainEntity() {
         return new User(
-                userId,
                 username,
+                nickname,
                 password,
                 role
         );
@@ -30,14 +30,14 @@ public class SignUpRequest {
 
     public static SignUpRequest formDomainEntity(User user) {
         return new SignUpRequest(
-                user.getUserId(),
                 user.getUsername(),
+                user.getNickname(),
                 user.getPassword(),
                 user.getRole()
         );
     }
 
     public SignUpRequest passwordEncode(PasswordEncoder passwordEncoder) {
-        return new SignUpRequest(userId, username, passwordEncoder.encode(password), role);
+        return new SignUpRequest(username, nickname, passwordEncoder.encode(password), role);
     }
 }

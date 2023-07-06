@@ -1,12 +1,14 @@
 package com.matzip.thread.users.application.service;
 
 import com.matzip.thread.users.application.port.in.SignUpRequest;
-import com.matzip.thread.users.application.port.in.UserUpdateRequest;
 import com.matzip.thread.users.application.port.in.UserUseCase;
 import com.matzip.thread.users.application.port.out.UserGateWay;
+import com.matzip.thread.users.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,12 +23,17 @@ class UserService implements UserUseCase {
     }
 
     @Override
-    public void edit(Long id, UserUpdateRequest userUpdateRequest) {
+    public void delete(Long id) {
 
     }
 
     @Override
-    public void delete(Long id) {
+    public User getByUsername(String id) {
+        return null;
+    }
 
+    @Override
+    public Optional<User> findByUsername(String id) {
+        return Optional.empty();
     }
 }

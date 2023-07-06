@@ -19,7 +19,7 @@ class CommonControllerTest {
     private MockMvc mockMvc;
 
     @Test
-    @DisplayName("홈 화면 조회")
+    @DisplayName("홈 화면 조회 성공")
     void getHome() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/"))
                 .andExpect(MockMvcResultMatchers.status().isOk())

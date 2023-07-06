@@ -1,9 +1,15 @@
 package com.matzip.thread.users.application.port.in;
 
+import com.matzip.thread.users.domain.User;
+
+import java.util.Optional;
+
 public interface UserUseCase {
     void signUp(SignUpRequest signUpRequest);
 
-    void edit(Long id, UserUpdateRequest userUpdateRequest);
-
     void delete(Long id);
+
+    User getByUsername(String username);
+
+    Optional<User> findByUsername(String username);
 }

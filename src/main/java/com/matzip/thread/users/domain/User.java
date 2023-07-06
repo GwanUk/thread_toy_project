@@ -7,28 +7,14 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
-    private String userId;
     private String username;
+    private String nickname;
     private String password;
     private Role role;
 
-    public User(String username, String password) {
-        this.userId = null;
+    public User(String username, String nickname, String password, Role role) {
         this.username = username;
-        this.password = password;
-        this.role = null;
-    }
-
-    public User(String userId, String username, String password, Role role) {
-        this.userId = userId;
-        this.username = username;
-        this.password = password;
-        this.role = role;
-    }
-
-    public User(String username, String password, Role role) {
-        this.userId = null;
-        this.username = username;
+        this.nickname = nickname;
         this.password = password;
         this.role = role;
     }

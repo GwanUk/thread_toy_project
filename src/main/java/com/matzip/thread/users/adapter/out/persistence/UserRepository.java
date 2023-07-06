@@ -1,6 +1,5 @@
 package com.matzip.thread.users.adapter.out.persistence;
 
-import com.matzip.thread.users.application.port.out.UserEntity;
 import com.matzip.thread.users.application.port.out.UserGateWay;
 import com.matzip.thread.users.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -28,13 +27,13 @@ class UserRepository implements UserGateWay {
     public List<User> findAll() {
         return userJpaRepository.findAll()
                 .stream()
-                .map(UserEntity::toDomainEntity)
+                .map(UserJpaEntity::toDomainEntity)
                 .toList();
     }
 
     @Override
     public Long save(User user) {
-        return userJpaRepository.save(UserEntity.formDomainEntity(user)).getId();
+        return userJpaRepository.save(UserJpaEntity.fromDomainEntity(user)).getId();
     }
 
     @Override
@@ -46,4 +45,6 @@ class UserRepository implements UserGateWay {
     public void delete(long id) {
 
     }
+
+
 }
