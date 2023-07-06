@@ -1,5 +1,6 @@
 package com.matzip.thread.users.adapter.out.persistence;
 
+import com.matzip.thread.users.application.port.out.UserEntity;
 import com.matzip.thread.users.application.port.out.UserGateWay;
 import com.matzip.thread.users.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -29,13 +30,13 @@ class UserRepository implements UserGateWay {
     }
 
     @Override
-    public long save(User user) {
-        return 0;
+    public void save(User user) {
+        userJpaRepository.save(UserEntity.formDomainEntity(user));
     }
 
     @Override
-    public long update(long id, User user) {
-        return 0;
+    public void update(long id, User user) {
+
     }
 
     @Override

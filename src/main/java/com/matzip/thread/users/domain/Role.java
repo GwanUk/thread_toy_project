@@ -1,6 +1,6 @@
 package com.matzip.thread.users.domain;
 
-public enum Membership {
+public enum Role {
     ADMIN,
     USER
 }

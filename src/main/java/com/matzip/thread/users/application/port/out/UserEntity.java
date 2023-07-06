@@ -1,8 +1,9 @@
 package com.matzip.thread.users.application.port.out;
 
-import com.matzip.thread.users.domain.Membership;
+import com.matzip.thread.users.domain.Role;
 import com.matzip.thread.users.domain.User;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
@@ -13,19 +14,20 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class UserEntity {
 
     @Id @GeneratedValue
     private  Long id;
     private  String username;
     private  String password;
-    private Membership membership;
+    private Role role;
 
-    public UserEntity(Long id, String username, String password, Membership membership) {
+    public UserEntity(Long id, String username, String password, Role role) {
         this.id = id;
         this.username = username;
         this.password = password;
-        this.membership = membership;
+        this.role = role;
     }
 
     public User toDomainEntity() {
@@ -33,7 +35,7 @@ public class UserEntity {
                 id,
                 username,
                 password,
-                membership
+                role
         );
     }
 
@@ -42,7 +44,7 @@ public class UserEntity {
                 user.getId(),
                 user.getUsername(),
                 user.getPassword(),
-                user.getMembership()
+                user.getRole()
         );
     }
 }

@@ -11,9 +11,9 @@ public interface UserGateWay {
 
     List<User> findAll();
 
-    long save(User user);
+    void save(User user);
 
-    long update(long id, User user);
+    void update(long id, User user);
 
     void delete(long id);
 }

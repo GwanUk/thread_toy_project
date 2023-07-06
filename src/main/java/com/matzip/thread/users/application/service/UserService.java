@@ -1,21 +1,23 @@
 package com.matzip.thread.users.application.service;
 
-import com.matzip.thread.users.application.port.in.UserCreateRequest;
+import com.matzip.thread.users.application.port.in.SignUpRequest;
 import com.matzip.thread.users.application.port.in.UserUpdateRequest;
 import com.matzip.thread.users.application.port.in.UserUseCase;
 import com.matzip.thread.users.application.port.out.UserGateWay;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 class UserService implements UserUseCase {
 
     private final UserGateWay userGateWay;
 
     @Override
-    public void join(UserCreateRequest userCreateRequest) {
-
+    public void signUp(SignUpRequest signUpRequest) {
+        userGateWay.save(signUpRequest.toDomainEntity());
     }
 
     @Override
@@ -25,11 +27,6 @@ class UserService implements UserUseCase {
 
     @Override
     public void delete(Long id) {
-
-    }
-
-    @Override
-    public void login(Long id, String password) {
 
     }
 }

@@ -2,14 +2,18 @@ package com.matzip.thread.users.application.port.in;
 
 import com.matzip.thread.users.domain.Role;
 import com.matzip.thread.users.domain.User;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-public class UserCreateRequest {
+@Getter
+public class SignUpRequest {
     private final String username;
     private final String password;
     private final Role role;
 
-    public UserCreateRequest(String username, String password, Role role) {
+    public SignUpRequest(String username, String password, Role role) {
         this.username = username;
         this.password = password;
         this.role = role;
@@ -23,15 +27,15 @@ public class UserCreateRequest {
         );
     }
 
-    public static UserCreateRequest formDomainEntity(User user) {
-        return new UserCreateRequest(
+    public static SignUpRequest formDomainEntity(User user) {
+        return new SignUpRequest(
                 user.getUsername(),
                 user.getPassword(),
                 user.getRole()
         );
     }
 
-    public UserCreateRequest passwordEncode(PasswordEncoder passwordEncoder) {
-        return new UserCreateRequest(username, passwordEncoder.encode(password), role);
+    public SignUpRequest passwordEncode(PasswordEncoder passwordEncoder) {
+        return new SignUpRequest(username, passwordEncoder.encode(password), role);
     }
 }
