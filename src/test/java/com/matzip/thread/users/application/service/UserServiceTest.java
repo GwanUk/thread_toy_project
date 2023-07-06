@@ -31,7 +31,7 @@ class UserServiceTest {
     @DisplayName("회원가입 서비스 성공")
     void singUp() {
         // given
-        SignUpRequest signUpRequest = new SignUpRequest("user", "kim", "1234", Role.USER);
+        SignUpRequest signUpRequest = new SignUpRequest("user", "kim", "1234", Role.ROLE_USER);
 
         // when
         userService.signUp(signUpRequest);
@@ -43,6 +43,6 @@ class UserServiceTest {
         BDDAssertions.then(userArgumentCaptorValue.getUsername()).isEqualTo("user");
         BDDAssertions.then(userArgumentCaptorValue.getNickname()).isEqualTo("kim");
         BDDAssertions.then(userArgumentCaptorValue.getPassword()).isEqualTo("1234");
-        BDDAssertions.then(userArgumentCaptorValue.getRole()).isEqualTo(Role.USER);
+        BDDAssertions.then(userArgumentCaptorValue.getRole()).isEqualTo(Role.ROLE_USER);
     }
 }
