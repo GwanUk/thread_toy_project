@@ -33,7 +33,7 @@ class UserServiceTest {
     @DisplayName("username 으로 회원 단일 조회 서비스 성공")
     void findByUsername() {
         // given
-        Optional<User> user = Optional.of(new User("user", "kim", "1234", Role.ROLE_USER));
+        Optional<User> user = Optional.of(new User("user", "kim", "1234", Role.USER));
         BDDMockito.given(userGateWay.findByUsername(Mockito.anyString())).willReturn(user);
 
         // when
@@ -43,14 +43,14 @@ class UserServiceTest {
         BDDAssertions.then(findUser.getUsername()).isEqualTo("user");
         BDDAssertions.then(findUser.getNickname()).isEqualTo("kim");
         BDDAssertions.then(findUser.getPassword()).isEqualTo("1234");
-        BDDAssertions.then(findUser.getRole()).isEqualTo(Role.ROLE_USER);
+        BDDAssertions.then(findUser.getRole()).isEqualTo(Role.USER);
     }
 
     @Test
     @DisplayName("회원가입 서비스 성공")
     void singUp() {
         // given
-        SignUpRequest signUpRequest = new SignUpRequest("user", "kim", "1234", Role.ROLE_USER);
+        SignUpRequest signUpRequest = new SignUpRequest("user", "kim", "1234", Role.USER);
 
         // when
         userService.signUp(signUpRequest);
@@ -62,6 +62,6 @@ class UserServiceTest {
         BDDAssertions.then(userArgumentCaptorValue.getUsername()).isEqualTo("user");
         BDDAssertions.then(userArgumentCaptorValue.getNickname()).isEqualTo("kim");
         BDDAssertions.then(userArgumentCaptorValue.getPassword()).isEqualTo("1234");
-        BDDAssertions.then(userArgumentCaptorValue.getRole()).isEqualTo(Role.ROLE_USER);
+        BDDAssertions.then(userArgumentCaptorValue.getRole()).isEqualTo(Role.USER);
     }
 }
