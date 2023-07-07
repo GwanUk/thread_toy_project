@@ -44,7 +44,7 @@ class UserControllerTest {
         String json = objectMapper.writeValueAsString(new SignUpRequest("user", "kim", "1234", Role.USER));
 
         // when
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/users")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sign_up")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(MockMvcResultMatchers.status().isOk())

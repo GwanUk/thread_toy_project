@@ -18,7 +18,7 @@ class UserController {
 
     private final PasswordEncoder passwordEncoder;
 
-    @PostMapping
+    @PostMapping("/sign_up")
     void signUp(@RequestBody SignUpRequest signUpRequest) {
         userUseCase.signUp(signUpRequest.passwordEncode(passwordEncoder));
     }

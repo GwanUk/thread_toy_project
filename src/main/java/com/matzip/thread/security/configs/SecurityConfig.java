@@ -33,7 +33,7 @@ public class SecurityConfig {
         http.antMatcher("/api/**")
                 .authorizeRequests()
                 .antMatchers("/api/admin").hasRole("ADMIN")
-                .antMatchers("/api/users").permitAll()
+                .antMatchers("/api/users/sign_up").permitAll()
                 .anyRequest().authenticated();
         http.addFilterBefore(apiLoginProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
         http.exceptionHandling()
