@@ -24,7 +24,7 @@ public class ApiAuthenticationProcessingFilter extends AbstractAuthenticationPro
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public ApiAuthenticationProcessingFilter() {
-        super(new AntPathRequestMatcher("/api/sing_in"));
+        super(new AntPathRequestMatcher("/api/users/sing_in"));
     }
 
     /**

@@ -19,7 +19,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -49,7 +48,7 @@ public class SecurityTest {
         BDDMockito.given(userUseCase.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEncoded));
 
         // expected
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/sing_in")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sing_in")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -64,7 +63,7 @@ public class SecurityTest {
         BDDMockito.given(userUseCase.findByUsername(Mockito.anyString())).willReturn(Optional.empty());
 
         // expected
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/sing_in")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sing_in")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(json))
@@ -82,7 +81,7 @@ public class SecurityTest {
         BDDMockito.given(userUseCase.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEncoded));
 
         // expected
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/sing_in")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sing_in")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(json))
@@ -100,7 +99,7 @@ public class SecurityTest {
         BDDMockito.given(userUseCase.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEncoded));
 
         // expected
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/sing_in")
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/users/sing_in")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(json))
@@ -118,7 +117,7 @@ public class SecurityTest {
         BDDMockito.given(userUseCase.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEncoded));
 
         // expected
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/sing_in")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sing_in")
                         .contentType(MediaType.TEXT_PLAIN)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(json))
@@ -136,7 +135,7 @@ public class SecurityTest {
         BDDMockito.given(userUseCase.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEncoded));
 
         // expected
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/sing_in")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sing_in")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(json))
@@ -154,7 +153,7 @@ public class SecurityTest {
         BDDMockito.given(userUseCase.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEncoded));
 
         // expected
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/sing_in")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sing_in")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(json))
@@ -172,7 +171,7 @@ public class SecurityTest {
         BDDMockito.given(userUseCase.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEncoded));
 
         // expected
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/sing_in")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sing_in")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(json))
@@ -190,7 +189,7 @@ public class SecurityTest {
         BDDMockito.given(userUseCase.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEncoded));
 
         // expected
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/sing_in")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sing_in")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(json))
@@ -208,7 +207,7 @@ public class SecurityTest {
         BDDMockito.given(userUseCase.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEncoded));
 
         // expected
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/sing_in")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sing_in")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(json))
@@ -226,7 +225,7 @@ public class SecurityTest {
         BDDMockito.given(userUseCase.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEncoded));
 
         // expected
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/sing_in")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sing_in")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(json))
