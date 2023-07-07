@@ -50,7 +50,7 @@ class UserServiceTest {
     @DisplayName("회원가입 서비스 성공")
     void singUp() {
         // given
-        SignUpRequest signUpRequest = new SignUpRequest("user", "kim", "1234", Role.USER);
+        SignUpRequest signUpRequest = new SignUpRequest("user", "kim", "1234");
 
         // when
         userService.signUp(signUpRequest);

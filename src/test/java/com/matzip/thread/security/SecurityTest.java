@@ -19,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.stereotype.Controller;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -26,7 +27,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.Optional;
 
-@WebMvcTest
+@WebMvcTest(SecurityTest.SecurityTestController.class)
 @Import(value = {SecurityConfig.class, ApplicationConfiguration.class})
 public class SecurityTest {
 
@@ -257,4 +258,7 @@ public class SecurityTest {
                 .andExpect(MockMvcResultMatchers.content().string("Access denied. Authorization is required"))
                 .andDo(MockMvcResultHandlers.print());
     }
+
+    @Controller
+    static class SecurityTestController {}
 }

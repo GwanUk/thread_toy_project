@@ -1,10 +1,10 @@
 package com.matzip.thread.users.adapter.in.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.deser.BasicDeserializerFactory;
 import com.matzip.thread.ApplicationConfiguration;
 import com.matzip.thread.users.application.port.in.SignUpRequest;
 import com.matzip.thread.users.application.port.in.UserUseCase;
-import com.matzip.thread.users.domain.Role;
 import org.assertj.core.api.BDDAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +16,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
@@ -41,7 +42,7 @@ class UserControllerTest {
     @DisplayName("회원 가입 요청 성공")
     void signUp() throws Exception {
         // given
-        String json = objectMapper.writeValueAsString(new SignUpRequest("user", "kim", "1234", Role.USER));
+        String json = objectMapper.writeValueAsString(new SignUpRequest("user", "kim", "1234"));
 
         // when
         mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sign_up")
@@ -57,6 +58,21 @@ class UserControllerTest {
         BDDAssertions.then(signUpRequestArgumentCaptorValue.getUsername()).isEqualTo("user");
         BDDAssertions.then(signUpRequestArgumentCaptorValue.getNickname()).isEqualTo("kim");
         BDDAssertions.then(passwordEncoder.matches("1234", signUpRequestArgumentCaptorValue.getPassword())).isTrue();
-        BDDAssertions.then(signUpRequestArgumentCaptorValue.getRole()).isEqualTo(Role.USER);
+    }
+
+    @Test
+    @DisplayName("회원 가입 요청 실패: username null")
+    void signUp_fail_username_null() throws Exception {
+        // given
+        String json = objectMapper.writeValueAsString(new SignUpRequest(null, "kim", "1234"));
+
+        // expected
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sign_up")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.BAD_REQUEST.name()))
+                .andDo(MockMvcResultHandlers.print());
     }
 }

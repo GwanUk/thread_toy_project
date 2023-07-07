@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
@@ -19,7 +21,7 @@ class UserController {
     private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/sign_up")
-    void signUp(@RequestBody SignUpRequest signUpRequest) {
+    void signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
         userUseCase.signUp(signUpRequest.passwordEncode(passwordEncoder));
     }
 

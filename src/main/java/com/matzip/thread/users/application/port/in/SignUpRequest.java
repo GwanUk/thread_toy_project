@@ -5,18 +5,21 @@ import com.matzip.thread.users.domain.User;
 import lombok.Getter;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.validation.constraints.NotBlank;
+
 @Getter
 public class SignUpRequest {
+    @NotBlank
     private final String username;
+    @NotBlank
     private final String nickname;
+    @NotBlank
     private final String password;
-    private final Role role;
 
-    public SignUpRequest(String username, String nickname, String password, Role role) {
+    public SignUpRequest(String username, String nickname, String password) {
         this.username = username;
         this.nickname = nickname;
         this.password = password;
-        this.role = role;
     }
 
     public User toDomainEntity() {
@@ -24,20 +27,11 @@ public class SignUpRequest {
                 username,
                 nickname,
                 password,
-                role
-        );
-    }
-
-    public static SignUpRequest formDomainEntity(User user) {
-        return new SignUpRequest(
-                user.getUsername(),
-                user.getNickname(),
-                user.getPassword(),
-                user.getRole()
+                Role.USER
         );
     }
 
     public SignUpRequest passwordEncode(PasswordEncoder passwordEncoder) {
-        return new SignUpRequest(username, nickname, passwordEncoder.encode(password), role);
+        return new SignUpRequest(username, nickname, passwordEncoder.encode(password));
     }
 }
