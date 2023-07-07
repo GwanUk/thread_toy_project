@@ -1,6 +1,8 @@
 package com.matzip.thread.security.configs;
 
+import com.matzip.thread.security.entrypoint.ApiLoginAuthenticationEntryPoint;
 import com.matzip.thread.security.filter.ApiLoginProcessingFilter;
+import com.matzip.thread.security.handler.ApiAccessDeniedHandler;
 import com.matzip.thread.security.handler.ApiAuthenticationFailureHandler;
 import com.matzip.thread.security.handler.ApiAuthenticationSuccessHandler;
 import com.matzip.thread.security.provider.ApiAuthenticationProvider;
@@ -37,8 +39,10 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/api/users").permitAll()
                 .anyRequest().authenticated();
-
         http.addFilterBefore(apiLoginProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.exceptionHandling()
+                .authenticationEntryPoint(new ApiLoginAuthenticationEntryPoint())
+                .accessDeniedHandler(new ApiAccessDeniedHandler());
 
         http.csrf().disable();
 
