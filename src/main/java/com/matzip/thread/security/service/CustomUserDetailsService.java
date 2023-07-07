@@ -16,6 +16,12 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserUseCase userUseCase;
 
+    /**
+     * 유저가 존재하면 UserContext 객체에 User 객체와 GrantedAuthority 리스트를 담아서 리턴
+     * @param username the username identifying the user whose data is required.
+     * @return UserContext
+     * @throws UsernameNotFoundException UsernameNotFoundException
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userUseCase.getByUsername(username);

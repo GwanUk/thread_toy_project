@@ -29,11 +29,11 @@ public class ApiLoginProcessingFilter extends AbstractAuthenticationProcessingFi
     }
 
     /**
-     * application/json 요청이고 유저 아이디와 비밀번호 존재할 경우 인증 매니저를 통해 인증한 결과를 돌려줌
+     * application/json 요청이고 유저 아이디와 비밀번호 존재할 경우 인증, 성공시 인증토큰 리턴
      * @param request from which to extract parameters and perform the authentication
      * @param response the response, which may be needed if the implementation has to do a
      * redirect as part of a multi-stage authentication process (such as OpenID).
-     * @return Authentication
+     * @return ApiAuthenticationToken
      * @throws AuthenticationException spring security RuntimeException
      * @throws IOException io Exception
      */

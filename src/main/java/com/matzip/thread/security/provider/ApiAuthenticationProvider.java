@@ -17,6 +17,12 @@ public class ApiAuthenticationProvider implements AuthenticationProvider {
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
 
+    /**
+     * 인증토큰(생성자1)을 받아서 인증 시도, 성공시 인증토큰(생성자2) 리턴
+     * @param authentication ApiAuthenticationToken 생성자1
+     * @return ApiAuthenticationToken
+     * @throws AuthenticationException BadCredentialsException or UsernameNotFoundException
+     */
     @Override
     @Transactional
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
