@@ -18,8 +18,8 @@ class UserService implements UserUseCase {
     private final UserGateWay userGateWay;
 
     @Override
-    public Optional<User> findByUsername(String id) {
-        return Optional.empty();
+    public Optional<User> findByUsername(String username) {
+        return userGateWay.findByUsername(username);
     }
 
     @Override
