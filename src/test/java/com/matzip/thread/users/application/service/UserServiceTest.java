@@ -15,6 +15,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
@@ -25,6 +27,23 @@ class UserServiceTest {
     @BeforeEach
     void init() {
         userService = new UserService(userGateWay);
+    }
+
+    @Test
+    @DisplayName("username 으로 회원 단일 조회 서비스 성공")
+    void findByUsername() {
+        // given
+        Optional<User> user = Optional.of(new User("user", "kim", "1234", Role.ROLE_USER));
+        BDDMockito.given(userGateWay.findByUsername(Mockito.anyString())).willReturn(user);
+
+        // when
+        User findUser = userService.findByUsername("user").orElseThrow(() -> new RuntimeException("유저가 존재하지 않습니다."));
+
+        // then
+        BDDAssertions.then(findUser.getUsername()).isEqualTo("user");
+        BDDAssertions.then(findUser.getNickname()).isEqualTo("kim");
+        BDDAssertions.then(findUser.getPassword()).isEqualTo("1234");
+        BDDAssertions.then(findUser.getRole()).isEqualTo(Role.ROLE_USER);
     }
 
     @Test
