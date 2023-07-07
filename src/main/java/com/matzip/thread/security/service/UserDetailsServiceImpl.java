@@ -1,9 +1,8 @@
 package com.matzip.thread.security.service;
 
+import com.matzip.thread.security.model.UserContext;
 import com.matzip.thread.users.application.port.in.UserUseCase;
 import com.matzip.thread.users.domain.User;
-import com.matzip.thread.security.model.UserContext;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,7 +26,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         User user = userUseCase.findByUsername(username)
-                .orElseThrow(()-> new UsernameNotFoundException("The user does not exist: " + username));
+                .orElseThrow(() -> new UsernameNotFoundException("The user does not exist: " + username));
 
         List<SimpleGrantedAuthority> roles = List.of(new SimpleGrantedAuthority(user.getRole().name()));
 

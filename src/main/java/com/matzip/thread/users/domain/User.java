@@ -5,12 +5,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
-    private String username;
-    private String nickname;
-    private String password;
-    private Role role;
+    private final String username;
+    private final String nickname;
+    private final String password;
+    private final Role role;
 
     public User(String username, String nickname, String password, Role role) {
         this.username = username;
