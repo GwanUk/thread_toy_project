@@ -8,7 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.validation.constraints.NotBlank;
 
 @Getter
-public class SignUpRequest {
+class SignUpRequest {
     @NotBlank
     private final String username;
     @NotBlank
@@ -16,13 +16,13 @@ public class SignUpRequest {
     @NotBlank
     private final String password;
 
-    public SignUpRequest(String username, String nickname, String password) {
+    SignUpRequest(String username, String nickname, String password) {
         this.username = username;
         this.nickname = nickname;
         this.password = password;
     }
 
-    public User toDomainEntity(PasswordEncoder passwordEncoder) {
+    User toDomainEntity(PasswordEncoder passwordEncoder) {
         return new User(
                 username,
                 nickname,
