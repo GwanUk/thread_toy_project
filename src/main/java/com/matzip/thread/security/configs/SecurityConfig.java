@@ -1,13 +1,12 @@
 package com.matzip.thread.security.configs;
 
-import com.matzip.thread.security.entrypoint.ApiLoginAuthenticationEntryPoint;
-import com.matzip.thread.security.filter.ApiLoginProcessingFilter;
+import com.matzip.thread.security.entrypoint.ApiAuthenticationEntryPoint;
+import com.matzip.thread.security.filter.ApiAuthenticationProcessingFilter;
 import com.matzip.thread.security.handler.ApiAccessDeniedHandler;
 import com.matzip.thread.security.handler.ApiAuthenticationFailureHandler;
 import com.matzip.thread.security.handler.ApiAuthenticationSuccessHandler;
 import com.matzip.thread.security.provider.ApiAuthenticationProvider;
-import com.matzip.thread.security.service.CustomUserDetailsService;
-import com.matzip.thread.users.application.port.in.UserUseCase;
+import com.matzip.thread.security.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,8 +15,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -30,18 +27,17 @@ public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
 
-    private final UserUseCase userUseCase;
-
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
 
         http.antMatcher("/api/**")
                 .authorizeRequests()
+                .antMatchers("/api/admin").hasRole("ADMIN")
                 .antMatchers("/api/users").permitAll()
                 .anyRequest().authenticated();
         http.addFilterBefore(apiLoginProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
         http.exceptionHandling()
-                .authenticationEntryPoint(new ApiLoginAuthenticationEntryPoint())
+                .authenticationEntryPoint(new ApiAuthenticationEntryPoint())
                 .accessDeniedHandler(new ApiAccessDeniedHandler());
 
         http.csrf().disable();
@@ -49,13 +45,13 @@ public class SecurityConfig {
         return http.build();
     }
 
-    public ApiLoginProcessingFilter apiLoginProcessingFilter() throws Exception {
-        ApiLoginProcessingFilter apiLoginProcessingFilter = new ApiLoginProcessingFilter();
-        apiLoginProcessingFilter.setAuthenticationManager(authenticationConfiguration.getAuthenticationManager());
+    public ApiAuthenticationProcessingFilter apiLoginProcessingFilter() throws Exception {
+        ApiAuthenticationProcessingFilter apiAuthenticationProcessingFilter = new ApiAuthenticationProcessingFilter();
+        apiAuthenticationProcessingFilter.setAuthenticationManager(authenticationConfiguration.getAuthenticationManager());
 //        apiLoginProcessingFilter.setAuthenticationManager(authenticationManager());
-        apiLoginProcessingFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler());
-        apiLoginProcessingFilter.setAuthenticationFailureHandler(authenticationFailureHandler());
-        return apiLoginProcessingFilter;
+        apiAuthenticationProcessingFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler());
+        apiAuthenticationProcessingFilter.setAuthenticationFailureHandler(authenticationFailureHandler());
+        return apiAuthenticationProcessingFilter;
     }
 
 //    @Bean
@@ -72,17 +68,12 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
-        return new ApiAuthenticationProvider(userDetailsService(), passwordEncoder());
+        return new ApiAuthenticationProvider();
     }
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return new CustomUserDetailsService(userUseCase);
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        return new UserDetailsServiceImpl();
     }
 
     @Bean
