@@ -1,6 +1,6 @@
 package com.matzip.thread.users.application.service;
 
-import com.matzip.thread.users.application.port.in.SignUpRequest;
+import com.matzip.thread.users.adapter.in.web.SignUpRequest;
 import com.matzip.thread.users.application.port.out.UserGateWay;
 import com.matzip.thread.users.domain.Role;
 import com.matzip.thread.users.domain.User;
@@ -50,10 +50,10 @@ class UserServiceTest {
     @DisplayName("회원가입 서비스 성공")
     void singUp() {
         // given
-        SignUpRequest signUpRequest = new SignUpRequest("user", "kim", "1234");
+        User user = new User("user", "kim", "1234", Role.USER);
 
         // when
-        userService.signUp(signUpRequest);
+        userService.signUp(user);
 
         // then
         ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);

@@ -1,6 +1,5 @@
-package com.matzip.thread.users.application.port.in;
+package com.matzip.thread.users.adapter.in.web;
 
-import com.matzip.thread.users.adapter.out.persistence.UserJpaEntity;
 import com.matzip.thread.users.domain.Role;
 import com.matzip.thread.users.domain.User;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package com.matzip.thread.users.application.port.in;
+package com.matzip.thread.security.model;
 
 import lombok.AccessLevel;
 import lombok.Getter;

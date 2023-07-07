@@ -1,4 +1,4 @@
-package com.matzip.thread.users.application.port.in;
+package com.matzip.thread.users.adapter.in.web;
 
 import com.matzip.thread.users.domain.Role;
 import com.matzip.thread.users.domain.User;
@@ -22,16 +22,12 @@ public class SignUpRequest {
         this.password = password;
     }
 
-    public User toDomainEntity() {
+    public User toDomainEntity(PasswordEncoder passwordEncoder) {
         return new User(
                 username,
                 nickname,
-                password,
+                passwordEncoder.encode(password),
                 Role.USER
         );
-    }
-
-    public SignUpRequest passwordEncode(PasswordEncoder passwordEncoder) {
-        return new SignUpRequest(username, nickname, passwordEncoder.encode(password));
     }
 }

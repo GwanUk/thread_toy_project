@@ -1,10 +1,9 @@
 package com.matzip.thread.users.adapter.in.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.deser.BasicDeserializerFactory;
 import com.matzip.thread.ApplicationConfiguration;
-import com.matzip.thread.users.application.port.in.SignUpRequest;
 import com.matzip.thread.users.application.port.in.UserUseCase;
+import com.matzip.thread.users.domain.User;
 import org.assertj.core.api.BDDAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -52,12 +51,12 @@ class UserControllerTest {
                 .andDo(MockMvcResultHandlers.print());
 
         // then
-        ArgumentCaptor<SignUpRequest> signUpRequestArgumentCaptor = ArgumentCaptor.forClass(SignUpRequest.class);
-        BDDMockito.then(userUseCase).should(Mockito.times(1)).signUp(signUpRequestArgumentCaptor.capture());
-        SignUpRequest signUpRequestArgumentCaptorValue = signUpRequestArgumentCaptor.getValue();
-        BDDAssertions.then(signUpRequestArgumentCaptorValue.getUsername()).isEqualTo("user");
-        BDDAssertions.then(signUpRequestArgumentCaptorValue.getNickname()).isEqualTo("kim");
-        BDDAssertions.then(passwordEncoder.matches("1234", signUpRequestArgumentCaptorValue.getPassword())).isTrue();
+        ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
+        BDDMockito.then(userUseCase).should(Mockito.times(1)).signUp(userArgumentCaptor.capture());
+        User userArgumentCaptorValue = userArgumentCaptor.getValue();
+        BDDAssertions.then(userArgumentCaptorValue.getUsername()).isEqualTo("user");
+        BDDAssertions.then(userArgumentCaptorValue.getNickname()).isEqualTo("kim");
+        BDDAssertions.then(passwordEncoder.matches("1234", userArgumentCaptorValue.getPassword())).isTrue();
     }
 
     @Test

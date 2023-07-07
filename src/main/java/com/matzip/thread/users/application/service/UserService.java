@@ -1,6 +1,5 @@
 package com.matzip.thread.users.application.service;
 
-import com.matzip.thread.users.application.port.in.SignUpRequest;
 import com.matzip.thread.users.application.port.in.UserUseCase;
 import com.matzip.thread.users.application.port.out.UserGateWay;
 import com.matzip.thread.users.domain.User;
@@ -23,7 +22,7 @@ class UserService implements UserUseCase {
     }
 
     @Override
-    public void signUp(SignUpRequest signUpRequest) {
-        userGateWay.save(signUpRequest.toDomainEntity());
+    public void signUp(User user) {
+        userGateWay.save(user);
     }
 }
