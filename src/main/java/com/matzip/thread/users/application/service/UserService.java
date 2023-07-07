@@ -18,22 +18,12 @@ class UserService implements UserUseCase {
     private final UserGateWay userGateWay;
 
     @Override
-    public void signUp(SignUpRequest signUpRequest) {
-        userGateWay.save(signUpRequest.toDomainEntity());
-    }
-
-    @Override
-    public void delete(Long id) {
-
-    }
-
-    @Override
-    public User getByUsername(String id) {
-        return null;
-    }
-
-    @Override
     public Optional<User> findByUsername(String id) {
         return Optional.empty();
+    }
+
+    @Override
+    public void signUp(SignUpRequest signUpRequest) {
+        userGateWay.save(signUpRequest.toDomainEntity());
     }
 }

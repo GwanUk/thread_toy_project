@@ -5,7 +5,7 @@ import com.matzip.thread.users.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -14,37 +14,12 @@ class UserRepository implements UserGateWay {
     private final UserJpaRepository userJpaRepository;
 
     @Override
-    public User findById(long id) {
-        return userJpaRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다.")).toDomainEntity();
+    public Optional<User> findByUsername(String username) {
+        return userJpaRepository.findByUsername(username).map(UserJpaEntity::toDomainEntity);
     }
 
     @Override
-    public User findByUsername(String username) {
-        return null;
+    public void save(User user) {
+        userJpaRepository.save(UserJpaEntity.fromDomainEntity(user));
     }
-
-    @Override
-    public List<User> findAll() {
-        return userJpaRepository.findAll()
-                .stream()
-                .map(UserJpaEntity::toDomainEntity)
-                .toList();
-    }
-
-    @Override
-    public Long save(User user) {
-        return userJpaRepository.save(UserJpaEntity.fromDomainEntity(user)).getId();
-    }
-
-    @Override
-    public void update(long id, User user) {
-
-    }
-
-    @Override
-    public void delete(long id) {
-
-    }
-
-
 }
