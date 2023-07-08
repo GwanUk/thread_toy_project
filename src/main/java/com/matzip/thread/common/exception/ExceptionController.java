@@ -1,4 +1,4 @@
-package com.matzip.thread.common;
+package com.matzip.thread.common.exception;
 
 import com.matzip.thread.common.model.ErrorResponse;
 import org.springframework.http.HttpStatus;

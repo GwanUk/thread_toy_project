@@ -1,7 +1,7 @@
 package com.matzip.thread.users.adapter.in.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.matzip.thread.ApplicationConfiguration;
+import com.matzip.thread.common.factorybean.PasswordEncoderFactoryBean;
 import com.matzip.thread.users.application.port.in.UserUseCase;
 import com.matzip.thread.users.domain.User;
 import org.assertj.core.api.BDDAssertions;
@@ -25,7 +25,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @WebMvcTest(controllers = UserController.class,
         excludeAutoConfiguration = SecurityAutoConfiguration.class)
-@Import(ApplicationConfiguration.class)
+@Import(PasswordEncoderFactoryBean.class)
 class UserControllerTest {
 
     @Autowired
