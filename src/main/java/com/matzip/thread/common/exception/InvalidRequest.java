@@ -8,34 +8,24 @@ public class InvalidRequest extends ApplicationException{
 
     private static final String ERROR_MESSAGE = "request is invalid";
 
-    private String message;
-
     public InvalidRequest() {
+        super(ERROR_MESSAGE);
     }
 
     public InvalidRequest(String message) {
-        this.message = message;
+        super(ERROR_MESSAGE + ": " + message);
+    }
+
+    public InvalidRequest(String message, Throwable cause) {
+        super(ERROR_MESSAGE + ": " + message, cause);
     }
 
     public InvalidRequest(Throwable cause) {
-        super(cause);
-    }
-
-    public InvalidRequest(Throwable cause, String message) {
-        super(cause);
-        this.message = message;
+        super(ERROR_MESSAGE, cause);
     }
 
     @Override
     public HttpStatus getHttpStatus() {
         return HTTP_STATUS;
-    }
-
-    @Override
-    public String getErrorMessage() {
-        if (message == null || message.equals("") || message.equals(" ")) {
-            return ERROR_MESSAGE;
-        }
-        return ERROR_MESSAGE + ": " + message;
     }
 }

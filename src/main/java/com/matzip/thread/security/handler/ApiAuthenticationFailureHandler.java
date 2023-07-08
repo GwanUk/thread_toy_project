@@ -1,5 +1,6 @@
 package com.matzip.thread.security.handler;
 
+import com.matzip.thread.common.exception.ApiAuthenticationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
@@ -13,7 +14,10 @@ public class ApiAuthenticationFailureHandler implements AuthenticationFailureHan
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
         response.setStatus(HttpStatus.BAD_REQUEST.value());
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.getWriter().print(exception.getMessage());
+
+        if (exception instanceof ApiAuthenticationException) {
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.getWriter().print(exception.getMessage());
+        }
     }
 }

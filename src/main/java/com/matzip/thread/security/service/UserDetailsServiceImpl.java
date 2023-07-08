@@ -1,5 +1,6 @@
 package com.matzip.thread.security.service;
 
+import com.matzip.thread.common.exception.ApiAuthenticationException;
 import com.matzip.thread.security.model.UserContext;
 import com.matzip.thread.users.application.port.in.UserUseCase;
 import com.matzip.thread.users.domain.User;
@@ -25,7 +26,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         User user = userUseCase.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("The user does not exist"));
+                .orElseThrow(() -> new ApiAuthenticationException("The user does not exist"));
 
         List<SimpleGrantedAuthority> roles = List.of(new SimpleGrantedAuthority(user.getRole().name()));
 

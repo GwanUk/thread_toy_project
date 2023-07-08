@@ -1,11 +1,11 @@
 package com.matzip.thread.security.provider;
 
+import com.matzip.thread.common.exception.ApiAuthenticationException;
 import com.matzip.thread.security.model.UserContext;
 import com.matzip.thread.security.token.ApiAuthenticationToken;
 import com.matzip.thread.users.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
@@ -38,7 +38,7 @@ public class ApiAuthenticationProvider implements AuthenticationProvider {
         Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
 
         if (!isPasswordMatches(password, encodedPassword)) {
-            throw new BadCredentialsException("Invalid password");
+            throw new ApiAuthenticationException("Invalid password");
         }
 
         return new ApiAuthenticationToken(user, null, authorities);
