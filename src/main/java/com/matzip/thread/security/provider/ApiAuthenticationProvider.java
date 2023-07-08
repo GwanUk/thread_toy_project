@@ -2,14 +2,18 @@ package com.matzip.thread.security.provider;
 
 import com.matzip.thread.security.model.UserContext;
 import com.matzip.thread.security.token.ApiAuthenticationToken;
+import com.matzip.thread.users.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collection;
 
 @RequiredArgsConstructor
 public class ApiAuthenticationProvider implements AuthenticationProvider {
@@ -17,29 +21,36 @@ public class ApiAuthenticationProvider implements AuthenticationProvider {
     private final PasswordEncoder passwordEncoder;
 
     /**
-     * 인증토큰(생성자1)을 받아서 인증 시도, 성공시 인증토큰(생성자2) 리턴
-     * @param authentication ApiAuthenticationToken 생성자1
-     * @return ApiAuthenticationToken
+     * 인증후 인증 객체와 권한이 담긴 인증 토큰 반환
+     * @param authentication ApiAuthenticationToken principal = username, credentials = password
+     * @return ApiAuthenticationToken principal = User, password = null, authorities
      * @throws AuthenticationException BadCredentialsException or UsernameNotFoundException
      */
     @Override
-    @Transactional
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
-        String username = authentication.getName();
+        String username = (String) authentication.getPrincipal();
         String password = (String) authentication.getCredentials();
 
-        UserContext userContext = (UserContext) userDetailsService.loadUserByUsername(username);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        User user = ((UserContext) userDetails).getUser();
+        String encodedPassword = userDetails.getPassword();
+        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
 
-        if (!passwordEncoder.matches(password, userContext.getUser().getPassword())) {
+        if (!isPasswordMatches(password, encodedPassword)) {
             throw new BadCredentialsException("Invalid password");
         }
 
-        return new ApiAuthenticationToken(userContext.getUser(), null, userContext.getAuthorities());
+        return new ApiAuthenticationToken(user, null, authorities);
     }
 
     @Override
     public boolean supports(Class<?> authentication) {
         return authentication.equals(ApiAuthenticationToken.class);
     }
+
+    private boolean isPasswordMatches(String password, String encodedPassword) {
+        return passwordEncoder.matches(password, encodedPassword);
+    }
+
 }

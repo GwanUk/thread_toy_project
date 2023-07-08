@@ -27,7 +27,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
     private final ObjectMapper objectMapper;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final PasswordEncoder passwordEncoder;
@@ -53,29 +52,15 @@ public class SecurityConfig {
     public ApiAuthenticationProcessingFilter apiLoginProcessingFilter() throws Exception {
         ApiAuthenticationProcessingFilter apiAuthenticationProcessingFilter = new ApiAuthenticationProcessingFilter(objectMapper);
         apiAuthenticationProcessingFilter.setAuthenticationManager(authenticationConfiguration.getAuthenticationManager());
-//        apiLoginProcessingFilter.setAuthenticationManager(authenticationManager());
         apiAuthenticationProcessingFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler());
         apiAuthenticationProcessingFilter.setAuthenticationFailureHandler(authenticationFailureHandler());
         return apiAuthenticationProcessingFilter;
     }
 
-//    @Bean
-//    public AuthenticationManager authenticationManager() {
-//        ProviderManager authenticationManager = null;
-//        try {
-//            authenticationManager = (ProviderManager) authenticationConfiguration.getAuthenticationManager();
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
-//        authenticationManager.getProviders().add(authenticationProvider());
-//        return authenticationManager;
-//    }
-
     @Bean
     public AuthenticationProvider authenticationProvider() {
         return new ApiAuthenticationProvider(userDetailsService(), passwordEncoder);
     }
-
     @Bean
     public UserDetailsService userDetailsService() {
         return new UserDetailsServiceImpl(userUseCase);

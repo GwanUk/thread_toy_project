@@ -8,7 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import java.util.Collection;
 
 /**
- * UserDetails 구현한 User 객체를 상속받아서 유저 도메인 엔티티를 필드로 가짐
+ * UserDetails 구현한 User Wrapper class
  */
 @Getter
 public class UserContext extends org.springframework.security.core.userdetails.User {

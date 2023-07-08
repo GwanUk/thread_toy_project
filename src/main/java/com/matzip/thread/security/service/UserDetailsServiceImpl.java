@@ -13,7 +13,6 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
-
     private final UserUseCase userUseCase;
 
     /**
