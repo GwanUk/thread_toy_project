@@ -1,6 +1,5 @@
 package com.matzip.thread.users.application.service;
 
-import com.matzip.thread.users.adapter.in.web.SignUpRequest;
 import com.matzip.thread.users.application.port.out.UserGateWay;
 import com.matzip.thread.users.domain.Role;
 import com.matzip.thread.users.domain.User;
@@ -33,7 +32,7 @@ class UserServiceTest {
     @DisplayName("username 으로 회원 단일 조회 서비스 성공")
     void findByUsername() {
         // given
-        Optional<User> user = Optional.of(new User("user", "kim", "1234", Role.USER));
+        Optional<User> user = Optional.of(new User("user", "kim", "1234", Role.ROLE_USER));
         BDDMockito.given(userGateWay.findByUsername(Mockito.anyString())).willReturn(user);
 
         // when
@@ -43,14 +42,14 @@ class UserServiceTest {
         BDDAssertions.then(findUser.getUsername()).isEqualTo("user");
         BDDAssertions.then(findUser.getNickname()).isEqualTo("kim");
         BDDAssertions.then(findUser.getPassword()).isEqualTo("1234");
-        BDDAssertions.then(findUser.getRole()).isEqualTo(Role.USER);
+        BDDAssertions.then(findUser.getRole()).isEqualTo(Role.ROLE_USER);
     }
 
     @Test
     @DisplayName("회원가입 서비스 성공")
     void singUp() {
         // given
-        User user = new User("user", "kim", "1234", Role.USER);
+        User user = new User("user", "kim", "1234", Role.ROLE_USER);
 
         // when
         userService.signUp(user);
@@ -62,6 +61,6 @@ class UserServiceTest {
         BDDAssertions.then(userArgumentCaptorValue.getUsername()).isEqualTo("user");
         BDDAssertions.then(userArgumentCaptorValue.getNickname()).isEqualTo("kim");
         BDDAssertions.then(userArgumentCaptorValue.getPassword()).isEqualTo("1234");
-        BDDAssertions.then(userArgumentCaptorValue.getRole()).isEqualTo(Role.USER);
+        BDDAssertions.then(userArgumentCaptorValue.getRole()).isEqualTo(Role.ROLE_USER);
     }
 }

@@ -23,7 +23,7 @@ class SignUpRequest {
                 username,
                 nickname,
                 passwordEncoder.encode(password),
-                Role.USER
+                Role.ROLE_USER
         );
     }
 }
