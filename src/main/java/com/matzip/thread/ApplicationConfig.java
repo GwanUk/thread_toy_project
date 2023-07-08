@@ -1,5 +1,6 @@
 package com.matzip.thread;
 
+import com.matzip.thread.security.token.ApiAuthenticationToken;
 import com.matzip.thread.users.domain.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,12 +20,11 @@ public class ApplicationConfig {
     public AuditorAware<String> auditorAware() {
         return () -> {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-            if (authentication instanceof AnonymousAuthenticationToken) {
-                return Optional.of((String) authentication.getPrincipal());
+            if (authentication instanceof ApiAuthenticationToken) {
+                return Optional.of(((User) authentication.getPrincipal()).getUsername());
             }
 
-            return Optional.ofNullable(((User) authentication.getPrincipal()).getUsername());
+            return Optional.of("ANONYMOUS");
         };
     }
 }
