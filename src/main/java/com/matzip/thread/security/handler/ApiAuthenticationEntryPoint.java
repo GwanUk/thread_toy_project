@@ -1,4 +1,4 @@
-package com.matzip.thread.security.entrypoint;
+package com.matzip.thread.security.handler;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
