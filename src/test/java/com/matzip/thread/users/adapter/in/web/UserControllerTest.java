@@ -71,7 +71,48 @@ class UserControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.BAD_REQUEST.name()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(HttpStatus.BAD_REQUEST.toString()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.fieldErrors[0].field").value("username"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.fieldErrors[0].errorMessage").value("must not be blank"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.fieldErrors[0].rejectedValue").isEmpty())
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("회원 가입 요청 실패: username empty")
+    void signUp_fail_username_empty() throws Exception {
+        // given
+        String json = objectMapper.writeValueAsString(new SignUpRequest("", "kim", "1234"));
+
+        // expected
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sign_up")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(HttpStatus.BAD_REQUEST.toString()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.fieldErrors[0].field").value("username"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.fieldErrors[0].errorMessage").value("must not be blank"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.fieldErrors[0].rejectedValue").isEmpty())
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("회원 가입 요청 실패: username blank")
+    void signUp_fail_username_blank() throws Exception {
+        // given
+        String json = objectMapper.writeValueAsString(new SignUpRequest(" ", "kim", "1234"));
+
+        // expected
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sign_up")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(HttpStatus.BAD_REQUEST.toString()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.fieldErrors[0].field").value("username"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.fieldErrors[0].errorMessage").value("must not be blank"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.fieldErrors[0].rejectedValue").value(" "))
                 .andDo(MockMvcResultHandlers.print());
     }
 }
