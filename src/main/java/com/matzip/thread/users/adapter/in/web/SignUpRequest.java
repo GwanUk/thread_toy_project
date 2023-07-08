@@ -3,11 +3,13 @@ package com.matzip.thread.users.adapter.in.web;
 import com.matzip.thread.users.domain.Role;
 import com.matzip.thread.users.domain.User;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.validation.constraints.NotBlank;
 
 @Getter
+@RequiredArgsConstructor
 class SignUpRequest {
     @NotBlank
     private final String username;
@@ -15,12 +17,6 @@ class SignUpRequest {
     private final String nickname;
     @NotBlank
     private final String password;
-
-    SignUpRequest(String username, String nickname, String password) {
-        this.username = username;
-        this.nickname = nickname;
-        this.password = password;
-    }
 
     User toDomainEntity(PasswordEncoder passwordEncoder) {
         return new User(

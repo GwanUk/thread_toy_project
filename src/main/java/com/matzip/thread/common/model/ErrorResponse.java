@@ -1,6 +1,7 @@
 package com.matzip.thread.common.model;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
@@ -23,13 +24,9 @@ public class ErrorResponse {
     }
 
     @Getter
+    @RequiredArgsConstructor
     static class FieldError {
         private final String field;
         private final String error;
-
-        public FieldError(String field, String error) {
-            this.field = field;
-            this.error = error;
-        }
     }
 }
