@@ -11,7 +11,7 @@ import java.io.IOException;
 public class ApiAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         response.setStatus(HttpStatus.OK.value());
     }
 }

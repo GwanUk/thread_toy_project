@@ -1,7 +1,7 @@
 package com.matzip.thread.security.configs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.matzip.thread.security.entrypoint.ApiAuthenticationEntryPoint;
+import com.matzip.thread.security.handler.ApiAuthenticationEntryPoint;
 import com.matzip.thread.security.filter.ApiAuthenticationProcessingFilter;
 import com.matzip.thread.security.handler.ApiAccessDeniedHandler;
 import com.matzip.thread.security.handler.ApiAuthenticationFailureHandler;

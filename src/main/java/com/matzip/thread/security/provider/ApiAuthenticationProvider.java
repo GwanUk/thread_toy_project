@@ -52,5 +52,4 @@ public class ApiAuthenticationProvider implements AuthenticationProvider {
     private boolean isPasswordMatches(String password, String encodedPassword) {
         return passwordEncoder.matches(password, encodedPassword);
     }
-
 }
