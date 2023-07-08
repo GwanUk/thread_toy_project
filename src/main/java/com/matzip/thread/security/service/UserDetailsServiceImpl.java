@@ -3,7 +3,7 @@ package com.matzip.thread.security.service;
 import com.matzip.thread.security.model.UserContext;
 import com.matzip.thread.users.application.port.in.UserUseCase;
 import com.matzip.thread.users.domain.User;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,10 +11,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    @Autowired
-    private UserUseCase userUseCase;
+    private final UserUseCase userUseCase;
 
     /**
      * 유저가 존재하면 UserContext 객체에 User 객체와 GrantedAuthority 리스트를 담아서 리턴

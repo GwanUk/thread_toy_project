@@ -20,11 +20,11 @@ import java.util.Objects;
  * POST, application/json 요청 인증처리를 담당하는 필터
  */
 public class ApiAuthenticationProcessingFilter extends AbstractAuthenticationProcessingFilter {
+    private final ObjectMapper objectMapper;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
-    public ApiAuthenticationProcessingFilter() {
+    public ApiAuthenticationProcessingFilter(ObjectMapper objectMapper) {
         super(new AntPathRequestMatcher("/api/users/sing_in"));
+        this.objectMapper = objectMapper;
     }
 
     /**
