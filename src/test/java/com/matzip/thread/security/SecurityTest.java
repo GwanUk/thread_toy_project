@@ -1,6 +1,7 @@
 package com.matzip.thread.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.matzip.thread.common.Repository.ResourcesJpaRepository;
 import com.matzip.thread.common.factorybean.PasswordEncoderFactoryBean;
 import com.matzip.thread.security.configs.SecurityConfig;
 import com.matzip.thread.security.model.SignInRequest;
@@ -39,6 +40,8 @@ public class SecurityTest {
     private PasswordEncoder passwordEncoder;
     @MockBean
     private  UserUseCase userUseCase;
+    @MockBean
+    private ResourcesJpaRepository resourcesJpaRepository;
 
     @Test
     @DisplayName("로그인 요청 성공")
