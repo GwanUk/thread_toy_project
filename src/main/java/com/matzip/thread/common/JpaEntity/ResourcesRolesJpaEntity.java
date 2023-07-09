@@ -26,4 +26,22 @@ public class ResourcesRolesJpaEntity {
 
     @Column(name = "order_num")
     private int orderNum;
+
+    public ResourcesRolesJpaEntity(Long id, ResourcesJpaEntity resourcesJpaEntity, RolesJpaEntity rolesJpaEntity, int orderNum) {
+        this.id = id;
+        setResourcesJpaEntity(resourcesJpaEntity);
+        this.rolesJpaEntity = rolesJpaEntity;
+        this.orderNum = orderNum;
+    }
+
+    public ResourcesRolesJpaEntity(ResourcesJpaEntity resourcesJpaEntity, RolesJpaEntity rolesJpaEntity, int orderNum) {
+        setResourcesJpaEntity(resourcesJpaEntity);
+        this.rolesJpaEntity = rolesJpaEntity;
+        this.orderNum = orderNum;
+    }
+
+    public void setResourcesJpaEntity(ResourcesJpaEntity resourcesJpaEntity) {
+        this.resourcesJpaEntity = resourcesJpaEntity;
+        resourcesJpaEntity.addResourcesRolesJpaEntity(this);
+    }
 }

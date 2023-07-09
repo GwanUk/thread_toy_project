@@ -23,4 +23,13 @@ public class ResourcesJpaEntity {
 
     @OneToMany(mappedBy = "resourcesJpaEntity")
     private List<ResourcesRolesJpaEntity> resourcesRoles = new ArrayList<>();
+
+    public ResourcesJpaEntity(Long id, String uri) {
+        this.id = id;
+        this.uri = uri;
+    }
+
+    public void addResourcesRolesJpaEntity(ResourcesRolesJpaEntity rolesJpaEntity) {
+        resourcesRoles.add(rolesJpaEntity);
+    }
 }

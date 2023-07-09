@@ -1,9 +1,6 @@
 package com.matzip.thread.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.matzip.thread.common.Repository.ResourcesJpaRepository;
-import com.matzip.thread.common.factorybean.PasswordEncoderFactoryBean;
-import com.matzip.thread.security.configs.SecurityConfig;
 import com.matzip.thread.security.model.SignInRequest;
 import com.matzip.thread.users.application.port.in.UserUseCase;
 import com.matzip.thread.users.domain.Role;
@@ -29,7 +26,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.Optional;
 
 @WebMvcTest(SecurityTest.SecurityTestController.class)
-@Import(value = {SecurityConfig.class, PasswordEncoderFactoryBean.class})
+@Import(SecurityTestConfiguration.class)
 public class SecurityTest {
 
     @Autowired
@@ -40,8 +37,6 @@ public class SecurityTest {
     private PasswordEncoder passwordEncoder;
     @MockBean
     private  UserUseCase userUseCase;
-    @MockBean
-    private ResourcesJpaRepository resourcesJpaRepository;
 
     @Test
     @DisplayName("로그인 요청 성공")
@@ -241,9 +236,9 @@ public class SecurityTest {
     @Test
     @WithAnonymousUser
     @DisplayName("요청 실패: 인증 되지 않는 사용자")
-    void login_failure_unauthorized() throws Exception {
+    void request_failure_unauthorized() throws Exception {
         // expected
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/admin")
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/thread")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized())
                 .andExpect(MockMvcResultMatchers.content().string("UnAuthorized. Only authorized users have access"))
@@ -251,9 +246,20 @@ public class SecurityTest {
     }
 
     @Test
+    @WithMockUser(username = "user", roles = "ADMIN")
+    @DisplayName("요청 ROLE_ADMIN 인증 성공")
+    void request_success_admin() throws Exception {
+        // expected
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/admin")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
     @WithMockUser(username = "user", roles = "USER")
     @DisplayName("요청 실패: 인가 되지 않은 사용자")
-    void login_failure_forbidden() throws Exception {
+    void request_failure_forbidden() throws Exception {
         // expected
         mockMvc.perform(MockMvcRequestBuilders.get("/api/admin")
                         .accept(MediaType.APPLICATION_JSON))

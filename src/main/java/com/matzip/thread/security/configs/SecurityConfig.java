@@ -1,10 +1,10 @@
 package com.matzip.thread.security.configs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.matzip.thread.common.Repository.ResourcesJpaRepository;
-import com.matzip.thread.security.handler.ApiAuthenticationEntryPoint;
+import com.matzip.thread.common.Repository.ResourcesRepository;
 import com.matzip.thread.security.filter.ApiAuthenticationProcessingFilter;
 import com.matzip.thread.security.handler.ApiAccessDeniedHandler;
+import com.matzip.thread.security.handler.ApiAuthenticationEntryPoint;
 import com.matzip.thread.security.handler.ApiAuthenticationFailureHandler;
 import com.matzip.thread.security.handler.ApiAuthenticationSuccessHandler;
 import com.matzip.thread.security.metadatasource.UrlFilterInvocationSecurityMetadataSource;
@@ -24,13 +24,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -42,7 +40,7 @@ public class SecurityConfig {
     private final PasswordEncoder passwordEncoder;
     private final UserUseCase userUseCase;
 
-    private final ResourcesJpaRepository resourcesJpaRepository;
+    private final ResourcesRepository resourcesRepository;
 
     @Bean
     public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
@@ -92,18 +90,17 @@ public class SecurityConfig {
         return new ApiAuthenticationFailureHandler();
     }
 
-    @Bean
     public FilterSecurityInterceptor ApiFilterSecurityInterceptor() throws Exception {
         FilterSecurityInterceptor filterSecurityInterceptor = new FilterSecurityInterceptor();
+        filterSecurityInterceptor.setAuthenticationManager(authenticationConfiguration.getAuthenticationManager());
         filterSecurityInterceptor.setSecurityMetadataSource(urlFilterInvocationSecurityMetadataSource());
         filterSecurityInterceptor.setAccessDecisionManager(affirmativeBased());
-        filterSecurityInterceptor.setAuthenticationManager(authenticationConfiguration.getAuthenticationManager());
         return filterSecurityInterceptor;
     }
 
     @Bean
     public UrlFilterInvocationSecurityMetadataSource urlFilterInvocationSecurityMetadataSource() {
-        return new UrlFilterInvocationSecurityMetadataSource(resourcesJpaRepository);
+        return new UrlFilterInvocationSecurityMetadataSource(resourcesRepository);
     }
 
     private AffirmativeBased affirmativeBased() {

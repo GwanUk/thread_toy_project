@@ -6,22 +6,24 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 
 @DataJpaTest
-class ResourcesJpaRepositoryTest {
+@Import(ResourcesRepository.class)
+class ResourcesRepositoryTest {
     @Autowired
-    private ResourcesJpaRepository resourcesJpaRepository;
+    private ResourcesRepository resourcesRepository;
 
     @Test
-    @Sql("/sql/common/resources-jpa-repository-test-data.sql")
+    @Sql("/sql/common/resources-repository-test-data.sql")
     @DisplayName("리소스 엔티티 리스트 조회 join 리소스_롤 테이블 join 롤 테이블")
     void findAllWithRoles() {
         // given
         // when
-        List<ResourcesJpaEntity> allWithRoles = resourcesJpaRepository.findAllWithRoles();
+        List<ResourcesJpaEntity> allWithRoles = resourcesRepository.findAllWithRoles();
 
         // then
         BDDAssertions.then(allWithRoles.get(0).getId()).isEqualTo(1);

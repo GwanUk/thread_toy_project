@@ -1,6 +1,6 @@
 package com.matzip.thread.security.metadatasource;
 
-import com.matzip.thread.common.Repository.ResourcesJpaRepository;
+import com.matzip.thread.common.Repository.ResourcesRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -16,9 +16,14 @@ import java.util.*;
 @RequiredArgsConstructor
 public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource {
 
-    private final ResourcesJpaRepository resourcesJpaRepository;
+    private final ResourcesRepository resourcesRepository;
 
     private final Map<RequestMatcher, List<ConfigAttribute>> requestMap = new LinkedHashMap<>();
+
+    @EventListener(ApplicationReadyEvent.class)
+    public void init() {
+        renewRequestMap();
+    }
 
     @Override
     public Collection<ConfigAttribute> getAttributes(Object object) throws IllegalArgumentException {
@@ -42,14 +47,9 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
         return FilterInvocation.class.isAssignableFrom(clazz);
     }
 
-    @EventListener(ApplicationReadyEvent.class)
-    public void init() {
-        renewRequestMap();
-    }
-
     private void renewRequestMap() {
         requestMap.clear();
-        resourcesJpaRepository.findAllWithRoles().forEach(r -> {
+        resourcesRepository.findAllWithRoles().forEach(r -> {
             List<ConfigAttribute> list = new ArrayList<>();
             r.getResourcesRoles().forEach(rr -> list.add(new SecurityConfig(rr.getRolesJpaEntity().getRoleName())));
             requestMap.put(new AntPathRequestMatcher(r.getUri()), list);
