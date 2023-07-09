@@ -8,14 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@RequiredArgsConstructor
 public class ErrorResponse {
 
     private final String message;
     private final List<FieldError> fieldErrors = new ArrayList<>();
-
-    public ErrorResponse(String message) {
-        this.message = message;
-    }
 
     public void addFieldError(org.springframework.validation.FieldError fieldError) {
         fieldErrors.add(new FieldError(fieldError.getField(), fieldError.getDefaultMessage(), fieldError.getRejectedValue()));
