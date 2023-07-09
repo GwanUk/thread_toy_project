@@ -12,5 +12,5 @@ values (2, 'ROLE_ADMIN', '관리자 권한');
 insert into RESOURCES_ROLES (resources_roles_id, resources_id, roles_id, order_num)
 values (1, 1, 1, 1);
 insert into RESOURCES_ROLES (resources_roles_id, resources_id, roles_id, order_num)
-values (2, 2, 2, 1);
+values (2, 2, 2, 2);
 

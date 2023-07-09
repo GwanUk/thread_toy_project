@@ -20,7 +20,7 @@ public class FakeResourcesRepository extends ResourcesRepository {
 
         ResourcesJpaEntity resource2 = new ResourcesJpaEntity(2L, "/api/admin");
         RolesJpaEntity role2 = new RolesJpaEntity(2L, "ROLE_ADMIN", "관리자 권한");
-        ResourcesRolesJpaEntity resourcesRoles2 = new ResourcesRolesJpaEntity(2L, resource2, role2, 1);
+        ResourcesRolesJpaEntity resourcesRoles2 = new ResourcesRolesJpaEntity(2L, resource2, role2, 2);
 
         return List.of(resource1, resource2);
     }
