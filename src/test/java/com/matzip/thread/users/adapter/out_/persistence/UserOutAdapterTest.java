@@ -11,11 +11,11 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
 
 @DataJpaTest
-@Import(UsersRepository.class)
-class UsersRepositoryTest {
+@Import(UserOutAdapter.class)
+class UserOutAdapterTest {
 
     @Autowired
-    private UsersRepository usersRepository;
+    private UserOutAdapter userOutAdapter;
 
     @Test
     @Sql("/sql/users/user-repository-test-data.sql")
@@ -23,7 +23,7 @@ class UsersRepositoryTest {
     void findByUsername() {
         // given
         // when
-        User user = usersRepository.findByUsername("user").orElseThrow(() -> new RuntimeException("존재하지 않는 유저입니다."));
+        User user = userOutAdapter.findByUsername("user").orElseThrow(() -> new RuntimeException("존재하지 않는 유저입니다."));
 
         // then
         BDDAssertions.then(user.getUsername()).isEqualTo("user");
@@ -39,10 +39,10 @@ class UsersRepositoryTest {
         User user = new User("user", "kim", "1234", Role.ROLE_USER);
 
         // when
-        usersRepository.save(user);
+        userOutAdapter.save(user);
 
         // then
-        User findUser = usersRepository.findByUsername("user").orElseThrow(() -> new RuntimeException("존재 하지 않는 유저"));
+        User findUser = userOutAdapter.findByUsername("user").orElseThrow(() -> new RuntimeException("존재 하지 않는 유저"));
         BDDAssertions.then(findUser.getUsername()).isEqualTo("user");
         BDDAssertions.then(findUser.getNickname()).isEqualTo("kim");
         BDDAssertions.then(findUser.getPassword()).isEqualTo("1234");

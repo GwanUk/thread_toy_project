@@ -23,10 +23,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-@WebMvcTest(controllers = UserController.class,
+@WebMvcTest(controllers = UseInAdapter.class,
         excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @Import(PasswordEncoderFactoryBean.class)
-class UserControllerTest {
+class UseInAdapterTest {
 
     @Autowired
     private MockMvc mockMvc;

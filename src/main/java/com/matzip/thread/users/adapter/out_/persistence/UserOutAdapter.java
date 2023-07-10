@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-class UsersRepository implements UserOutPort {
+class UserOutAdapter implements UserOutPort {
 
     private final UsersJpaRepository usersJpaRepository;
 

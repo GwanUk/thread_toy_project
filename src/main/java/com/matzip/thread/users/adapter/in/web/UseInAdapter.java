@@ -13,7 +13,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
-class UserController {
+class UseInAdapter {
 
     private final UserInPort userInPort;
 
