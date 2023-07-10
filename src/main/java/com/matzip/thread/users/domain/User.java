@@ -1,25 +1,20 @@
 package com.matzip.thread.users.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 public class User {
-    private final Long id;
     private final String username;
+    private final String nickname;
     private final String password;
-    private final Membership membership;
+    private final Role role;
 
-    public User(Long id, String username, String password, Membership membership) {
-        this.id = id;
+    public User(String username, String nickname, String password, Role role) {
         this.username = username;
+        this.nickname = nickname;
         this.password = password;
-        this.membership = membership;
-    }
-
-    public User(String username, String password, Membership membership) {
-        this.id = null;
-        this.username = username;
-        this.password = password;
-        this.membership = membership;
+        this.role = role;
     }
 }

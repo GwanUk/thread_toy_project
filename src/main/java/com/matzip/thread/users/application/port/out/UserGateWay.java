@@ -2,18 +2,11 @@ package com.matzip.thread.users.application.port.out;
 
 import com.matzip.thread.users.domain.User;
 
-import java.util.List;
+import java.util.Optional;
 
 public interface UserGateWay {
-    User findById(long id);
 
-    User findByUsername(String username);
+    Optional<User> findByUsername(String username);
 
-    List<User> findAll();
-
-    long save(User user);
-
-    long update(long id, User user);
-
-    void delete(long id);
+    void save(User user);
 }
