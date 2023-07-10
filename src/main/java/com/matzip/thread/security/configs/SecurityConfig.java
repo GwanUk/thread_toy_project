@@ -10,7 +10,7 @@ import com.matzip.thread.security.metadatasource.UrlFilterInvocationSecurityMeta
 import com.matzip.thread.security.provider.ApiAuthenticationProvider;
 import com.matzip.thread.security.service.UserDetailsServiceImpl;
 import com.matzip.thread.uri.application.port.in.UriInPort;
-import com.matzip.thread.users.application.port.in.UserUseCase;
+import com.matzip.thread.user.application.port.in.UserInPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,7 +38,7 @@ public class SecurityConfig {
     private final ObjectMapper objectMapper;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final PasswordEncoder passwordEncoder;
-    private final UserUseCase userUseCase;
+    private final UserInPort userInPort;
 
     private final UriInPort uriInPort;
 
@@ -77,7 +77,7 @@ public class SecurityConfig {
     }
     @Bean
     public UserDetailsService userDetailsService() {
-        return new UserDetailsServiceImpl(userUseCase);
+        return new UserDetailsServiceImpl(userInPort);
     }
 
     @Bean

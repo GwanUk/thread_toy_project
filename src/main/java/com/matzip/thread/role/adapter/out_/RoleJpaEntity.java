@@ -1,5 +1,6 @@
 package com.matzip.thread.role.adapter.out_;
 
+import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.role.domain.RoleEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -19,16 +20,23 @@ public class RoleJpaEntity {
     private Long id;
 
     @Column(name = "ROLE_NAME")
-    private String roleName;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     private String description;
 
-    public RoleJpaEntity(String roleName, String description) {
-        this.roleName = roleName;
+    public RoleJpaEntity(Role role, String description) {
+        this.role = role;
         this.description = description;
     }
 
+    public static RoleJpaEntity fromEntity(RoleEntity roleEntity) {
+        if (roleEntity == null)
+            return null;
+        return new RoleJpaEntity(roleEntity.getRole(), roleEntity.getDescription());
+    }
+
     public RoleEntity toEntity() {
-        return new RoleEntity(roleName, description);
+        return new RoleEntity(id, role, description);
     }
 }

@@ -52,7 +52,7 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
         uriInPort.findAll().forEach(u -> requestMap.put(
                 new AntPathRequestMatcher(u.getUriName()),
                 u.getRoles().stream()
-                        .<ConfigAttribute>map(r -> new SecurityConfig(r.getRoleName()))
+                        .<ConfigAttribute>map(r -> new SecurityConfig(r.getRole().name()))
                         .toList()));
     }
 }

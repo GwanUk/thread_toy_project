@@ -2,8 +2,8 @@ package com.matzip.thread.security.service;
 
 import com.matzip.thread.common.exception.ApiAuthenticationException;
 import com.matzip.thread.security.model.UserContext;
-import com.matzip.thread.users.application.port.in.UserUseCase;
-import com.matzip.thread.users.domain.User;
+import com.matzip.thread.user.application.port.in.UserInPort;
+import com.matzip.thread.user.domain.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,7 +14,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
-    private final UserUseCase userUseCase;
+    private final UserInPort userInPort;
 
     /**
      * 유저가 존재하면 UserContext 객체에 User 객체와 GrantedAuthority 리스트를 담아서 리턴
@@ -25,11 +25,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        User user = userUseCase.findByUsername(username)
+        UserEntity userEntity = userInPort.findByUsername(username)
                 .orElseThrow(() -> new ApiAuthenticationException("The user does not exist"));
 
-        List<SimpleGrantedAuthority> roles = List.of(new SimpleGrantedAuthority(user.getRole().name()));
+        List<SimpleGrantedAuthority> roles = List.of(new SimpleGrantedAuthority(userEntity.getRoleEntity().getRole().name()));
 
-        return new UserContext(user, roles);
+        return new UserContext(userEntity, roles);
     }
 }
