@@ -1,7 +1,6 @@
 package com.matzip.thread.security.configs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.matzip.thread.common.Repository.ResourcesRepository;
 import com.matzip.thread.security.filter.ApiAuthenticationProcessingFilter;
 import com.matzip.thread.security.handler.ApiAccessDeniedHandler;
 import com.matzip.thread.security.handler.ApiAuthenticationEntryPoint;
@@ -10,6 +9,7 @@ import com.matzip.thread.security.handler.ApiAuthenticationSuccessHandler;
 import com.matzip.thread.security.metadatasource.UrlFilterInvocationSecurityMetadataSource;
 import com.matzip.thread.security.provider.ApiAuthenticationProvider;
 import com.matzip.thread.security.service.UserDetailsServiceImpl;
+import com.matzip.thread.uri.application.port.in.UriInPort;
 import com.matzip.thread.users.application.port.in.UserUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -40,7 +40,7 @@ public class SecurityConfig {
     private final PasswordEncoder passwordEncoder;
     private final UserUseCase userUseCase;
 
-    private final ResourcesRepository resourcesRepository;
+    private final UriInPort uriInPort;
 
     @Bean
     public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
@@ -100,7 +100,7 @@ public class SecurityConfig {
 
     @Bean
     public UrlFilterInvocationSecurityMetadataSource urlFilterInvocationSecurityMetadataSource() {
-        return new UrlFilterInvocationSecurityMetadataSource(resourcesRepository);
+        return new UrlFilterInvocationSecurityMetadataSource(uriInPort);
     }
 
     private AffirmativeBased affirmativeBased() {
