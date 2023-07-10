@@ -2,8 +2,8 @@ package com.matzip.thread.security.service;
 
 import com.matzip.thread.common.exception.ApiAuthenticationException;
 import com.matzip.thread.security.model.UserContext;
-import com.matzip.thread.users.application.port.in.UserInPort;
-import com.matzip.thread.users.domain.User;
+import com.matzip.thread.user.application.port.in.UserInPort;
+import com.matzip.thread.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

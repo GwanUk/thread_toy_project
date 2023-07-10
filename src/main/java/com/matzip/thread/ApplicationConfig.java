@@ -1,7 +1,7 @@
 package com.matzip.thread;
 
 import com.matzip.thread.security.token.ApiAuthenticationToken;
-import com.matzip.thread.users.domain.User;
+import com.matzip.thread.user.domain.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;

@@ -10,7 +10,7 @@ import com.matzip.thread.security.metadatasource.UrlFilterInvocationSecurityMeta
 import com.matzip.thread.security.provider.ApiAuthenticationProvider;
 import com.matzip.thread.security.service.UserDetailsServiceImpl;
 import com.matzip.thread.uri.application.port.in.UriInPort;
-import com.matzip.thread.users.application.port.in.UserInPort;
+import com.matzip.thread.user.application.port.in.UserInPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

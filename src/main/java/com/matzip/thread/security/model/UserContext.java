@@ -1,7 +1,7 @@
 package com.matzip.thread.security.model;
 
 
-import com.matzip.thread.users.domain.User;
+import com.matzip.thread.user.domain.User;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 
