@@ -1,4 +1,4 @@
-package com.matzip.thread.users.application.port.out;
+package com.matzip.thread.users.application.port.out_;
 
 import com.matzip.thread.users.domain.User;
 

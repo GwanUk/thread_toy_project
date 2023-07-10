@@ -1,6 +1,6 @@
 package com.matzip.thread.users.application.service;
 
-import com.matzip.thread.users.application.port.out.UserGateWay;
+import com.matzip.thread.users.application.port.out_.UserGateWay;
 import com.matzip.thread.users.domain.Role;
 import com.matzip.thread.users.domain.User;
 import org.assertj.core.api.BDDAssertions;

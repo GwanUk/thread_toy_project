@@ -1,7 +1,7 @@
 package com.matzip.thread.users.application.service;
 
 import com.matzip.thread.users.application.port.in.UserUseCase;
-import com.matzip.thread.users.application.port.out.UserGateWay;
+import com.matzip.thread.users.application.port.out_.UserGateWay;
 import com.matzip.thread.users.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
