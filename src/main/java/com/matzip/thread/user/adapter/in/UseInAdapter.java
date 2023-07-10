@@ -1,4 +1,4 @@
-package com.matzip.thread.user.adapter.in.web;
+package com.matzip.thread.user.adapter.in;
 
 import com.matzip.thread.user.application.port.in.UserInPort;
 import lombok.RequiredArgsConstructor;

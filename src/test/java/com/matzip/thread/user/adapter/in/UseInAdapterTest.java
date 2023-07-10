@@ -1,4 +1,4 @@
-package com.matzip.thread.user.adapter.in.web;
+package com.matzip.thread.user.adapter.in;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.matzip.thread.common.factorybean.PasswordEncoderFactoryBean;

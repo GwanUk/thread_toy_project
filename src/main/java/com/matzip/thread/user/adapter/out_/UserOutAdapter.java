@@ -1,4 +1,4 @@
-package com.matzip.thread.user.adapter.out_.persistence;
+package com.matzip.thread.user.adapter.out_;
 
 import com.matzip.thread.user.application.port.out_.UserOutPort;
 import com.matzip.thread.user.domain.User;

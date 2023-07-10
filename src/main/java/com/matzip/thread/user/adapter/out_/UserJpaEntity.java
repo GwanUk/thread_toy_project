@@ -1,4 +1,4 @@
-package com.matzip.thread.user.adapter.out_.persistence;
+package com.matzip.thread.user.adapter.out_;
 
 import com.matzip.thread.common.model.JpaBaseTimeEntity;
 import com.matzip.thread.user.domain.Role;

@@ -1,4 +1,4 @@
-package com.matzip.thread.user.adapter.out_.persistence;
+package com.matzip.thread.user.adapter.out_;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
