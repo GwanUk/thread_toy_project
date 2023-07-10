@@ -28,7 +28,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         UserEntity userEntity = userInPort.findByUsername(username)
                 .orElseThrow(() -> new ApiAuthenticationException("The user does not exist"));
 
-        List<SimpleGrantedAuthority> roles = List.of(new SimpleGrantedAuthority(userEntity.getRole().name()));
+        List<SimpleGrantedAuthority> roles = List.of(new SimpleGrantedAuthority(userEntity.getRoleEntity().getRole().name()));
 
         return new UserContext(userEntity, roles);
     }

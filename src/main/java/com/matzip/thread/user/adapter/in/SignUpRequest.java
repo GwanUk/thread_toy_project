@@ -1,6 +1,5 @@
 package com.matzip.thread.user.adapter.in;
 
-import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.user.domain.UserEntity;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -18,12 +17,12 @@ class SignUpRequest {
     @NotBlank
     private final String password;
 
-    UserEntity toDomainEntity(PasswordEncoder passwordEncoder) {
+    UserEntity toEntity(PasswordEncoder passwordEncoder) {
         return new UserEntity(
                 username,
                 nickname,
                 passwordEncoder.encode(password),
-                Role.ROLE_USER
+                null
         );
     }
 }

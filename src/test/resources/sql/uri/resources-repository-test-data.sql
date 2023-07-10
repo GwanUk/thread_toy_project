@@ -1,4 +1,3 @@
-
 insert into URI (URI_ID, URI_NAME, URI_ORDER)
 values (1, '/api/thread', 1);
 insert into URI (URI_ID, URI_NAME, URI_ORDER)

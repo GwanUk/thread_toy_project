@@ -1,11 +1,9 @@
 package com.matzip.thread.user.adapter.out_;
 
 import com.matzip.thread.common.model.JpaBaseTimeEntity;
-import com.matzip.thread.role.domain.Role;
+import com.matzip.thread.role.adapter.out_.RoleJpaEntity;
 import com.matzip.thread.user.domain.UserEntity;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -21,31 +19,41 @@ class UserJpaEntity extends JpaBaseTimeEntity {
     private String username;
     private String nickname;
     private String password;
-    @Enumerated(EnumType.STRING)
-    private Role role;
+    @OneToOne
+    @JoinColumn(name = "ROLE_ID")
+    private RoleJpaEntity roleJpaEntity;
 
-    UserJpaEntity(String username, String nickname, String password, Role role) {
+    UserJpaEntity(String username, String nickname, String password, RoleJpaEntity roleJpaEntity) {
         this.username = username;
         this.nickname = nickname;
         this.password = password;
-        this.role = role;
+        this.roleJpaEntity = roleJpaEntity;
     }
 
-    UserEntity toDomainEntity() {
+    UserEntity toEntity() {
         return new UserEntity(
                 username,
                 nickname,
                 password,
-                role
+                roleJpaEntity.toEntity()
         );
     }
 
-    static UserJpaEntity fromDomainEntity(UserEntity userEntity) {
+    static UserJpaEntity fromEntity(UserEntity userEntity) {
         return new UserJpaEntity(
                 userEntity.getUsername(),
                 userEntity.getNickname(),
                 userEntity.getPassword(),
-                userEntity.getRole()
+                RoleJpaEntity.fromEntity(userEntity.getRoleEntity())
+        );
+    }
+
+    static UserJpaEntity fromEntity(UserEntity userEntity, RoleJpaEntity roleJpaEntity) {
+        return new UserJpaEntity(
+                userEntity.getUsername(),
+                userEntity.getNickname(),
+                userEntity.getPassword(),
+                roleJpaEntity
         );
     }
 }

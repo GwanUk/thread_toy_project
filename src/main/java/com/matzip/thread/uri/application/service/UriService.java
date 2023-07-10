@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class UriService implements UriInPort {
+class UriService implements UriInPort {
 
     private final UriOutPort uriOutPort;
 

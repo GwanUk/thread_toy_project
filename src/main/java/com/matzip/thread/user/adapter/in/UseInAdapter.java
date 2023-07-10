@@ -1,5 +1,6 @@
 package com.matzip.thread.user.adapter.in;
 
+import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.user.application.port.in.UserInPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,7 +22,6 @@ class UseInAdapter {
 
     @PostMapping("/sign_up")
     void signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
-        userInPort.signUp(signUpRequest.toDomainEntity(passwordEncoder));
+        userInPort.signUp(signUpRequest.toEntity(passwordEncoder), Role.ROLE_USER);
     }
-
 }

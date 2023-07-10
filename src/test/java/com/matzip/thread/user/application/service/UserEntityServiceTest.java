@@ -1,7 +1,8 @@
 package com.matzip.thread.user.application.service;
 
-import com.matzip.thread.user.application.port.out_.UserOutPort;
 import com.matzip.thread.role.domain.Role;
+import com.matzip.thread.role.domain.RoleEntity;
+import com.matzip.thread.user.application.port.out_.UserOutPort;
 import com.matzip.thread.user.domain.UserEntity;
 import org.assertj.core.api.BDDAssertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +33,7 @@ class UserEntityServiceTest {
     @DisplayName("username 으로 회원 단일 조회 서비스 성공")
     void findByUsername() {
         // given
-        Optional<UserEntity> user = Optional.of(new UserEntity("user", "kim", "1234", Role.ROLE_USER));
+        Optional<UserEntity> user = Optional.of(new UserEntity("user", "kim", "1234", new RoleEntity(1L, Role.ROLE_USER, "유저 권한")));
         BDDMockito.given(userOutPort.findByUsername(Mockito.anyString())).willReturn(user);
 
         // when
@@ -42,25 +43,28 @@ class UserEntityServiceTest {
         BDDAssertions.then(findUserEntity.getUsername()).isEqualTo("user");
         BDDAssertions.then(findUserEntity.getNickname()).isEqualTo("kim");
         BDDAssertions.then(findUserEntity.getPassword()).isEqualTo("1234");
-        BDDAssertions.then(findUserEntity.getRole()).isEqualTo(Role.ROLE_USER);
+        BDDAssertions.then(findUserEntity.getRoleEntity().getId()).isEqualTo(1L);
+        BDDAssertions.then(findUserEntity.getRoleEntity().getRole()).isEqualTo(Role.ROLE_USER);
+        BDDAssertions.then(findUserEntity.getRoleEntity().getDescription()).isEqualTo("유저 권한");
     }
 
     @Test
     @DisplayName("회원가입 서비스 성공")
     void singUp() {
         // given
-        UserEntity userEntity = new UserEntity("user", "kim", "1234", Role.ROLE_USER);
+        UserEntity userEntity = new UserEntity("user", "kim", "1234", null);
 
         // when
-        userService.signUp(userEntity);
+        userService.signUp(userEntity, Role.ROLE_USER);
 
         // then
         ArgumentCaptor<UserEntity> userArgumentCaptor = ArgumentCaptor.forClass(UserEntity.class);
-        BDDMockito.then(userOutPort).should(Mockito.times(1)).save(userArgumentCaptor.capture());
+        ArgumentCaptor<Role> roleArgumentCaptor = ArgumentCaptor.forClass(Role.class);
+        BDDMockito.then(userOutPort).should(Mockito.times(1)).save(userArgumentCaptor.capture(), roleArgumentCaptor.capture());
         UserEntity userEntityArgumentCaptorValue = userArgumentCaptor.getValue();
         BDDAssertions.then(userEntityArgumentCaptorValue.getUsername()).isEqualTo("user");
         BDDAssertions.then(userEntityArgumentCaptorValue.getNickname()).isEqualTo("kim");
         BDDAssertions.then(userEntityArgumentCaptorValue.getPassword()).isEqualTo("1234");
-        BDDAssertions.then(userEntityArgumentCaptorValue.getRole()).isEqualTo(Role.ROLE_USER);
+        BDDAssertions.then(roleArgumentCaptor.getValue().equals(Role.ROLE_USER)).isTrue();
     }
 }

@@ -1,6 +1,6 @@
 package com.matzip.thread.user.domain;
 
-import com.matzip.thread.role.domain.Role;
+import com.matzip.thread.role.domain.RoleEntity;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -10,5 +10,5 @@ public class UserEntity {
     private final String username;
     private final String nickname;
     private final String password;
-    private final Role role;
+    private final RoleEntity roleEntity;
 }
