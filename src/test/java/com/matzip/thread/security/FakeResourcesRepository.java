@@ -2,7 +2,7 @@ package com.matzip.thread.security;
 
 import com.matzip.thread.common.JpaEntity.ResourcesJpaEntity;
 import com.matzip.thread.common.JpaEntity.ResourcesRolesJpaEntity;
-import com.matzip.thread.roles.adapter.out.RolesJpaEntity;
+import com.matzip.thread.roles.adapter.out_.RolesJpaEntity;
 import com.matzip.thread.common.Repository.ResourcesRepository;
 
 import javax.persistence.EntityManager;
