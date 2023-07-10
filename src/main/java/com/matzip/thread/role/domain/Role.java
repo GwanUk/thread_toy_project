@@ -1,4 +1,4 @@
-package com.matzip.thread.user.domain;
+package com.matzip.thread.role.domain;
 
 public enum Role {
     ROLE_ADMIN,

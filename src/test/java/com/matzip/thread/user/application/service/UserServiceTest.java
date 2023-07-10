@@ -1,7 +1,7 @@
 package com.matzip.thread.user.application.service;
 
 import com.matzip.thread.user.application.port.out_.UserOutPort;
-import com.matzip.thread.user.domain.Role;
+import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.user.domain.User;
 import org.assertj.core.api.BDDAssertions;
 import org.junit.jupiter.api.BeforeEach;

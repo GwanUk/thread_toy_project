@@ -1,5 +1,6 @@
 package com.matzip.thread.user.domain;
 
+import com.matzip.thread.role.domain.Role;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

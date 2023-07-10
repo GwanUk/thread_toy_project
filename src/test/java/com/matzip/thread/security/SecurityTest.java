@@ -3,7 +3,7 @@ package com.matzip.thread.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.matzip.thread.security.model.SignInRequest;
 import com.matzip.thread.user.application.port.in.UserInPort;
-import com.matzip.thread.user.domain.Role;
+import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.user.domain.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

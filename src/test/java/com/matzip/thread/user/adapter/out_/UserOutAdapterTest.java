@@ -1,7 +1,6 @@
 package com.matzip.thread.user.adapter.out_;
 
-import com.matzip.thread.user.adapter.out_.UserOutAdapter;
-import com.matzip.thread.user.domain.Role;
+import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.user.domain.User;
 import org.assertj.core.api.BDDAssertions;
 import org.junit.jupiter.api.DisplayName;

@@ -1,7 +1,7 @@
 package com.matzip.thread.user.adapter.out_;
 
 import com.matzip.thread.common.model.JpaBaseTimeEntity;
-import com.matzip.thread.user.domain.Role;
+import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.user.domain.User;
 import lombok.AccessLevel;
 import lombok.Getter;
