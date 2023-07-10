@@ -2,7 +2,7 @@ package com.matzip.thread.user.application.service;
 
 import com.matzip.thread.user.application.port.in.UserInPort;
 import com.matzip.thread.user.application.port.out_.UserOutPort;
-import com.matzip.thread.user.domain.User;
+import com.matzip.thread.user.domain.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,12 +17,12 @@ class UserService implements UserInPort {
     private final UserOutPort userOutPort;
 
     @Override
-    public Optional<User> findByUsername(String username) {
+    public Optional<UserEntity> findByUsername(String username) {
         return userOutPort.findByUsername(username);
     }
 
     @Override
-    public void signUp(User user) {
-        userOutPort.save(user);
+    public void signUp(UserEntity userEntity) {
+        userOutPort.save(userEntity);
     }
 }

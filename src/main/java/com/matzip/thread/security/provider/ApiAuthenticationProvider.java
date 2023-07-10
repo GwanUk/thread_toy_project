@@ -3,7 +3,7 @@ package com.matzip.thread.security.provider;
 import com.matzip.thread.common.exception.ApiAuthenticationException;
 import com.matzip.thread.security.model.UserContext;
 import com.matzip.thread.security.token.ApiAuthenticationToken;
-import com.matzip.thread.user.domain.User;
+import com.matzip.thread.user.domain.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
@@ -33,7 +33,7 @@ public class ApiAuthenticationProvider implements AuthenticationProvider {
         String password = (String) authentication.getCredentials();
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        User user = ((UserContext) userDetails).getUser();
+        UserEntity userEntity = ((UserContext) userDetails).getUserEntity();
         String encodedPassword = userDetails.getPassword();
         Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
 
@@ -41,7 +41,7 @@ public class ApiAuthenticationProvider implements AuthenticationProvider {
             throw new ApiAuthenticationException("Invalid password");
         }
 
-        return new ApiAuthenticationToken(user, null, authorities);
+        return new ApiAuthenticationToken(userEntity, null, authorities);
     }
 
     @Override

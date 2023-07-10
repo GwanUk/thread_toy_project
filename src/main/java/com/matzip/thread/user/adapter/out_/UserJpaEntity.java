@@ -2,7 +2,7 @@ package com.matzip.thread.user.adapter.out_;
 
 import com.matzip.thread.common.model.JpaBaseTimeEntity;
 import com.matzip.thread.role.domain.Role;
-import com.matzip.thread.user.domain.User;
+import com.matzip.thread.user.domain.UserEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,13 +10,13 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "USERS")
+@Table(name = "USER_")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 class UserJpaEntity extends JpaBaseTimeEntity {
 
     @Id @GeneratedValue
-    @Column(name = "users_id")
+    @Column(name = "USER_ID")
     private Long id;
     private String username;
     private String nickname;
@@ -31,8 +31,8 @@ class UserJpaEntity extends JpaBaseTimeEntity {
         this.role = role;
     }
 
-    User toDomainEntity() {
-        return new User(
+    UserEntity toDomainEntity() {
+        return new UserEntity(
                 username,
                 nickname,
                 password,
@@ -40,12 +40,12 @@ class UserJpaEntity extends JpaBaseTimeEntity {
         );
     }
 
-    static UserJpaEntity fromDomainEntity(User user) {
+    static UserJpaEntity fromDomainEntity(UserEntity userEntity) {
         return new UserJpaEntity(
-                user.getUsername(),
-                user.getNickname(),
-                user.getPassword(),
-                user.getRole()
+                userEntity.getUsername(),
+                userEntity.getNickname(),
+                userEntity.getPassword(),
+                userEntity.getRole()
         );
     }
 }

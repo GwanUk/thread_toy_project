@@ -1,7 +1,7 @@
 package com.matzip.thread.security.model;
 
 
-import com.matzip.thread.user.domain.User;
+import com.matzip.thread.user.domain.UserEntity;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -13,10 +13,10 @@ import java.util.Collection;
 @Getter
 public class UserContext extends org.springframework.security.core.userdetails.User {
 
-    private final User user;
+    private final UserEntity userEntity;
 
-    public UserContext(User user, Collection<? extends GrantedAuthority> authorities) {
-        super(user.getUsername(), user.getPassword(), authorities);
-        this.user = user;
+    public UserContext(UserEntity userEntity, Collection<? extends GrantedAuthority> authorities) {
+        super(userEntity.getUsername(), userEntity.getPassword(), authorities);
+        this.userEntity = userEntity;
     }
 }

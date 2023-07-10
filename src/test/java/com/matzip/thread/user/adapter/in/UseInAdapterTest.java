@@ -3,7 +3,7 @@ package com.matzip.thread.user.adapter.in;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.matzip.thread.common.factorybean.PasswordEncoderFactoryBean;
 import com.matzip.thread.user.application.port.in.UserInPort;
-import com.matzip.thread.user.domain.User;
+import com.matzip.thread.user.domain.UserEntity;
 import org.assertj.core.api.BDDAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -51,12 +51,12 @@ class UseInAdapterTest {
                 .andDo(MockMvcResultHandlers.print());
 
         // then
-        ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
+        ArgumentCaptor<UserEntity> userArgumentCaptor = ArgumentCaptor.forClass(UserEntity.class);
         BDDMockito.then(userInPort).should(Mockito.times(1)).signUp(userArgumentCaptor.capture());
-        User userArgumentCaptorValue = userArgumentCaptor.getValue();
-        BDDAssertions.then(userArgumentCaptorValue.getUsername()).isEqualTo("user");
-        BDDAssertions.then(userArgumentCaptorValue.getNickname()).isEqualTo("kim");
-        BDDAssertions.then(passwordEncoder.matches("1234", userArgumentCaptorValue.getPassword())).isTrue();
+        UserEntity userEntityArgumentCaptorValue = userArgumentCaptor.getValue();
+        BDDAssertions.then(userEntityArgumentCaptorValue.getUsername()).isEqualTo("user");
+        BDDAssertions.then(userEntityArgumentCaptorValue.getNickname()).isEqualTo("kim");
+        BDDAssertions.then(passwordEncoder.matches("1234", userEntityArgumentCaptorValue.getPassword())).isTrue();
     }
 
     @Test

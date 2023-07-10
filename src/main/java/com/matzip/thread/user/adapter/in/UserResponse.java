@@ -1,7 +1,7 @@
 package com.matzip.thread.user.adapter.in;
 
 import com.matzip.thread.role.domain.Role;
-import com.matzip.thread.user.domain.User;
+import com.matzip.thread.user.domain.UserEntity;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -13,12 +13,12 @@ class UserResponse {
     private final String password;
     private final Role role;
 
-    static UserResponse fromDomainEntity(User user) {
+    static UserResponse fromDomainEntity(UserEntity userEntity) {
         return new UserResponse(
-                user.getUsername(),
-                user.getNickname(),
-                user.getPassword(),
-                user.getRole()
+                userEntity.getUsername(),
+                userEntity.getNickname(),
+                userEntity.getPassword(),
+                userEntity.getRole()
         );
     }
 }

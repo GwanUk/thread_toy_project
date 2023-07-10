@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class User {
+public class UserEntity {
     private final String username;
     private final String nickname;
     private final String password;
