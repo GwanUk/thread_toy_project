@@ -1,6 +1,6 @@
 package com.matzip.thread.common.JpaEntity;
 
-import com.matzip.thread.roles.adapter.out.RolesJpaEntity;
+import com.matzip.thread.roles.adapter.out_.RolesJpaEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
