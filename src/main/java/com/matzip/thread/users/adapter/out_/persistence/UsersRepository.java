@@ -1,6 +1,6 @@
 package com.matzip.thread.users.adapter.out_.persistence;
 
-import com.matzip.thread.users.application.port.out_.UserGateWay;
+import com.matzip.thread.users.application.port.out_.UserOutPort;
 import com.matzip.thread.users.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-class UsersRepository implements UserGateWay {
+class UsersRepository implements UserOutPort {
 
     private final UsersJpaRepository usersJpaRepository;
 

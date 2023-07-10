@@ -2,7 +2,7 @@ package com.matzip.thread.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.matzip.thread.security.model.SignInRequest;
-import com.matzip.thread.users.application.port.in.UserUseCase;
+import com.matzip.thread.users.application.port.in.UserInPort;
 import com.matzip.thread.users.domain.Role;
 import com.matzip.thread.users.domain.User;
 import org.junit.jupiter.api.DisplayName;
@@ -36,7 +36,7 @@ public class SecurityTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
     @MockBean
-    private  UserUseCase userUseCase;
+    private UserInPort userInPort;
 
     @Test
     @DisplayName("로그인 요청 성공")
@@ -44,7 +44,7 @@ public class SecurityTest {
         // given
         String json = objectMapper.writeValueAsString(new SignInRequest("user", "1234"));
         User userEncoded = new User("user", "kim", passwordEncoder.encode("1234"), Role.ROLE_USER);
-        BDDMockito.given(userUseCase.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEncoded));
+        BDDMockito.given(userInPort.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEncoded));
 
         // expected
         mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sing_in")
@@ -59,7 +59,7 @@ public class SecurityTest {
     void login_failure_username() throws Exception {
         // given
         String json = objectMapper.writeValueAsString(new SignInRequest("user", "1234"));
-        BDDMockito.given(userUseCase.findByUsername(Mockito.anyString())).willReturn(Optional.empty());
+        BDDMockito.given(userInPort.findByUsername(Mockito.anyString())).willReturn(Optional.empty());
 
         // expected
         mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sing_in")
@@ -77,7 +77,7 @@ public class SecurityTest {
         // given
         String json = objectMapper.writeValueAsString(new SignInRequest("user", "1234_fail"));
         User userEncoded = new User("user", "kim", passwordEncoder.encode("1234"), Role.ROLE_USER);
-        BDDMockito.given(userUseCase.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEncoded));
+        BDDMockito.given(userInPort.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEncoded));
 
         // expected
         mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sing_in")
@@ -95,7 +95,7 @@ public class SecurityTest {
         // given
         String json = objectMapper.writeValueAsString(new SignInRequest("user", "1234"));
         User userEncoded = new User("user", "kim", passwordEncoder.encode("1234"), Role.ROLE_USER);
-        BDDMockito.given(userUseCase.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEncoded));
+        BDDMockito.given(userInPort.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEncoded));
 
         // expected
         mockMvc.perform(MockMvcRequestBuilders.put("/api/users/sing_in")
@@ -113,7 +113,7 @@ public class SecurityTest {
         // given
         String json = objectMapper.writeValueAsString(new SignInRequest("user", "1234"));
         User userEncoded = new User("user", "kim", passwordEncoder.encode("1234"), Role.ROLE_USER);
-        BDDMockito.given(userUseCase.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEncoded));
+        BDDMockito.given(userInPort.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEncoded));
 
         // expected
         mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sing_in")
@@ -131,7 +131,7 @@ public class SecurityTest {
         // given
         String json = objectMapper.writeValueAsString(new SignInRequest(null, "1234"));
         User userEncoded = new User("user", "kim", passwordEncoder.encode("1234"), Role.ROLE_USER);
-        BDDMockito.given(userUseCase.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEncoded));
+        BDDMockito.given(userInPort.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEncoded));
 
         // expected
         mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sing_in")
@@ -149,7 +149,7 @@ public class SecurityTest {
         // given
         String json = objectMapper.writeValueAsString(new SignInRequest("", "1234"));
         User userEncoded = new User("user", "kim", passwordEncoder.encode("1234"), Role.ROLE_USER);
-        BDDMockito.given(userUseCase.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEncoded));
+        BDDMockito.given(userInPort.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEncoded));
 
         // expected
         mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sing_in")
@@ -167,7 +167,7 @@ public class SecurityTest {
         // given
         String json = objectMapper.writeValueAsString(new SignInRequest(" ", "1234"));
         User userEncoded = new User("user", "kim", passwordEncoder.encode("1234"), Role.ROLE_USER);
-        BDDMockito.given(userUseCase.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEncoded));
+        BDDMockito.given(userInPort.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEncoded));
 
         // expected
         mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sing_in")
@@ -185,7 +185,7 @@ public class SecurityTest {
         // given
         String json = objectMapper.writeValueAsString(new SignInRequest("user", null));
         User userEncoded = new User("user", "kim", passwordEncoder.encode("1234"), Role.ROLE_USER);
-        BDDMockito.given(userUseCase.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEncoded));
+        BDDMockito.given(userInPort.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEncoded));
 
         // expected
         mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sing_in")
@@ -203,7 +203,7 @@ public class SecurityTest {
         // given
         String json = objectMapper.writeValueAsString(new SignInRequest("user", ""));
         User userEncoded = new User("user", "kim", passwordEncoder.encode("1234"), Role.ROLE_USER);
-        BDDMockito.given(userUseCase.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEncoded));
+        BDDMockito.given(userInPort.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEncoded));
 
         // expected
         mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sing_in")
@@ -221,7 +221,7 @@ public class SecurityTest {
         // given
         String json = objectMapper.writeValueAsString(new SignInRequest("user", " "));
         User userEncoded = new User("user", "kim", passwordEncoder.encode("1234"), Role.ROLE_USER);
-        BDDMockito.given(userUseCase.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEncoded));
+        BDDMockito.given(userInPort.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEncoded));
 
         // expected
         mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sing_in")

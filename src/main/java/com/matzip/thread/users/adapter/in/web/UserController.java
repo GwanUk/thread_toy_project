@@ -1,6 +1,6 @@
 package com.matzip.thread.users.adapter.in.web;
 
-import com.matzip.thread.users.application.port.in.UserUseCase;
+import com.matzip.thread.users.application.port.in.UserInPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,13 +15,13 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 class UserController {
 
-    private final UserUseCase userUseCase;
+    private final UserInPort userInPort;
 
     private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/sign_up")
     void signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
-        userUseCase.signUp(signUpRequest.toDomainEntity(passwordEncoder));
+        userInPort.signUp(signUpRequest.toDomainEntity(passwordEncoder));
     }
 
 }

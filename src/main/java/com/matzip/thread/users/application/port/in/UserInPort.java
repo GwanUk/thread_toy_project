@@ -1,12 +1,11 @@
-package com.matzip.thread.users.application.port.out_;
+package com.matzip.thread.users.application.port.in;
 
 import com.matzip.thread.users.domain.User;
 
 import java.util.Optional;
 
-public interface UserGateWay {
-
+public interface UserInPort {
     Optional<User> findByUsername(String username);
 
-    void save(User user);
+    void signUp(User user);
 }

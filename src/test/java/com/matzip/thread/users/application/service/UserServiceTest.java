@@ -1,6 +1,6 @@
 package com.matzip.thread.users.application.service;
 
-import com.matzip.thread.users.application.port.out_.UserGateWay;
+import com.matzip.thread.users.application.port.out_.UserOutPort;
 import com.matzip.thread.users.domain.Role;
 import com.matzip.thread.users.domain.User;
 import org.assertj.core.api.BDDAssertions;
@@ -21,11 +21,11 @@ class UserServiceTest {
 
     private UserService userService;
     @Mock
-    private UserGateWay userGateWay;
+    private UserOutPort userOutPort;
 
     @BeforeEach
     void init() {
-        userService = new UserService(userGateWay);
+        userService = new UserService(userOutPort);
     }
 
     @Test
@@ -33,7 +33,7 @@ class UserServiceTest {
     void findByUsername() {
         // given
         Optional<User> user = Optional.of(new User("user", "kim", "1234", Role.ROLE_USER));
-        BDDMockito.given(userGateWay.findByUsername(Mockito.anyString())).willReturn(user);
+        BDDMockito.given(userOutPort.findByUsername(Mockito.anyString())).willReturn(user);
 
         // when
         User findUser = userService.findByUsername("user").orElseThrow(() -> new RuntimeException("유저가 존재하지 않습니다."));
@@ -56,7 +56,7 @@ class UserServiceTest {
 
         // then
         ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
-        BDDMockito.then(userGateWay).should(Mockito.times(1)).save(userArgumentCaptor.capture());
+        BDDMockito.then(userOutPort).should(Mockito.times(1)).save(userArgumentCaptor.capture());
         User userArgumentCaptorValue = userArgumentCaptor.getValue();
         BDDAssertions.then(userArgumentCaptorValue.getUsername()).isEqualTo("user");
         BDDAssertions.then(userArgumentCaptorValue.getNickname()).isEqualTo("kim");

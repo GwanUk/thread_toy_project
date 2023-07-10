@@ -2,7 +2,7 @@ package com.matzip.thread.users.adapter.in.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.matzip.thread.common.factorybean.PasswordEncoderFactoryBean;
-import com.matzip.thread.users.application.port.in.UserUseCase;
+import com.matzip.thread.users.application.port.in.UserInPort;
 import com.matzip.thread.users.domain.User;
 import org.assertj.core.api.BDDAssertions;
 import org.junit.jupiter.api.DisplayName;
@@ -35,7 +35,7 @@ class UserControllerTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
     @MockBean
-    private UserUseCase userUseCase;
+    private UserInPort userInPort;
 
     @Test
     @DisplayName("회원 가입 요청 성공")
@@ -52,7 +52,7 @@ class UserControllerTest {
 
         // then
         ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
-        BDDMockito.then(userUseCase).should(Mockito.times(1)).signUp(userArgumentCaptor.capture());
+        BDDMockito.then(userInPort).should(Mockito.times(1)).signUp(userArgumentCaptor.capture());
         User userArgumentCaptorValue = userArgumentCaptor.getValue();
         BDDAssertions.then(userArgumentCaptorValue.getUsername()).isEqualTo("user");
         BDDAssertions.then(userArgumentCaptorValue.getNickname()).isEqualTo("kim");

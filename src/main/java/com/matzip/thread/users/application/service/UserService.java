@@ -1,7 +1,7 @@
 package com.matzip.thread.users.application.service;
 
-import com.matzip.thread.users.application.port.in.UserUseCase;
-import com.matzip.thread.users.application.port.out_.UserGateWay;
+import com.matzip.thread.users.application.port.in.UserInPort;
+import com.matzip.thread.users.application.port.out_.UserOutPort;
 import com.matzip.thread.users.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,17 +12,17 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-class UserService implements UserUseCase {
+class UserService implements UserInPort {
 
-    private final UserGateWay userGateWay;
+    private final UserOutPort userOutPort;
 
     @Override
     public Optional<User> findByUsername(String username) {
-        return userGateWay.findByUsername(username);
+        return userOutPort.findByUsername(username);
     }
 
     @Override
     public void signUp(User user) {
-        userGateWay.save(user);
+        userOutPort.save(user);
     }
 }
