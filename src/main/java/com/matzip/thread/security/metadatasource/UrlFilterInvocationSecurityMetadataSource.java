@@ -1,6 +1,6 @@
 package com.matzip.thread.security.metadatasource;
 
-import com.matzip.thread.common.Repository.ResourcesRepository;
+import com.matzip.thread.uri.application.port.in.UriInPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -16,7 +16,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource {
 
-    private final ResourcesRepository resourcesRepository;
+    private final UriInPort uriInPort;
 
     private final Map<RequestMatcher, List<ConfigAttribute>> requestMap = new LinkedHashMap<>();
 
@@ -49,10 +49,10 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
 
     private void renewRequestMap() {
         requestMap.clear();
-        resourcesRepository.findAllWithRoles().forEach(r -> {
-            List<ConfigAttribute> list = new ArrayList<>();
-            r.getResourcesRoles().forEach(rr -> list.add(new SecurityConfig(rr.getRolesJpaEntity().getRoleName())));
-            requestMap.put(new AntPathRequestMatcher(r.getUri()), list);
-        });
+        uriInPort.findAll().forEach(u -> requestMap.put(
+                new AntPathRequestMatcher(u.getUriName()),
+                u.getRoles().stream()
+                        .<ConfigAttribute>map(r -> new SecurityConfig(r.getRoleName()))
+                        .toList()));
     }
 }
