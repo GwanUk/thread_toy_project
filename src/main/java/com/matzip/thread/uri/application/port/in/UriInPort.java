@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface UriInPort {
     List<UriEntity> findAll();
+
+    void save(UriEntity uriEntity);
 }

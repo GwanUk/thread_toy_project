@@ -20,7 +20,7 @@ class UriOutAdapterTest {
 
     @Test
     @Sql("/sql/uri/resources-repository-test-data.sql")
-    @DisplayName("")
+    @DisplayName("RUI 자원을 ROLE 권한과 함께 조회 성공")
     void findAllWithRoles() {
         // given
         // when

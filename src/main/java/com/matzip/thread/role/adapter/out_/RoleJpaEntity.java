@@ -1,5 +1,6 @@
 package com.matzip.thread.role.adapter.out_;
 
+import com.matzip.thread.common.JpaEntity.JpaBaseEntity;
 import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.role.domain.RoleEntity;
 import lombok.AccessLevel;
@@ -12,7 +13,7 @@ import javax.persistence.*;
 @Getter
 @Table(name = "ROLE")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class RoleJpaEntity {
+public class RoleJpaEntity extends JpaBaseEntity {
 
     @Id
     @GeneratedValue
@@ -31,8 +32,6 @@ public class RoleJpaEntity {
     }
 
     public static RoleJpaEntity fromEntity(RoleEntity roleEntity) {
-        if (roleEntity == null)
-            return null;
         return new RoleJpaEntity(roleEntity.getRole(), roleEntity.getDescription());
     }
 

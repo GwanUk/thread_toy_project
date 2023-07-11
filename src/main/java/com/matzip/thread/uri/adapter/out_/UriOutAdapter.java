@@ -18,4 +18,9 @@ class UriOutAdapter implements UriOutPort {
     public List<UriEntity> findAllWithRoles() {
         return uriJapRepository.findAllWithRoles().stream().map(UriJpaEntity::toEntity).toList();
     }
+
+    @Override
+    public void save(UriEntity uriEntity) {
+        uriJapRepository.save(UriJpaEntity.fromEntity(uriEntity));
+    }
 }

@@ -28,6 +28,11 @@ public class SecurityTestConfiguration {
                 UriEntity resource2 = new UriEntity("/api/admin", 2, List.of(role2));
                 return List.of(resource1, resource2);
             }
+
+            @Override
+            public void save(UriEntity uriEntity) {
+
+            }
         };
     }
 }
