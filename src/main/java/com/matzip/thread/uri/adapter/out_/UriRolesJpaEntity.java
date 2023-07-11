@@ -1,5 +1,6 @@
 package com.matzip.thread.uri.adapter.out_;
 
+import com.matzip.thread.common.JpaEntity.JpaBaseEntity;
 import com.matzip.thread.role.adapter.out_.RoleJpaEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -11,7 +12,7 @@ import javax.persistence.*;
 @Getter
 @Table(name = "URI_ROLE")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-class UriRolesJpaEntity {
+class UriRolesJpaEntity extends JpaBaseEntity {
     @Id
     @GeneratedValue
     @Column(name = "URI_ROLE_ID")

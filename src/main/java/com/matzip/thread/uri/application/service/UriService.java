@@ -20,4 +20,10 @@ class UriService implements UriInPort {
     public List<UriEntity> findAll() {
         return uriOutPort.findAllWithRoles();
     }
+
+    @Override
+    @Transactional
+    public void save(UriEntity uriEntity) {
+        uriOutPort.save(uriEntity);
+    }
 }

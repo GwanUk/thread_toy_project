@@ -1,5 +1,6 @@
 package com.matzip.thread.uri.adapter.out_;
 
+import com.matzip.thread.common.JpaEntity.JpaBaseEntity;
 import com.matzip.thread.uri.domain.UriEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import java.util.List;
 @Getter
 @Table(name = "URI")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-class UriJpaEntity {
+class UriJpaEntity extends JpaBaseEntity {
 
     @Id
     @GeneratedValue
@@ -47,4 +48,7 @@ class UriJpaEntity {
                         .toList());
     }
 
+    static UriJpaEntity fromEntity(UriEntity uriEntity) {
+        return new UriJpaEntity(uriEntity.getUriName(), uriEntity.getUriOrder());
+    }
 }

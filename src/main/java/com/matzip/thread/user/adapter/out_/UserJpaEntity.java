@@ -1,6 +1,6 @@
 package com.matzip.thread.user.adapter.out_;
 
-import com.matzip.thread.common.model.JpaBaseTimeEntity;
+import com.matzip.thread.common.JpaEntity.JpaBaseTimeEntity;
 import com.matzip.thread.role.adapter.out_.RoleJpaEntity;
 import com.matzip.thread.user.domain.UserEntity;
 import lombok.*;
@@ -44,7 +44,7 @@ class UserJpaEntity extends JpaBaseTimeEntity {
                 userEntity.getUsername(),
                 userEntity.getNickname(),
                 userEntity.getPassword(),
-                RoleJpaEntity.fromEntity(userEntity.getRoleEntity())
+                userEntity.getRoleEntity() == null ? null : RoleJpaEntity.fromEntity(userEntity.getRoleEntity())
         );
     }
 

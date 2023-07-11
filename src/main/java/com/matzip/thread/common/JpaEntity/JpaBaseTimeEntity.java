@@ -1,4 +1,4 @@
-package com.matzip.thread.common.model;
+package com.matzip.thread.common.JpaEntity;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;

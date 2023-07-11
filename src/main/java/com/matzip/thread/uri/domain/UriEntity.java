@@ -12,6 +12,11 @@ public class UriEntity {
     private final int uriOrder;
     private final List<RoleEntity> roles = new ArrayList<>();
 
+    public UriEntity(String uriName, int uriOrder) {
+        this.uriName = uriName;
+        this.uriOrder = uriOrder;
+    }
+
     public UriEntity(String uriName, int uriOrder, List<RoleEntity> roles) {
         this.uriName = uriName;
         this.uriOrder = uriOrder;

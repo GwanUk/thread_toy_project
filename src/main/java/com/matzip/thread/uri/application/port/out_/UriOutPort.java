@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface UriOutPort {
     List<UriEntity> findAllWithRoles();
+
+    void save(UriEntity uriEntity);
 }
