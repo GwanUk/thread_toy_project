@@ -1,6 +1,8 @@
 package com.matzip.thread.user.adapter.out_;
 
 import com.matzip.thread.common.annotation.PersistenceAdapter;
+import com.matzip.thread.common.exception.InvalidRequest;
+import com.matzip.thread.common.exception.NotfoundArgument;
 import com.matzip.thread.role.adapter.out_.RoleJpaEntity;
 import com.matzip.thread.role.adapter.out_.RoleJpaRepository;
 import com.matzip.thread.role.domain.Role;
@@ -23,7 +25,7 @@ class UserPersistenceAdapter implements UserOutPort {
 
     @Override
     public void save(UserEntity userEntity, Role role) {
-        RoleJpaEntity roleJpaEntity = roleJpaRepository.findByRole(role);
+        RoleJpaEntity roleJpaEntity = roleJpaRepository.findByRole(role).orElseThrow(() -> new NotfoundArgument(role.name()));
         userJpaRepository.save(UserJpaEntity.fromEntity(userEntity, roleJpaEntity));
     }
 }

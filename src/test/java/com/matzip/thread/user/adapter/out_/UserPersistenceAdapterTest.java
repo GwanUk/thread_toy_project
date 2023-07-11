@@ -34,7 +34,7 @@ class UserPersistenceAdapterTest {
     }
 
     @Test
-    @Sql("/sql/user/user-repository-command-test-data.sql")
+    @Sql("/sql/role/role-repository-test-data.sql")
     @DisplayName("유저 영속화 성공")
     void save() {
         // given

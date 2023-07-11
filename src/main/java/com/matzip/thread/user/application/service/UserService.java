@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 class UserService implements UserInPort {
 
     private final UserOutPort userOutPort;
@@ -25,6 +25,7 @@ class UserService implements UserInPort {
     }
 
     @Override
+    @Transactional
     public void signUp(UserEntity userEntity, Role role) {
         userOutPort.save(userEntity, role);
     }

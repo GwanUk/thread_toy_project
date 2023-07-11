@@ -19,7 +19,7 @@ class UriPersistenceAdapterTest {
     private UriPersistenceAdapter uriPersistenceAdapter;
 
     @Test
-    @Sql("/sql/uri/resources-repository-test-data.sql")
+    @Sql("/sql/uri/uri-repository-test-data.sql")
     @DisplayName("RUI 자원을 ROLE 권한과 함께 조회 성공")
     void findAllWithRoles() {
         // given
