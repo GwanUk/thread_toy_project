@@ -16,4 +16,9 @@ class RolePersistenceAdapter implements RoleOutPort {
     public RoleEntity findByRole(Role role) {
         return roleJpaRepository.findByRole(role).toEntity();
     }
+
+    @Override
+    public void save(RoleEntity roleEntity) {
+        roleJpaRepository.save(RoleJpaEntity.fromEntity(roleEntity));
+    }
 }

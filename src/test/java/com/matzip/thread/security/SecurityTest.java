@@ -44,7 +44,7 @@ public class SecurityTest {
     void login_success() throws Exception {
         // given
         String json = objectMapper.writeValueAsString(new SignInRequest("user", "1234"));
-        UserEntity userEntityEncoded = new UserEntity("user", "kim", passwordEncoder.encode("1234"), new RoleEntity(1L, Role.ROLE_USER, "유저 권"));
+        UserEntity userEntityEncoded = new UserEntity("user", "kim", passwordEncoder.encode("1234"), new RoleEntity(Role.ROLE_USER, "유저 권"));
         BDDMockito.given(userInPort.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEntityEncoded));
 
         // expected
@@ -77,7 +77,7 @@ public class SecurityTest {
     void login_failure_password() throws Exception {
         // given
         String json = objectMapper.writeValueAsString(new SignInRequest("user", "1234_fail"));
-        UserEntity userEntityEncoded = new UserEntity("user", "kim", passwordEncoder.encode("1234"), new RoleEntity(1L, Role.ROLE_USER, "유저 권"));
+        UserEntity userEntityEncoded = new UserEntity("user", "kim", passwordEncoder.encode("1234"), new RoleEntity(Role.ROLE_USER, "유저 권"));
         BDDMockito.given(userInPort.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEntityEncoded));
 
         // expected
@@ -95,7 +95,7 @@ public class SecurityTest {
     void login_failure_http_method() throws Exception {
         // given
         String json = objectMapper.writeValueAsString(new SignInRequest("user", "1234"));
-        UserEntity userEntityEncoded = new UserEntity("user", "kim", passwordEncoder.encode("1234"), new RoleEntity(1L, Role.ROLE_USER, "유저 권"));
+        UserEntity userEntityEncoded = new UserEntity("user", "kim", passwordEncoder.encode("1234"), new RoleEntity(Role.ROLE_USER, "유저 권"));
         BDDMockito.given(userInPort.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEntityEncoded));
 
         // expected
@@ -113,7 +113,7 @@ public class SecurityTest {
     void login_failure_content_type() throws Exception {
         // given
         String json = objectMapper.writeValueAsString(new SignInRequest("user", "1234"));
-        UserEntity userEntityEncoded = new UserEntity("user", "kim", passwordEncoder.encode("1234"), new RoleEntity(1L, Role.ROLE_USER, "유저 권"));
+        UserEntity userEntityEncoded = new UserEntity("user", "kim", passwordEncoder.encode("1234"), new RoleEntity(Role.ROLE_USER, "유저 권"));
         BDDMockito.given(userInPort.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEntityEncoded));
 
         // expected
@@ -131,7 +131,7 @@ public class SecurityTest {
     void login_failure_username_null() throws Exception {
         // given
         String json = objectMapper.writeValueAsString(new SignInRequest(null, "1234"));
-        UserEntity userEntityEncoded = new UserEntity("user", "kim", passwordEncoder.encode("1234"), new RoleEntity(1L, Role.ROLE_USER, "유저 권"));
+        UserEntity userEntityEncoded = new UserEntity("user", "kim", passwordEncoder.encode("1234"), new RoleEntity(Role.ROLE_USER, "유저 권"));
         BDDMockito.given(userInPort.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEntityEncoded));
 
         // expected
@@ -149,7 +149,7 @@ public class SecurityTest {
     void login_failure_username_empty() throws Exception {
         // given
         String json = objectMapper.writeValueAsString(new SignInRequest("", "1234"));
-        UserEntity userEntityEncoded = new UserEntity("user", "kim", passwordEncoder.encode("1234"), new RoleEntity(1L, Role.ROLE_USER, "유저 권"));
+        UserEntity userEntityEncoded = new UserEntity("user", "kim", passwordEncoder.encode("1234"), new RoleEntity(Role.ROLE_USER, "유저 권"));
         BDDMockito.given(userInPort.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEntityEncoded));
 
         // expected
@@ -167,7 +167,7 @@ public class SecurityTest {
     void login_failure_username_blank() throws Exception {
         // given
         String json = objectMapper.writeValueAsString(new SignInRequest(" ", "1234"));
-        UserEntity userEntityEncoded = new UserEntity("user", "kim", passwordEncoder.encode("1234"), new RoleEntity(1L, Role.ROLE_USER, "유저 권"));
+        UserEntity userEntityEncoded = new UserEntity("user", "kim", passwordEncoder.encode("1234"), new RoleEntity(Role.ROLE_USER, "유저 권"));
         BDDMockito.given(userInPort.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEntityEncoded));
 
         // expected
@@ -185,7 +185,7 @@ public class SecurityTest {
     void login_failure_password_null() throws Exception {
         // given
         String json = objectMapper.writeValueAsString(new SignInRequest("user", null));
-        UserEntity userEntityEncoded = new UserEntity("user", "kim", passwordEncoder.encode("1234"), new RoleEntity(1L, Role.ROLE_USER, "유저 권"));
+        UserEntity userEntityEncoded = new UserEntity("user", "kim", passwordEncoder.encode("1234"), new RoleEntity(Role.ROLE_USER, "유저 권"));
         BDDMockito.given(userInPort.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEntityEncoded));
 
         // expected
@@ -203,7 +203,7 @@ public class SecurityTest {
     void login_failure_password_empty() throws Exception {
         // given
         String json = objectMapper.writeValueAsString(new SignInRequest("user", ""));
-        UserEntity userEntityEncoded = new UserEntity("user", "kim", passwordEncoder.encode("1234"), new RoleEntity(1L, Role.ROLE_USER, "유저 권"));
+        UserEntity userEntityEncoded = new UserEntity("user", "kim", passwordEncoder.encode("1234"), new RoleEntity(Role.ROLE_USER, "유저 권"));
         BDDMockito.given(userInPort.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEntityEncoded));
 
         // expected
@@ -221,7 +221,7 @@ public class SecurityTest {
     void login_failure_password_blank() throws Exception {
         // given
         String json = objectMapper.writeValueAsString(new SignInRequest("user", " "));
-        UserEntity userEntityEncoded = new UserEntity("user", "kim", passwordEncoder.encode("1234"), new RoleEntity(1L, Role.ROLE_USER, "유저 권한"));
+        UserEntity userEntityEncoded = new UserEntity("user", "kim", passwordEncoder.encode("1234"), new RoleEntity(Role.ROLE_USER, "유저 권한"));
         BDDMockito.given(userInPort.findByUsername(Mockito.anyString())).willReturn(Optional.of(userEntityEncoded));
 
         // expected

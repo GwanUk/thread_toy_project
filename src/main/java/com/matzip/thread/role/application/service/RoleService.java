@@ -19,4 +19,9 @@ class RoleService implements RoleInPort {
     public RoleEntity findByRole(Role role) {
         return roleOutPort.findByRole(role);
     }
+
+    @Override
+    public void save(RoleEntity roleEntity) {
+        roleOutPort.save(roleEntity);
+    }
 }

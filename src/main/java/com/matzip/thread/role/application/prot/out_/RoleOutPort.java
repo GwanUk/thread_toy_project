@@ -5,4 +5,6 @@ import com.matzip.thread.role.domain.RoleEntity;
 
 public interface RoleOutPort {
     RoleEntity findByRole(Role role);
+
+    void save(RoleEntity roleEntity);
 }

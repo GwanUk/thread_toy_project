@@ -25,5 +25,6 @@ class UriService implements UriInPort {
     @Transactional
     public void save(UriEntity uriEntity) {
         uriOutPort.save(uriEntity);
+        // TODO: UrlFilterInvocationSecurityMetadataSource 리로드해야함
     }
 }

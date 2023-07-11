@@ -47,6 +47,10 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
         return FilterInvocation.class.isAssignableFrom(clazz);
     }
 
+    public void reload() {
+        renewRequestMap();
+    }
+
     private void renewRequestMap() {
         requestMap.clear();
         uriInPort.findAll().forEach(u -> requestMap.put(

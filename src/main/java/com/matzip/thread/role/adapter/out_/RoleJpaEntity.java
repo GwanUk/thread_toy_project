@@ -36,6 +36,6 @@ public class RoleJpaEntity extends JpaBaseEntity {
     }
 
     public RoleEntity toEntity() {
-        return new RoleEntity(id, role, description);
+        return new RoleEntity(role, description);
     }
 }

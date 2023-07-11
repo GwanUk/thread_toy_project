@@ -6,11 +6,11 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class UriSaveRequest {
+class UriSaveRequest {
     private final String uriName;
     private final int uriOrder;
 
-    public UriEntity toEntity() {
+    UriEntity toEntity() {
         return new UriEntity(uriName, uriOrder);
     }
 }
