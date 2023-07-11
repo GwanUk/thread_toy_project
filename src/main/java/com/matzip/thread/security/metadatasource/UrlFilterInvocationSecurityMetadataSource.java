@@ -1,5 +1,6 @@
 package com.matzip.thread.security.metadatasource;
 
+import com.matzip.thread.common.event.UriAuthorizationChangedEvent;
 import com.matzip.thread.uri.application.port.in.UriInPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -22,7 +23,13 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
 
     @EventListener(ApplicationReadyEvent.class)
     public void init() {
-        renewRequestMap();
+        addRequestMap();
+    }
+
+    @EventListener
+    public void renew(UriAuthorizationChangedEvent uriAuthorizationChangedEvent) {
+        requestMap.clear();
+        addRequestMap();
     }
 
     @Override
@@ -47,12 +54,7 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
         return FilterInvocation.class.isAssignableFrom(clazz);
     }
 
-    public void reload() {
-        renewRequestMap();
-    }
-
-    private void renewRequestMap() {
-        requestMap.clear();
+    private void addRequestMap() {
         uriInPort.findAll().forEach(u -> requestMap.put(
                 new AntPathRequestMatcher(u.getUriName()),
                 u.getRoles().stream()
