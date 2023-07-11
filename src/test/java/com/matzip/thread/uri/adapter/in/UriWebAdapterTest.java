@@ -19,9 +19,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-@WebMvcTest(controllers = UriInAdapter.class,
+@WebMvcTest(controllers = UriWebAdapter.class,
         excludeAutoConfiguration = SecurityAutoConfiguration.class)
-class UriInAdapterTest {
+class UriWebAdapterTest {
 
     @Autowired
     private MockMvc mockMvc;

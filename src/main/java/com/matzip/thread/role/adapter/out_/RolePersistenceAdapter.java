@@ -1,14 +1,14 @@
 package com.matzip.thread.role.adapter.out_;
 
+import com.matzip.thread.common.annotation.PersistenceAdapter;
 import com.matzip.thread.role.application.prot.out_.RoleOutPort;
 import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.role.domain.RoleEntity;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
-@Component
+@PersistenceAdapter
 @RequiredArgsConstructor
-class RoleOutAdapter implements RoleOutPort {
+class RolePersistenceAdapter implements RoleOutPort {
 
     private final RoleJpaRepository roleJpaRepository;
 

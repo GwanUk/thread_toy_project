@@ -1,16 +1,16 @@
 package com.matzip.thread.uri.adapter.out_;
 
+import com.matzip.thread.common.annotation.PersistenceAdapter;
 import com.matzip.thread.uri.application.port.out_.UriOutPort;
 import com.matzip.thread.uri.domain.UriEntity;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 
-@Component
+@PersistenceAdapter
 @RequiredArgsConstructor
-class UriOutAdapter implements UriOutPort {
+class UriPersistenceAdapter implements UriOutPort {
 
     private final UriJapRepository uriJapRepository;
 

@@ -1,7 +1,6 @@
 package com.matzip.thread.user.adapter.out_;
 
 import com.matzip.thread.role.domain.Role;
-import com.matzip.thread.role.domain.RoleEntity;
 import com.matzip.thread.user.domain.UserEntity;
 import org.assertj.core.api.BDDAssertions;
 import org.junit.jupiter.api.DisplayName;
@@ -12,11 +11,11 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
 
 @DataJpaTest
-@Import(UserOutAdapter.class)
-class UserOutAdapterTest {
+@Import(UserPersistenceAdapter.class)
+class UserPersistenceAdapterTest {
 
     @Autowired
-    private UserOutAdapter userOutAdapter;
+    private UserPersistenceAdapter userPersistenceAdapter;
 
     @Test
     @Sql("/sql/user/user-repository-test-data.sql")
@@ -24,7 +23,7 @@ class UserOutAdapterTest {
     void findByUsername() {
         // given
         // when
-        UserEntity findUserEntity = userOutAdapter.findByUsername("user").orElseThrow(() -> new RuntimeException("존재하지 않는 유저입니다."));
+        UserEntity findUserEntity = userPersistenceAdapter.findByUsername("user").orElseThrow(() -> new RuntimeException("존재하지 않는 유저입니다."));
 
         // then
         BDDAssertions.then(findUserEntity.getUsername()).isEqualTo("user");
@@ -42,10 +41,10 @@ class UserOutAdapterTest {
         UserEntity userEntity = new UserEntity("jake", "yam", "4885", null);
 
         // when
-        userOutAdapter.save(userEntity, Role.ROLE_USER);
+        userPersistenceAdapter.save(userEntity, Role.ROLE_USER);
 
         // then
-        UserEntity findUserEntity = userOutAdapter.findByUsername("jake").orElseThrow(() -> new RuntimeException("존재 하지 않는 유저"));
+        UserEntity findUserEntity = userPersistenceAdapter.findByUsername("jake").orElseThrow(() -> new RuntimeException("존재 하지 않는 유저"));
         BDDAssertions.then(findUserEntity.getUsername()).isEqualTo("jake");
         BDDAssertions.then(findUserEntity.getNickname()).isEqualTo("yam");
         BDDAssertions.then(findUserEntity.getPassword()).isEqualTo("4885");
