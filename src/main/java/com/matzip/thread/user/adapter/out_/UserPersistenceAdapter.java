@@ -1,18 +1,18 @@
 package com.matzip.thread.user.adapter.out_;
 
+import com.matzip.thread.common.annotation.PersistenceAdapter;
 import com.matzip.thread.role.adapter.out_.RoleJpaEntity;
 import com.matzip.thread.role.adapter.out_.RoleJpaRepository;
 import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.user.application.port.out_.UserOutPort;
 import com.matzip.thread.user.domain.UserEntity;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-@Component
+@PersistenceAdapter
 @RequiredArgsConstructor
-class UserOutAdapter implements UserOutPort {
+class UserPersistenceAdapter implements UserOutPort {
 
     private final UserJpaRepository userJpaRepository;
     private final RoleJpaRepository roleJpaRepository;

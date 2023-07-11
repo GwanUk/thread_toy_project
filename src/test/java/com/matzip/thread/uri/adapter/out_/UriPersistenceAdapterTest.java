@@ -13,10 +13,10 @@ import org.springframework.test.context.jdbc.Sql;
 import java.util.List;
 
 @DataJpaTest
-@Import(UriOutAdapter.class)
-class UriOutAdapterTest {
+@Import(UriPersistenceAdapter.class)
+class UriPersistenceAdapterTest {
     @Autowired
-    private UriOutAdapter uriOutAdapter;
+    private UriPersistenceAdapter uriPersistenceAdapter;
 
     @Test
     @Sql("/sql/uri/resources-repository-test-data.sql")
@@ -24,7 +24,7 @@ class UriOutAdapterTest {
     void findAllWithRoles() {
         // given
         // when
-        List<UriEntity> uriList = uriOutAdapter.findAllWithRoles();
+        List<UriEntity> uriList = uriPersistenceAdapter.findAllWithRoles();
 
         // then
         BDDAssertions.then(uriList.get(0).getUriName()).isEqualTo("/api/thread");

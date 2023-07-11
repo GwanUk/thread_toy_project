@@ -1,20 +1,18 @@
 package com.matzip.thread.user.adapter.in;
 
+import com.matzip.thread.common.annotation.WebAdapter;
 import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.user.application.port.in.UserInPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
-@RestController
-@RequestMapping("/api/users")
+@WebAdapter(path = "/api/users")
 @RequiredArgsConstructor
-class UseInAdapter {
+class UseWebAdapter {
 
     private final UserInPort userInPort;
 
