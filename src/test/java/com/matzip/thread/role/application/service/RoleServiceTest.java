@@ -91,15 +91,14 @@ class RoleServiceTest {
     }
 
     @Test
-
     @DisplayName("롤 권한 계층화 성공")
     void getHierarchy() {
         // given
         BDDMockito.given(roleOutPort.findAll()).willReturn(List.of(
                 new RoleEntity(Role.ROLE_USER, "유저 권한", Role.ROLE_VIP),
-                new RoleEntity(Role.ROLE_VIP, "특별 권한", Role.ROLE_VIP),
+                new RoleEntity(Role.ROLE_VIP, "특별 권한", Role.ROLE_ADMIN),
                 new RoleEntity(Role.ROLE_MANAGER, "매니저 권한", Role.ROLE_ADMIN),
-                new RoleEntity(Role.ROLE_ADMIN, "관리자 권한", Role.ROLE_ADMIN)
+                new RoleEntity(Role.ROLE_ADMIN, "관리자 권한", null)
         ));
 
 
@@ -109,9 +108,8 @@ class RoleServiceTest {
         // then
         BDDAssertions.then(concatenateRoles).isEqualTo(
                 "ROLE_VIP > ROLE_USER\n" +
-                        "ROLE_VIP > ROLE_VIP\n" +
-                        "ROLE_ADMIN > ROLE_MANAGER\n" +
-                        "ROLE_ADMIN > ROLE_ADMIN\n"
+                        "ROLE_ADMIN > ROLE_VIP\n" +
+                        "ROLE_ADMIN > ROLE_MANAGER\n"
         );
 
 

@@ -55,6 +55,7 @@ public class SecurityTestConfiguration {
             @Override
             public String getHierarchy() {
                 return "ROLE_VIP > ROLE_USER\n" +
+                        "ROLE_ADMIN > ROLE_VIP\n" +
                         "ROLE_ADMIN > ROLE_MANAGER\n";
             }
         };

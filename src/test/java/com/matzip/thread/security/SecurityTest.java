@@ -275,7 +275,18 @@ public class SecurityTest {
     @Test
     @WithMockUser(username = "user", roles = "VIP")
     @DisplayName("권한 계층: VIP 권한을 가지고 /api/user 경로 인증 성공")
-    void request_success_admin_user_uri() throws Exception {
+    void request_success_user_uri_has_vip() throws Exception {
+        // expected
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/user")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @WithMockUser(username = "user", roles = "ADMIN")
+    @DisplayName("권한 계층: ADMIN 권한을 가지고 /api/user 경로 인증 성공")
+    void request_success_user_uri_has_admin() throws Exception {
         // expected
         mockMvc.perform(MockMvcRequestBuilders.get("/api/user")
                         .accept(MediaType.APPLICATION_JSON))
