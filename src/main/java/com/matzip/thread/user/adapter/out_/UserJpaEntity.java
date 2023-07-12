@@ -19,7 +19,7 @@ class UserJpaEntity extends JpaBaseTimeEntity {
     private String username;
     private String nickname;
     private String password;
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ROLE_ID")
     private RoleJpaEntity roleJpaEntity;
 

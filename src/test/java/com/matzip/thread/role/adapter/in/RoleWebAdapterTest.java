@@ -37,7 +37,7 @@ class RoleWebAdapterTest {
     @DisplayName("role user 단건 조회 성공")
     void findByRole() throws Exception {
         // given
-        BDDMockito.given(roleInPort.findByRole(Mockito.any())).willReturn(new RoleEntity(Role.ROLE_USER, "유저 권한"));
+        BDDMockito.given(roleInPort.findByRole(Mockito.any())).willReturn(new RoleEntity(Role.ROLE_USER, "유저 권한", null));
 
         // expected
         mockMvc.perform(MockMvcRequestBuilders.get("/api/role/{role}", Role.ROLE_USER)
@@ -53,10 +53,10 @@ class RoleWebAdapterTest {
     void findAll() throws Exception {
         // given
         BDDMockito.given(roleInPort.findAll()).willReturn(List.of(
-                new RoleEntity(Role.ROLE_USER, "유저 권한"),
-                new RoleEntity(Role.ROLE_VIP, "특별 권한"),
-                new RoleEntity(Role.ROLE_MANAGER, "매니저 권한"),
-                new RoleEntity(Role.ROLE_ADMIN, "관리자 권한")
+                new RoleEntity(Role.ROLE_USER, "유저 권한", null),
+                new RoleEntity(Role.ROLE_VIP, "특별 권한", null),
+                new RoleEntity(Role.ROLE_MANAGER, "매니저 권한", null),
+                new RoleEntity(Role.ROLE_ADMIN, "관리자 권한", null)
         ));
 
         // expected
@@ -78,7 +78,7 @@ class RoleWebAdapterTest {
     @DisplayName("ROLE_USER 저장 성공")
     void save() throws Exception {
         // given
-        String json = objectMapper.writeValueAsString(new RoleSaveRequest(Role.ROLE_USER, "유저 권한"));
+        String json = objectMapper.writeValueAsString(new RoleSaveRequest(Role.ROLE_USER, "유저 권한", null));
 
         // when
         mockMvc.perform(MockMvcRequestBuilders.post("/api/role")
@@ -93,5 +93,4 @@ class RoleWebAdapterTest {
         BDDAssertions.then(roleEntityArgumentCaptor.getValue().getRole()).isEqualTo(Role.ROLE_USER);
         BDDAssertions.then(roleEntityArgumentCaptor.getValue().getDescription()).isEqualTo("유저 권한");
     }
-
 }

@@ -8,4 +8,5 @@ import lombok.RequiredArgsConstructor;
 public class RoleEntity {
     private final Role role;
     private final String description;
+    private final Role parent;
 }

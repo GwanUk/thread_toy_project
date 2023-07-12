@@ -1,7 +1,6 @@
 package com.matzip.thread.user.adapter.out_;
 
 import com.matzip.thread.common.annotation.PersistenceAdapter;
-import com.matzip.thread.common.exception.InvalidRequest;
 import com.matzip.thread.common.exception.NotfoundArgument;
 import com.matzip.thread.role.adapter.out_.RoleJpaEntity;
 import com.matzip.thread.role.adapter.out_.RoleJpaRepository;

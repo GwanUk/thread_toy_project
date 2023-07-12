@@ -26,7 +26,7 @@ class RoleServiceTest {
     @DisplayName("role user 저장 서비스 성공")
     void save() {
         // given
-        RoleEntity roleEntity = new RoleEntity(Role.ROLE_USER, "유저 권한");
+        RoleEntity roleEntity = new RoleEntity(Role.ROLE_USER, "유저 권한", null);
 
         // when
         roleService.save(roleEntity);
@@ -42,7 +42,7 @@ class RoleServiceTest {
     @DisplayName("role 조회 by user 권한 서비스 성공")
     void findByRole() {
         // given
-        BDDMockito.given(roleOutPort.findByRole(Mockito.any())).willReturn(Optional.of(new RoleEntity(Role.ROLE_USER, "유저 권한")));
+        BDDMockito.given(roleOutPort.findByRole(Mockito.any())).willReturn(Optional.of(new RoleEntity(Role.ROLE_USER, "유저 권한", null)));
 
         // when
         RoleEntity findRoleEntity = roleService.findByRole(Role.ROLE_USER);
@@ -67,10 +67,10 @@ class RoleServiceTest {
     void findAll() {
         // given
         BDDMockito.given(roleOutPort.findAll()).willReturn(List.of(
-                new RoleEntity(Role.ROLE_USER, "유저 권한"),
-                new RoleEntity(Role.ROLE_VIP, "특별 권한"),
-                new RoleEntity(Role.ROLE_MANAGER, "매니저 권한"),
-                new RoleEntity(Role.ROLE_ADMIN, "관리자 권한")
+                new RoleEntity(Role.ROLE_USER, "유저 권한", null),
+                new RoleEntity(Role.ROLE_VIP, "특별 권한", null),
+                new RoleEntity(Role.ROLE_MANAGER, "매니저 권한", null),
+                new RoleEntity(Role.ROLE_ADMIN, "관리자 권한", null)
         ));
 
         // when

@@ -10,8 +10,9 @@ import lombok.RequiredArgsConstructor;
 class RoleSaveRequest {
     private final Role role;
     private final String description;
+    private final Role parent;
 
     RoleEntity toEntity() {
-        return new RoleEntity(role, description);
+        return new RoleEntity(role, description, parent);
     }
 }

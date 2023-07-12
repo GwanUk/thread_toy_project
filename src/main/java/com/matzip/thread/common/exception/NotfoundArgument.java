@@ -13,11 +13,11 @@ public class NotfoundArgument extends ApplicationException{
     }
 
     public NotfoundArgument(String message) {
-        super(ERROR_MESSAGE + " " + message);
+        super(message + " " + ERROR_MESSAGE);
     }
 
     public NotfoundArgument(String message, Throwable cause) {
-        super(ERROR_MESSAGE + " " + message, cause);
+        super(message + " " + ERROR_MESSAGE, cause);
     }
 
     public NotfoundArgument(Throwable cause) {

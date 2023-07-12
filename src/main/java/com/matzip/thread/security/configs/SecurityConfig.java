@@ -46,8 +46,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
         http.antMatcher("/api/**")
                 .authorizeRequests()
-                .antMatchers("/api/users/sign_up").permitAll()
-                .anyRequest().authenticated();
+                .anyRequest()
+                .permitAll();
+
+        http.csrf().disable();
 
         http.addFilterBefore(apiLoginProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
 
@@ -56,9 +58,6 @@ public class SecurityConfig {
         http.exceptionHandling()
                 .authenticationEntryPoint(new ApiAuthenticationEntryPoint())
                 .accessDeniedHandler(new ApiAccessDeniedHandler());
-
-
-        http.csrf().disable();
 
         return http.build();
     }
@@ -108,6 +107,17 @@ public class SecurityConfig {
     }
 
     private List<AccessDecisionVoter<?>> getAccessDecisionVoters() {
+//        return List.of(accessDecisionVoter());
         return List.of(new RoleVoter());
     }
+
+//    @Bean
+//    public AccessDecisionVoter<?> accessDecisionVoter() {
+//        return new RoleHierarchyVoter(roleHierarchy());
+//    }
+//
+//    @Bean
+//    public RoleHierarchyImpl roleHierarchy() {
+//        return new RoleHierarchyImpl();
+//    }
 }

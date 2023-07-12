@@ -1,12 +1,14 @@
 package com.matzip.thread.role.adapter.out_;
 
 import com.matzip.thread.common.annotation.PersistenceAdapter;
+import com.matzip.thread.common.exception.NotfoundArgument;
 import com.matzip.thread.role.application.prot.out_.RoleOutPort;
 import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.role.domain.RoleEntity;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @PersistenceAdapter
@@ -27,6 +29,11 @@ class RolePersistenceAdapter implements RoleOutPort {
 
     @Override
     public void save(RoleEntity roleEntity) {
-        roleJpaRepository.save(RoleJpaEntity.fromEntity(roleEntity));
+        RoleJpaEntity parentRoleJpaEntity = null;
+        if (Objects.nonNull(roleEntity.getParent())) {
+            parentRoleJpaEntity = roleJpaRepository.findByRole(roleEntity.getParent())
+                    .orElseThrow(() -> new NotfoundArgument(roleEntity.getParent().name()));
+        }
+        roleJpaRepository.save(RoleJpaEntity.fromEntity(roleEntity, parentRoleJpaEntity));
     }
 }
