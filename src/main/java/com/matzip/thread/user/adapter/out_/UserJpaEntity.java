@@ -35,16 +35,7 @@ class UserJpaEntity extends JpaBaseTimeEntity {
                 username,
                 nickname,
                 password,
-                roleJpaEntity.toEntity()
-        );
-    }
-
-    static UserJpaEntity fromEntity(UserEntity userEntity) {
-        return new UserJpaEntity(
-                userEntity.getUsername(),
-                userEntity.getNickname(),
-                userEntity.getPassword(),
-                userEntity.getRoleEntity() == null ? null : RoleJpaEntity.fromEntity(userEntity.getRoleEntity())
+                roleJpaEntity.toEntity().getRole()
         );
     }
 

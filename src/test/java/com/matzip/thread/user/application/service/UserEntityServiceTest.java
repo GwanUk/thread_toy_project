@@ -25,7 +25,7 @@ class UserEntityServiceTest {
     @DisplayName("username 으로 회원 단일 조회 서비스 성공")
     void findByUsername() {
         // given
-        Optional<UserEntity> user = Optional.of(new UserEntity("user", "kim", "1234", new RoleEntity(Role.ROLE_USER, "유저 권한")));
+        Optional<UserEntity> user = Optional.of(new UserEntity("user", "kim", "1234", Role.ROLE_USER));
         BDDMockito.given(userOutPort.findByUsername(Mockito.anyString())).willReturn(user);
 
         // when
@@ -35,8 +35,7 @@ class UserEntityServiceTest {
         BDDAssertions.then(findUserEntity.getUsername()).isEqualTo("user");
         BDDAssertions.then(findUserEntity.getNickname()).isEqualTo("kim");
         BDDAssertions.then(findUserEntity.getPassword()).isEqualTo("1234");
-        BDDAssertions.then(findUserEntity.getRoleEntity().getRole()).isEqualTo(Role.ROLE_USER);
-        BDDAssertions.then(findUserEntity.getRoleEntity().getDescription()).isEqualTo("유저 권한");
+        BDDAssertions.then(findUserEntity.getRole()).isEqualTo(Role.ROLE_USER);
     }
 
     @Test

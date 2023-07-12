@@ -29,8 +29,7 @@ class UserPersistenceAdapterTest {
         BDDAssertions.then(findUserEntity.getUsername()).isEqualTo("user");
         BDDAssertions.then(findUserEntity.getNickname()).isEqualTo("kim");
         BDDAssertions.then(findUserEntity.getPassword()).isEqualTo("1234");
-        BDDAssertions.then(findUserEntity.getRoleEntity().getRole()).isEqualTo(Role.ROLE_USER);
-        BDDAssertions.then(findUserEntity.getRoleEntity().getDescription()).isEqualTo("유저 권한");
+        BDDAssertions.then(findUserEntity.getRole()).isEqualTo(Role.ROLE_USER);
     }
 
     @Test
@@ -48,7 +47,6 @@ class UserPersistenceAdapterTest {
         BDDAssertions.then(findUserEntity.getUsername()).isEqualTo("jake");
         BDDAssertions.then(findUserEntity.getNickname()).isEqualTo("yam");
         BDDAssertions.then(findUserEntity.getPassword()).isEqualTo("4885");
-        BDDAssertions.then(findUserEntity.getRoleEntity().getRole()).isEqualTo(Role.ROLE_USER);
-        BDDAssertions.then(findUserEntity.getRoleEntity().getDescription()).isEqualTo("유저 권한");
+        BDDAssertions.then(findUserEntity.getRole()).isEqualTo(Role.ROLE_USER);
     }
 }
