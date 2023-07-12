@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.List;
 
@@ -18,9 +19,10 @@ class UriServiceTest {
 
     @InjectMocks
     private UriService uriService;
-
     @Mock
     private UriOutPort uriOutPort;
+    @Mock
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @Test
     @DisplayName("uri 자원 전체 조회 서비스 성공")
@@ -46,9 +48,9 @@ class UriServiceTest {
 
     @Test
     @DisplayName("uri 자원 저장 서비스 성공")
-    void save() {
+    void save_uri() {
         // given
-        UriEntity uerEntity = new UriEntity("/api/user/**", 1);
+        UriEntity uerEntity = new UriEntity("/api/user/**", 1, List.of());
 
         // when
         uriService.save(uerEntity);
@@ -59,5 +61,23 @@ class UriServiceTest {
         BDDAssertions.then(uriEntityArgumentCaptor.getValue().getUriName()).isEqualTo("/api/user/**");
         BDDAssertions.then(uriEntityArgumentCaptor.getValue().getUriOrder()).isEqualTo(1);
         BDDAssertions.then(uriEntityArgumentCaptor.getValue().getRoles()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("uri with role 자원 저장 서비스 성공")
+    void save_uri_role() {
+        // given
+        UriEntity uerEntity = new UriEntity("/api/user/**", 1, List.of(new RoleEntity(Role.ROLE_USER, "유저 자원")));
+
+        // when
+        uriService.save(uerEntity);
+
+        // then
+        ArgumentCaptor<UriEntity> uriEntityArgumentCaptor = ArgumentCaptor.forClass(UriEntity.class);
+        BDDMockito.then(uriOutPort).should(Mockito.times(1)).save(uriEntityArgumentCaptor.capture());
+        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getUriName()).isEqualTo("/api/user/**");
+        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getUriOrder()).isEqualTo(1);
+        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getRoles().get(0).getRole()).isEqualTo(Role.ROLE_USER);
+        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getRoles().get(0).getDescription()).isEqualTo("유저 자원");
     }
 }

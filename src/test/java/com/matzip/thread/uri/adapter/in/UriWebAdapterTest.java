@@ -56,15 +56,32 @@ class UriWebAdapterTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].roles[0].description").value("특급 권한"))
                 .andDo(MockMvcResultHandlers.print());
     }
+    @Test
+    @DisplayName("URI 저장 요청 성공")
+    void save_uri() throws Exception {
+        // given
+        String json = objectMapper.writeValueAsString(new UriSaveRequest("/api/admin/**", 1, List.of()));
+
+        // when
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/uri")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print());
+
+        // then
+        ArgumentCaptor<UriEntity> uriEntityArgumentCaptor = ArgumentCaptor.forClass(UriEntity.class);
+        BDDMockito.then(uriInPort).should(Mockito.times(1)).save(uriEntityArgumentCaptor.capture());
+        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getUriName()).isEqualTo("/api/admin/**");
+        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getUriOrder()).isEqualTo(1);
+        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getRoles()).isEmpty();
+    }
 
     @Test
-    @DisplayName("URI 자원 저장 성공")
-    void save() throws Exception {
+    @DisplayName("URI with Role 저장 요청 성공")
+    void save_uri_role() throws Exception {
         // given
-        String json = objectMapper.createObjectNode()
-                .put("uriName", "/api/admin/**")
-                .put("uriOrder", 1)
-                .toString();
+        String json = objectMapper.writeValueAsString(new UriSaveRequest("/api/admin/**", 1, List.of(new RoleEntity(Role.ROLE_USER, "유저 권한"))));
 
         // when
         mockMvc.perform(MockMvcRequestBuilders.post("/api/uri")
@@ -78,5 +95,7 @@ class UriWebAdapterTest {
         BDDMockito.then(uriInPort).should(Mockito.times(1)).save(uriEntityArgumentCaptor.capture());
         BDDAssertions.then(uriEntityArgumentCaptor.getValue().getUriName()).isEqualTo("/api/admin/**");
         BDDAssertions.then(uriEntityArgumentCaptor.getValue().getUriOrder()).isEqualTo(1);
+        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getRoles().get(0).getRole()).isEqualTo(Role.ROLE_USER);
+        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getRoles().get(0).getDescription()).isEqualTo("유저 권한");
     }
 }
