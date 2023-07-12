@@ -4,7 +4,6 @@ import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.role.domain.RoleEntity;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface RoleInPort {
     RoleEntity findByRole(Role role);
@@ -12,4 +11,6 @@ public interface RoleInPort {
     List<RoleEntity> findAll();
 
     void save(RoleEntity roleEntity);
+
+    String getHierarchy();
 }
