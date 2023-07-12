@@ -1,10 +1,9 @@
 package com.matzip.thread.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.matzip.thread.role.domain.RoleEntity;
+import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.security.model.SignInRequest;
 import com.matzip.thread.user.application.port.in.UserInPort;
-import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.user.domain.UserEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,6 +37,9 @@ public class SecurityTest {
     private PasswordEncoder passwordEncoder;
     @MockBean
     private UserInPort userInPort;
+
+    @Controller
+    static class SecurityTestController {}
 
     @Test
     @DisplayName("로그인 요청 성공")
@@ -268,7 +270,5 @@ public class SecurityTest {
                 .andExpect(MockMvcResultMatchers.content().string("Access denied. Authorization is required"))
                 .andDo(MockMvcResultHandlers.print());
     }
-
-    @Controller
-    static class SecurityTestController {}
+    //TODO:UrlFilterInvocationSecurityMetadataSource 테스트 추가하기
 }
