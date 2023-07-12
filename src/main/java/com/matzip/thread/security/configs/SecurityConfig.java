@@ -1,6 +1,7 @@
 package com.matzip.thread.security.configs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.matzip.thread.role.application.prot.in.RoleInPort;
 import com.matzip.thread.security.filter.ApiAuthenticationProcessingFilter;
 import com.matzip.thread.security.handler.ApiAccessDeniedHandler;
 import com.matzip.thread.security.handler.ApiAuthenticationEntryPoint;
@@ -15,8 +16,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.AccessDecisionVoter;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.access.vote.AffirmativeBased;
-import org.springframework.security.access.vote.RoleVoter;
+import org.springframework.security.access.vote.RoleHierarchyVoter;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -39,8 +41,8 @@ public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
     private final PasswordEncoder passwordEncoder;
     private final UserInPort userInPort;
-
     private final UriInPort uriInPort;
+    private final RoleInPort roleInPort;
 
     @Bean
     public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
@@ -107,17 +109,18 @@ public class SecurityConfig {
     }
 
     private List<AccessDecisionVoter<?>> getAccessDecisionVoters() {
-//        return List.of(accessDecisionVoter());
-        return List.of(new RoleVoter());
+        return List.of(accessDecisionVoter());
     }
 
-//    @Bean
-//    public AccessDecisionVoter<?> accessDecisionVoter() {
-//        return new RoleHierarchyVoter(roleHierarchy());
-//    }
-//
-//    @Bean
-//    public RoleHierarchyImpl roleHierarchy() {
-//        return new RoleHierarchyImpl();
-//    }
+    @Bean
+    public AccessDecisionVoter<?> accessDecisionVoter() {
+        return new RoleHierarchyVoter(roleHierarchy());
+    }
+
+    @Bean
+    public RoleHierarchyImpl roleHierarchy() {
+        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
+        roleHierarchy.setHierarchy(roleInPort.getHierarchy());
+        return roleHierarchy;
+    }
 }

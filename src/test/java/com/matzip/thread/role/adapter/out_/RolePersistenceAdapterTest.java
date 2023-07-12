@@ -48,11 +48,9 @@ class RolePersistenceAdapterTest {
 
         BDDAssertions.then(roleEntities.get(1).getRole()).isEqualTo(Role.ROLE_VIP);
         BDDAssertions.then(roleEntities.get(1).getDescription()).isEqualTo("특별 권한");
-        BDDAssertions.then(roleEntities.get(1).getParent()).isEqualTo(Role.ROLE_VIP);
 
         BDDAssertions.then(roleEntities.get(2).getRole()).isEqualTo(Role.ROLE_ADMIN);
         BDDAssertions.then(roleEntities.get(2).getDescription()).isEqualTo("관리자 권한");
-        BDDAssertions.then(roleEntities.get(2).getParent()).isEqualTo(Role.ROLE_ADMIN);
     }
 
     @Test

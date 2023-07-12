@@ -241,7 +241,7 @@ public class SecurityTest {
     @DisplayName("요청 실패: 인증 되지 않는 사용자")
     void request_failure_unauthorized() throws Exception {
         // expected
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/thread")
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/admin")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized())
                 .andExpect(MockMvcResultMatchers.content().string("UnAuthorized. Only authorized users have access"))
@@ -271,4 +271,15 @@ public class SecurityTest {
                 .andDo(MockMvcResultHandlers.print());
     }
     //TODO:UrlFilterInvocationSecurityMetadataSource 테스트 추가하기
+
+    @Test
+    @WithMockUser(username = "user", roles = "VIP")
+    @DisplayName("권한 계층: VIP 권한을 가지고 /api/user 경로 인증 성공")
+    void request_success_admin_user_uri() throws Exception {
+        // expected
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/user")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andDo(MockMvcResultHandlers.print());
+    }
 }
