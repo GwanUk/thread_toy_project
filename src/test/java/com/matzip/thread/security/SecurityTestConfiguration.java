@@ -21,11 +21,8 @@ public class SecurityTestConfiguration {
         return new UriInPort() {
             @Override
             public List<UriEntity> findAll() {
-                RoleEntity role1 = new RoleEntity(Role.ROLE_USER, "유저 권한");
-                UriEntity resource1 = new UriEntity("/api/thread", 1, List.of(role1));
-
-                RoleEntity role2 = new RoleEntity(Role.ROLE_ADMIN, "관리자 권한");
-                UriEntity resource2 = new UriEntity("/api/admin", 2, List.of(role2));
+                UriEntity resource1 = new UriEntity("/api/thread", 1, List.of(Role.ROLE_USER));
+                UriEntity resource2 = new UriEntity("/api/admin", 2, List.of(Role.ROLE_ADMIN));
                 return List.of(resource1, resource2);
             }
 

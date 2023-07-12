@@ -29,8 +29,8 @@ class UriServiceTest {
     void findAll() {
         // given
         BDDMockito.given(uriService.findAll()).willReturn(List.of(
-                new UriEntity("/api/user/**", 1,  List.of(new RoleEntity(Role.ROLE_USER, "유저 권한"))),
-                new UriEntity("/api/admin/**", 2, List.of(new RoleEntity(Role.ROLE_ADMIN, "특급 권한")))));
+                new UriEntity("/api/user/**", 1,  List.of(Role.ROLE_USER)),
+                new UriEntity("/api/admin/**", 2, List.of(Role.ROLE_ADMIN))));
 
         // when
         List<UriEntity> findUriEntities = uriService.findAll();
@@ -38,12 +38,10 @@ class UriServiceTest {
         // then
         BDDAssertions.then(findUriEntities.get(0).getUriName()).isEqualTo("/api/user/**");
         BDDAssertions.then(findUriEntities.get(0).getUriOrder()).isEqualTo(1);
-        BDDAssertions.then(findUriEntities.get(0).getRoles().get(0).getRole()).isEqualTo(Role.ROLE_USER);
-        BDDAssertions.then(findUriEntities.get(0).getRoles().get(0).getDescription()).isEqualTo("유저 권한");
+        BDDAssertions.then(findUriEntities.get(0).getRoles().get(0)).isEqualTo(Role.ROLE_USER);
         BDDAssertions.then(findUriEntities.get(1).getUriName()).isEqualTo("/api/admin/**");
         BDDAssertions.then(findUriEntities.get(1).getUriOrder()).isEqualTo(2);
-        BDDAssertions.then(findUriEntities.get(1).getRoles().get(0).getRole()).isEqualTo(Role.ROLE_ADMIN);
-        BDDAssertions.then(findUriEntities.get(1).getRoles().get(0).getDescription()).isEqualTo("특급 권한");
+        BDDAssertions.then(findUriEntities.get(1).getRoles().get(0)).isEqualTo(Role.ROLE_ADMIN);
     }
 
     @Test
@@ -67,7 +65,7 @@ class UriServiceTest {
     @DisplayName("uri with role 자원 저장 서비스 성공")
     void save_uri_role() {
         // given
-        UriEntity uerEntity = new UriEntity("/api/user/**", 1, List.of(new RoleEntity(Role.ROLE_USER, "유저 자원")));
+        UriEntity uerEntity = new UriEntity("/api/user/**", 1, List.of(Role.ROLE_USER));
 
         // when
         uriService.save(uerEntity);
@@ -77,7 +75,6 @@ class UriServiceTest {
         BDDMockito.then(uriOutPort).should(Mockito.times(1)).save(uriEntityArgumentCaptor.capture());
         BDDAssertions.then(uriEntityArgumentCaptor.getValue().getUriName()).isEqualTo("/api/user/**");
         BDDAssertions.then(uriEntityArgumentCaptor.getValue().getUriOrder()).isEqualTo(1);
-        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getRoles().get(0).getRole()).isEqualTo(Role.ROLE_USER);
-        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getRoles().get(0).getDescription()).isEqualTo("유저 자원");
+        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getRoles().get(0)).isEqualTo(Role.ROLE_USER);
     }
 }

@@ -39,8 +39,8 @@ class UriWebAdapterTest {
     void findAll() throws Exception {
         // given
         BDDMockito.given(uriInPort.findAll()).willReturn(List.of(
-                new UriEntity("/api/user/**", 1,  List.of(new RoleEntity(Role.ROLE_USER, "유저 권한"))),
-                new UriEntity("/api/admin/**", 2, List.of(new RoleEntity(Role.ROLE_ADMIN, "특급 권한")))));
+                new UriEntity("/api/user/**", 1,  List.of(Role.ROLE_USER)),
+                new UriEntity("/api/admin/**", 2, List.of(Role.ROLE_ADMIN))));
 
         // expected
         mockMvc.perform(MockMvcRequestBuilders.get("/api/uri")
@@ -48,12 +48,10 @@ class UriWebAdapterTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].uriName").value("/api/user/**"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].uriOrder").value(1))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].roles[0].role").value(Role.ROLE_USER.name()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].roles[0].description").value("유저 권한"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].roles[0]").value(Role.ROLE_USER.name()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].uriName").value("/api/admin/**"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].uriOrder").value(2))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].roles[0].role").value(Role.ROLE_ADMIN.name()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].roles[0].description").value("특급 권한"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].roles[0]").value(Role.ROLE_ADMIN.name()))
                 .andDo(MockMvcResultHandlers.print());
     }
     @Test
@@ -81,7 +79,7 @@ class UriWebAdapterTest {
     @DisplayName("URI with Role 저장 요청 성공")
     void save_uri_role() throws Exception {
         // given
-        String json = objectMapper.writeValueAsString(new UriSaveRequest("/api/admin/**", 1, List.of(new RoleEntity(Role.ROLE_USER, "유저 권한"))));
+        String json = objectMapper.writeValueAsString(new UriSaveRequest("/api/admin/**", 1, List.of(Role.ROLE_USER)));
 
         // when
         mockMvc.perform(MockMvcRequestBuilders.post("/api/uri")
@@ -95,7 +93,6 @@ class UriWebAdapterTest {
         BDDMockito.then(uriInPort).should(Mockito.times(1)).save(uriEntityArgumentCaptor.capture());
         BDDAssertions.then(uriEntityArgumentCaptor.getValue().getUriName()).isEqualTo("/api/admin/**");
         BDDAssertions.then(uriEntityArgumentCaptor.getValue().getUriOrder()).isEqualTo(1);
-        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getRoles().get(0).getRole()).isEqualTo(Role.ROLE_USER);
-        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getRoles().get(0).getDescription()).isEqualTo("유저 권한");
+        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getRoles().get(0)).isEqualTo(Role.ROLE_USER);
     }
 }

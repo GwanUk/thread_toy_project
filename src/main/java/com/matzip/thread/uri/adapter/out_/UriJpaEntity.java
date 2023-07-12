@@ -28,14 +28,14 @@ class UriJpaEntity extends JpaBaseEntity {
     private int uriOrder;
 
     @OneToMany(mappedBy = "uriJpaEntity")
-    private final List<UriRolesJpaEntity> uriRolesJpaEntities = new ArrayList<>();
+    private final List<UriRoleJpaEntity> uriRolesJpaEntities = new ArrayList<>();
 
     UriJpaEntity(String uriName, int uriOrder) {
         this.uriName = uriName;
         this.uriOrder = uriOrder;
     }
 
-    void addResourcesRolesJpaEntity(UriRolesJpaEntity rolesJpaEntity) {
+    void addResourcesRolesJpaEntity(UriRoleJpaEntity rolesJpaEntity) {
         uriRolesJpaEntities.add(rolesJpaEntity);
     }
 
@@ -44,7 +44,7 @@ class UriJpaEntity extends JpaBaseEntity {
                 uriName,
                 uriOrder,
                 uriRolesJpaEntities.stream()
-                        .map(ur -> ur.getRoleJpaEntity().toEntity())
+                        .map(ur -> ur.getRoleJpaEntity().getRole())
                         .toList());
     }
 

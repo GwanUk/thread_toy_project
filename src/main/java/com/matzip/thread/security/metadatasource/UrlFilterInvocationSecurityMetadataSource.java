@@ -23,13 +23,13 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
 
     @EventListener(ApplicationReadyEvent.class)
     public void init() {
-        addRequestMap();
+        loadRequestMap();
     }
 
     @EventListener
-    public void renew(UriAuthorizationChangedEvent uriAuthorizationChangedEvent) {
+    public void reload(UriAuthorizationChangedEvent uriAuthorizationChangedEvent) {
         requestMap.clear();
-        addRequestMap();
+        loadRequestMap();
     }
 
     @Override
@@ -54,11 +54,11 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
         return FilterInvocation.class.isAssignableFrom(clazz);
     }
 
-    private void addRequestMap() {
+    private void loadRequestMap() {
         uriInPort.findAll().forEach(u -> requestMap.put(
                 new AntPathRequestMatcher(u.getUriName()),
                 u.getRoles().stream()
-                        .<ConfigAttribute>map(r -> new SecurityConfig(r.getRole().name()))
+                        .<ConfigAttribute>map(r -> new SecurityConfig(r.name()))
                         .toList()));
     }
 }
