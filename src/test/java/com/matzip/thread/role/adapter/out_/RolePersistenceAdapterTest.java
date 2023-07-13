@@ -58,7 +58,7 @@ class RolePersistenceAdapterTest {
     @DisplayName("role user 권한 저장 persistence 성공")
     void save() {
         // given
-        RoleEntity roleEntity = new RoleEntity(Role.ROLE_USER, "유저 권한", null);
+        RoleEntity roleEntity = new RoleEntity(Role.ROLE_USER, "유저 권한", null, List.of());
 
         // when
         rolePersistenceAdapter.save(roleEntity);
@@ -74,7 +74,7 @@ class RolePersistenceAdapterTest {
     @DisplayName("부모 노드를 가진 권한 db 저장 성공")
     void role_has_parent() {
         // given
-        RoleEntity roleEntity = new RoleEntity(Role.ROLE_MANAGER, "매니저 권한", Role.ROLE_ADMIN);
+        RoleEntity roleEntity = new RoleEntity(Role.ROLE_MANAGER, "매니저 권한", Role.ROLE_ADMIN, List.of());
 
         // when
         rolePersistenceAdapter.save(roleEntity);

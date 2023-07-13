@@ -34,6 +34,6 @@ class RolePersistenceAdapter implements RoleOutPort {
             parentRoleJpaEntity = roleJpaRepository.findByRole(roleEntity.getParent())
                     .orElseThrow(() -> new NotfoundArgument(roleEntity.getParent().name()));
         }
-        roleJpaRepository.save(RoleJpaEntity.fromEntity(roleEntity, parentRoleJpaEntity));
+        roleJpaRepository.save(RoleJpaEntity.toJpaEntity(roleEntity, parentRoleJpaEntity));
     }
 }
