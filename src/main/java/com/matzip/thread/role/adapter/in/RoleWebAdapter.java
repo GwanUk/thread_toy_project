@@ -31,4 +31,9 @@ class RoleWebAdapter {
     void save(@RequestBody RoleSaveRequest roleSaveRequest) {
         roleInPort.save(roleSaveRequest.toEntity());
     }
+
+    @GetMapping("/test")
+    void test() {
+        roleInPort.findByRole(null);
+    }
 }

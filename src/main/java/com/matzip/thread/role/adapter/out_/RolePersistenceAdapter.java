@@ -1,6 +1,8 @@
 package com.matzip.thread.role.adapter.out_;
 
+import com.matzip.thread.common.annotation.NullCheck;
 import com.matzip.thread.common.annotation.PersistenceAdapter;
+import com.matzip.thread.common.annotation.Validation;
 import com.matzip.thread.common.exception.NotFoundDataException;
 import com.matzip.thread.common.exception.NullArgumentException;
 import com.matzip.thread.role.application.prot.out_.RoleOutPort;
@@ -19,8 +21,9 @@ class RolePersistenceAdapter implements RoleOutPort {
     private final RoleJpaRepository roleJpaRepository;
 
     @Override
-    public Optional<RoleEntity> findByRole(Role role) {
-        if (Objects.isNull(role)) throw new NullArgumentException(Role.class.toString());
+    @Validation
+    public Optional<RoleEntity> findByRole(@NullCheck Role role) {
+//        if (Objects.isNull(role)) throw new NullArgumentException(Role.class.toString());
 
         return roleJpaRepository.findByRole(role).map(RoleJpaEntity::toEntity);
     }
