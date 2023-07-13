@@ -1,13 +1,16 @@
 package com.matzip.thread.role.adapter.out_;
 
+import com.matzip.thread.common.aop.ValidationAspect;
 import com.matzip.thread.common.exception.NotFoundDataException;
 import com.matzip.thread.common.exception.NullArgumentException;
+import com.matzip.thread.role.application.prot.out_.RoleOutPort;
 import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.role.domain.RoleEntity;
 import org.assertj.core.api.BDDAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -17,11 +20,13 @@ import java.util.List;
 import java.util.Optional;
 
 @DataJpaTest
-@Import(RolePersistenceAdapter.class)
+@Import({RolePersistenceAdapter.class,
+        AopAutoConfiguration.class,
+        ValidationAspect.class})
 class RolePersistenceAdapterTest {
 
     @Autowired
-    private RolePersistenceAdapter rolePersistenceAdapter;
+    private RoleOutPort rolePersistenceAdapter;
 
     @Test
     @Sql("/sql/role/role-repository-test-data.sql")
