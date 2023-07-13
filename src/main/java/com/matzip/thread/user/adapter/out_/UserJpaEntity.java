@@ -19,7 +19,7 @@ class UserJpaEntity extends JpaBaseTimeEntity {
     private String username;
     private String nickname;
     private String password;
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ROLE_ID")
     private RoleJpaEntity roleJpaEntity;
 
@@ -35,16 +35,7 @@ class UserJpaEntity extends JpaBaseTimeEntity {
                 username,
                 nickname,
                 password,
-                roleJpaEntity.toEntity()
-        );
-    }
-
-    static UserJpaEntity fromEntity(UserEntity userEntity) {
-        return new UserJpaEntity(
-                userEntity.getUsername(),
-                userEntity.getNickname(),
-                userEntity.getPassword(),
-                userEntity.getRoleEntity() == null ? null : RoleJpaEntity.fromEntity(userEntity.getRoleEntity())
+                roleJpaEntity.toEntity().getRole()
         );
     }
 

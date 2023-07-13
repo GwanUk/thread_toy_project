@@ -17,7 +17,7 @@ class UserResponse {
                 userEntity.getUsername(),
                 userEntity.getNickname(),
                 userEntity.getPassword(),
-                userEntity.getRoleEntity().getRole().name()
+                userEntity.getRole().name()
         );
     }
 }

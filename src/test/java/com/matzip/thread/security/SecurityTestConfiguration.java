@@ -1,6 +1,7 @@
 package com.matzip.thread.security;
 
 import com.matzip.thread.common.factorybean.PasswordEncoderFactoryBean;
+import com.matzip.thread.role.application.prot.in.RoleInPort;
 import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.role.domain.RoleEntity;
 import com.matzip.thread.security.configs.SecurityConfig;
@@ -21,17 +22,41 @@ public class SecurityTestConfiguration {
         return new UriInPort() {
             @Override
             public List<UriEntity> findAll() {
-                RoleEntity role1 = new RoleEntity(1L, Role.ROLE_USER, "유저 권한");
-                UriEntity resource1 = new UriEntity("/api/thread", 1, List.of(role1));
-
-                RoleEntity role2 = new RoleEntity(2L, Role.ROLE_ADMIN, "관리자 권한");
-                UriEntity resource2 = new UriEntity("/api/admin", 2, List.of(role2));
+                UriEntity resource1 = new UriEntity("/api/user", 1, List.of(Role.ROLE_USER));
+                UriEntity resource2 = new UriEntity("/api/admin", 2, List.of(Role.ROLE_ADMIN));
                 return List.of(resource1, resource2);
             }
 
             @Override
             public void save(UriEntity uriEntity) {
 
+            }
+        };
+    }
+
+    @Bean
+    public RoleInPort roleInPort() {
+        return new RoleInPort() {
+            @Override
+            public RoleEntity findByRole(Role role) {
+                return null;
+            }
+
+            @Override
+            public List<RoleEntity> findAll() {
+                return null;
+            }
+
+            @Override
+            public void save(RoleEntity roleEntity) {
+
+            }
+
+            @Override
+            public String getHierarchy() {
+                return "ROLE_VIP > ROLE_USER\n" +
+                        "ROLE_ADMIN > ROLE_VIP\n" +
+                        "ROLE_ADMIN > ROLE_MANAGER\n";
             }
         };
     }

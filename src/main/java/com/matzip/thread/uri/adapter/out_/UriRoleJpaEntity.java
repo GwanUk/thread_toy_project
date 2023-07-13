@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Getter
 @Table(name = "URI_ROLE")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-class UriRolesJpaEntity extends JpaBaseEntity {
+class UriRoleJpaEntity extends JpaBaseEntity {
     @Id
     @GeneratedValue
     @Column(name = "URI_ROLE_ID")
@@ -26,7 +26,7 @@ class UriRolesJpaEntity extends JpaBaseEntity {
     @JoinColumn(name = "ROLE_ID")
     private RoleJpaEntity roleJpaEntity;
 
-    UriRolesJpaEntity(UriJpaEntity uriJpaEntity, RoleJpaEntity roleJpaEntity) {
+    UriRoleJpaEntity(UriJpaEntity uriJpaEntity, RoleJpaEntity roleJpaEntity) {
         setUri(uriJpaEntity);
         this.roleJpaEntity = roleJpaEntity;
     }

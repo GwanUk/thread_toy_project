@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -26,16 +27,21 @@ public class RoleJpaEntity extends JpaBaseEntity {
 
     private String description;
 
-    public RoleJpaEntity(Role role, String description) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PARENT_ID")
+    private RoleJpaEntity parent;
+
+    public RoleJpaEntity(Role role, String description, RoleJpaEntity parent) {
         this.role = role;
         this.description = description;
+        this.parent = parent;
     }
 
-    public static RoleJpaEntity fromEntity(RoleEntity roleEntity) {
-        return new RoleJpaEntity(roleEntity.getRole(), roleEntity.getDescription());
+    public static RoleJpaEntity fromEntity(RoleEntity roleEntity, RoleJpaEntity parentRoleJpaEntity) {
+        return new RoleJpaEntity(roleEntity.getRole(), roleEntity.getDescription(), parentRoleJpaEntity);
     }
 
     public RoleEntity toEntity() {
-        return new RoleEntity(id, role, description);
+        return new RoleEntity(role, description, Objects.nonNull(parent) ? parent.getRole() : null);
     }
 }
