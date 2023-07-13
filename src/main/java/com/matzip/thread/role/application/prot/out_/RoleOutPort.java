@@ -12,4 +12,6 @@ public interface RoleOutPort {
     List<RoleEntity> findAll();
 
     void save(RoleEntity roleEntity);
+
+    void update(Role role, RoleEntity roleEntity);
 }

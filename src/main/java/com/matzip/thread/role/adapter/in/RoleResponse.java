@@ -12,16 +12,16 @@ class RoleResponse {
     private final Role role;
     private final String description;
     private final Role parent;
-    private final List<Role> roles = new ArrayList<>();
+    private final List<Role> children = new ArrayList<>();
 
-    public RoleResponse(Role role, String description, Role parent, List<Role> roles) {
+    public RoleResponse(Role role, String description, Role parent, List<Role> children) {
         this.role = role;
         this.description = description;
         this.parent = parent;
-        this.roles.addAll(roles);
+        this.children.addAll(children);
     }
 
     static RoleResponse toResponse(RoleEntity roleEntity) {
-        return new RoleResponse(roleEntity.getRole(), roleEntity.getDescription(), roleEntity.getParent(), roleEntity.getRoles());
+        return new RoleResponse(roleEntity.getRole(), roleEntity.getDescription(), roleEntity.getParent(), roleEntity.getChildren());
     }
 }

@@ -1,6 +1,6 @@
 package com.matzip.thread.role.application.service;
 
-import com.matzip.thread.common.exception.NotfoundArgument;
+import com.matzip.thread.common.exception.NotFoundDataException;
 import com.matzip.thread.role.application.prot.out_.RoleOutPort;
 import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.role.domain.RoleEntity;
@@ -59,7 +59,7 @@ class RoleServiceTest {
         BDDMockito.given(roleOutPort.findByRole(Mockito.any())).willReturn(Optional.empty());
 
         // expected
-        BDDAssertions.thenThrownBy(() -> roleService.findByRole(Role.ROLE_USER)).isInstanceOf(NotfoundArgument.class);
+        BDDAssertions.thenThrownBy(() -> roleService.findByRole(Role.ROLE_USER)).isInstanceOf(NotFoundDataException.class);
     }
 
     @Test

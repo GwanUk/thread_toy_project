@@ -12,16 +12,16 @@ class RoleSaveRequest {
     private final Role role;
     private final String description;
     private final Role parent;
-    private final List<Role> roles = new ArrayList<>();
+    private final List<Role> children = new ArrayList<>();
 
-    public RoleSaveRequest(Role role, String description, Role parent, List<Role> roles) {
+    public RoleSaveRequest(Role role, String description, Role parent, List<Role> children) {
         this.role = role;
         this.description = description;
         this.parent = parent;
-        this.roles.addAll(roles);
+        this.children.addAll(children);
     }
 
     RoleEntity toEntity() {
-        return new RoleEntity(role, description, parent, roles);
+        return new RoleEntity(role, description, parent, children);
     }
 }

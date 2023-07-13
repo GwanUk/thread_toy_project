@@ -1,4 +1,4 @@
-package com.matzip.thread.common.model;
+package com.matzip.thread.common.contoller;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

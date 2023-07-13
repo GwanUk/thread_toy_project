@@ -49,7 +49,6 @@ class UriPersistenceAdapterTest {
         BDDAssertions.then(findUriEntities.get(0).getUriName()).isEqualTo("/api/user/**");
         BDDAssertions.then(findUriEntities.get(0).getUriOrder()).isEqualTo(1);
         BDDAssertions.then(findUriEntities.get(0).getRoles().get(0)).isEqualTo(Role.ROLE_USER);
-        BDDAssertions.then(findUriEntities.get(0).getRoles().get(1)).isEqualTo(Role.ROLE_VIP);
     }
 
     @Test

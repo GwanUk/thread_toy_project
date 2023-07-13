@@ -1,6 +1,7 @@
 package com.matzip.thread.role.adapter.out_;
 
 import com.matzip.thread.common.JpaEntity.JpaBaseEntity;
+import com.matzip.thread.common.exception.NullArgumentException;
 import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.role.domain.RoleEntity;
 import lombok.AccessLevel;
@@ -23,7 +24,9 @@ public class RoleJpaEntity extends JpaBaseEntity {
     @Column(name = "ROLE_ID")
     private Long id;
 
-    @Column(name = "ROLE_NAME")
+    @Column(name = "ROLE_NAME",
+            unique = true,
+            nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -37,13 +40,13 @@ public class RoleJpaEntity extends JpaBaseEntity {
     private final List<RoleJpaEntity> children = new ArrayList<>();
 
     public RoleJpaEntity(Role role, String description, RoleJpaEntity parent, List<RoleJpaEntity> children) {
-        this.role = role;
-        this.description = description;
+        setRole(role);
+        setDescription(description);
         setParent(parent);
-        children.forEach(c -> c.setParent(this));
+        setChildren(children);
     }
 
-    public static RoleJpaEntity toJpaEntity(RoleEntity roleEntity, RoleJpaEntity parent) {
+    public static RoleJpaEntity from(RoleEntity roleEntity, RoleJpaEntity parent) {
         return new RoleJpaEntity(
                 roleEntity.getRole(),
                 roleEntity.getDescription(),
@@ -63,10 +66,30 @@ public class RoleJpaEntity extends JpaBaseEntity {
         );
     }
 
-    private void setParent(RoleJpaEntity parent) {
-        if (Objects.isNull(parent)) return;
+    public void setRole(Role role) {
+        if (Objects.isNull(role)) throw new NullArgumentException(Role.class.toString());
+        this.role = role;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setParent(RoleJpaEntity parent) {
+        if (Objects.nonNull(this.parent)) {
+            this.parent.children.remove(this);
+        }
 
         this.parent = parent;
-        parent.children.add(this);
+
+        if (Objects.nonNull(parent)) {
+            parent.children.add(this);
+        }
+    }
+
+    public void setChildren(List<RoleJpaEntity> children) {
+        if (Objects.isNull(children)) throw new NullArgumentException(Role.class.toString());
+
+        children.forEach(c -> c.setParent(this));
     }
 }
