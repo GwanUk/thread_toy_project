@@ -11,8 +11,10 @@ import com.matzip.thread.role.domain.RoleEntity;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
+
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @PersistenceAdapter
 @RequiredArgsConstructor
@@ -23,32 +25,38 @@ class RolePersistenceAdapter implements RoleOutPort {
     @Override
     @Validation
     public Optional<RoleEntity> findByRole(Role role) {
-        return roleJpaRepository.findByRole(role).map(RoleJpaEntity::toEntity);
+        return roleJpaRepository.findByRole(role)
+                .map(RoleJpaEntity::toEntity);
     }
 
     @Override
     public List<RoleEntity> findAll() {
-        return roleJpaRepository.findAll().stream().map(RoleJpaEntity::toEntity).toList();
+        return roleJpaRepository.findAll().stream()
+                .map(RoleJpaEntity::toEntity).toList();
     }
 
     @Override
     @Validation
     public void save(@NullCheck RoleEntity roleEntity) {
         RoleJpaEntity parentRoleJpaEntity = null;
-        if (Objects.nonNull(roleEntity.getParent())) {
-            parentRoleJpaEntity = roleJpaRepository.findByRole(roleEntity.getParent())
-                    .orElseThrow(() -> new NotFoundDataException(roleEntity.getParent().name()));
+        Role parent = roleEntity.getParent();
+        List<Role> children = roleEntity.getChildren();
+
+        if (nonNull(parent)) {
+            parentRoleJpaEntity = roleJpaRepository.findByRole(parent)
+                    .orElseThrow(() -> new NotFoundDataException(parent.name()));
         }
 
-        RoleJpaEntity savedRoleJpaEntity = roleJpaRepository.save(RoleJpaEntity.from(roleEntity, parentRoleJpaEntity));
+        RoleJpaEntity roleJpaEntity = RoleJpaEntity.from(roleEntity, parentRoleJpaEntity);
+        RoleJpaEntity savedRoleJpaEntity = roleJpaRepository.save(roleJpaEntity);
 
-        List<RoleJpaEntity> children = roleJpaRepository.findInRoles(roleEntity.getChildren());
+        List<RoleJpaEntity> findChildren = roleJpaRepository.findInRoles(children);
 
-        if (roleEntity.getChildren().size() != 0 && children.size() == 0) {
-            throw new NotFoundDataException(roleEntity.getChildren().toString());
+        if (children.size() != 0 && findChildren.size() == 0) {
+            throw new NotFoundDataException(children.toString());
         }
 
-        savedRoleJpaEntity.setChildren(children);
+        savedRoleJpaEntity.setChildren(findChildren);
     }
 
     @Override
@@ -57,29 +65,42 @@ class RolePersistenceAdapter implements RoleOutPort {
         RoleJpaEntity findRoleJpaEntity = roleJpaRepository.findByRole(role)
                 .orElseThrow(() -> new NotFoundDataException(role.name()));
 
-        if (!role.equals(roleEntity.getRole()) &&
-                roleJpaRepository.findByRole(roleEntity.getRole()).isPresent()) {
-            throw new ApplicationConventionViolationException(roleEntity.getRole().name() + " that already exists");
-        }
+        Role updatingRole = roleEntity.getRole();
+        String updatingDescription = roleEntity.getDescription();
+        Role updatingParent = roleEntity.getParent();
+        List<Role> updatingChildren = roleEntity.getChildren();
 
-        findRoleJpaEntity.setRole(roleEntity.getRole());
-        findRoleJpaEntity.setDescription(roleEntity.getDescription());
+        checkDuplication(role, updatingRole);
 
-        if (Objects.isNull(roleEntity.getParent())) {
+        findRoleJpaEntity.setRole(updatingRole);
+        findRoleJpaEntity.setDescription(updatingDescription);
+
+        if (isNull(updatingParent)) {
             findRoleJpaEntity.setParent(null);
         } else {
-            RoleJpaEntity parent = roleJpaRepository.findByRole(roleEntity.getParent())
-                    .orElseThrow(() -> new NotFoundDataException(roleEntity.getParent().name()));
+            RoleJpaEntity parent = roleJpaRepository.findByRole(updatingParent)
+                    .orElseThrow(() -> new NotFoundDataException(updatingParent.name()));
             findRoleJpaEntity.setParent(parent);
         }
 
-        if (roleEntity.getChildren().size() == 0) {
+        if (updatingChildren.size() == 0) {
             findRoleJpaEntity.setChildren(List.of());
         } else {
-            List<RoleJpaEntity> children = roleJpaRepository.findInRoles(roleEntity.getChildren());
-            if (children.size() == 0) throw new NotFoundDataException(roleEntity.getChildren().toString());
+            List<RoleJpaEntity> children = roleJpaRepository.findInRoles(updatingChildren);
+            if (children.size() == 0) throw new NotFoundDataException(updatingChildren.toString());
             findRoleJpaEntity.setChildren(children);
         }
+    }
+
+    private void checkDuplication(Role role, Role updatingRole) {
+        if (!role.equals(updatingRole)
+                && roleJpaRepository.findByRole(updatingRole).isPresent()) {
+            throw new ApplicationConventionViolationException(updatingRole.name() + " that already exists");
+        }
+    }
+
+    @Override
+    public void delete(Role role) {
 
     }
 }

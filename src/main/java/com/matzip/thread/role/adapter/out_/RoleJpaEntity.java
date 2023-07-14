@@ -87,7 +87,7 @@ public class RoleJpaEntity extends JpaBaseEntity {
         }
     }
 
-    public void setChildren(List<RoleJpaEntity> children) {
+    public void setChildren(List<RoleJpaEntity> children)  {
         if (Objects.isNull(children)) throw new NullArgumentException(Role.class.getSimpleName());
 
         List.copyOf(getChildren()).forEach(c -> c.setParent(null));

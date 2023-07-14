@@ -1,6 +1,6 @@
 package com.matzip.thread.security;
 
-import com.matzip.thread.common.factorybean.PasswordEncoderFactoryBean;
+import com.matzip.thread.user.domain.PasswordEncoderFactoryBean;
 import com.matzip.thread.role.application.prot.in.RoleInPort;
 import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.role.domain.RoleEntity;

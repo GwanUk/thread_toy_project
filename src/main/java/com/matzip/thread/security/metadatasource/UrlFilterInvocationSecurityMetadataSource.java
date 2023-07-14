@@ -1,6 +1,6 @@
 package com.matzip.thread.security.metadatasource;
 
-import com.matzip.thread.common.event.UriAuthorizationChangedEvent;
+import com.matzip.thread.uri.application.event.UriAuthorizationChangedEvent;
 import com.matzip.thread.uri.application.port.in.UriInPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.event.ApplicationReadyEvent;

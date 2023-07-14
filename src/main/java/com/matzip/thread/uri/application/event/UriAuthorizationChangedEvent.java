@@ -1,4 +1,4 @@
-package com.matzip.thread.common.event;
+package com.matzip.thread.uri.application.event;
 
 import org.springframework.stereotype.Component;
 
