@@ -1,6 +1,6 @@
 package com.matzip.thread.uri.application.service;
 
-import com.matzip.thread.common.event.UriAuthorizationChangedEvent;
+import com.matzip.thread.uri.application.event.UriAuthorizationChangedEvent;
 import com.matzip.thread.uri.application.port.in.UriInPort;
 import com.matzip.thread.uri.application.port.out_.UriOutPort;
 import com.matzip.thread.uri.domain.UriEntity;

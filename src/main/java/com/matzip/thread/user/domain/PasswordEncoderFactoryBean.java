@@ -1,4 +1,4 @@
-package com.matzip.thread.common.factorybean;
+package com.matzip.thread.user.domain;
 
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;

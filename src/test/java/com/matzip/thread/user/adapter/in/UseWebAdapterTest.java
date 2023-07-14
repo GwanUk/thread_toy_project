@@ -1,7 +1,7 @@
 package com.matzip.thread.user.adapter.in;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.matzip.thread.common.factorybean.PasswordEncoderFactoryBean;
+import com.matzip.thread.user.domain.PasswordEncoderFactoryBean;
 import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.user.application.port.in.UserInPort;
 import com.matzip.thread.user.domain.UserEntity;
