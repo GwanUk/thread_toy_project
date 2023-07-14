@@ -67,7 +67,7 @@ public class RoleJpaEntity extends JpaBaseEntity {
     }
 
     public void setRole(Role role) {
-        if (Objects.isNull(role)) throw new NullArgumentException(Role.class.toString());
+        if (Objects.isNull(role)) throw new NullArgumentException(Role.class.getSimpleName());
         this.role = role;
     }
 
@@ -77,19 +77,20 @@ public class RoleJpaEntity extends JpaBaseEntity {
 
     public void setParent(RoleJpaEntity parent) {
         if (Objects.nonNull(this.parent)) {
-            this.parent.children.remove(this);
+            this.parent.getChildren().remove(this);
         }
 
         this.parent = parent;
 
         if (Objects.nonNull(parent)) {
-            parent.children.add(this);
+            parent.getChildren().add(this);
         }
     }
 
     public void setChildren(List<RoleJpaEntity> children) {
-        if (Objects.isNull(children)) throw new NullArgumentException(Role.class.toString());
+        if (Objects.isNull(children)) throw new NullArgumentException(Role.class.getSimpleName());
 
+        List.copyOf(getChildren()).forEach(c -> c.setParent(null));
         children.forEach(c -> c.setParent(this));
     }
 }

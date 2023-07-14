@@ -32,9 +32,9 @@ public class ValidationAspect {
             if (nonNull(parameter.getAnnotation(NullCheck.class))
                     && isNull(arg)) {
 
-                log.error("[" + methodSignature + "] " + parameter.getName() + " is null");
+                log.error("[" + methodSignature + "] " + parameter.getType().getSimpleName() + " is null");
 
-                throw new NullArgumentException(parameter.getType().getName());
+                throw new NullArgumentException(parameter.getType().getSimpleName());
             }
         }
     }
