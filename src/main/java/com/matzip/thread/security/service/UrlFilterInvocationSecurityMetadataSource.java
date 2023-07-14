@@ -1,4 +1,4 @@
-package com.matzip.thread.security.metadatasource;
+package com.matzip.thread.security.service;
 
 import com.matzip.thread.uri.application.event.UriAuthorizationChangedEvent;
 import com.matzip.thread.uri.application.port.in.UriInPort;
@@ -59,6 +59,7 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
                 new AntPathRequestMatcher(u.getUriName()),
                 u.getRoles().stream()
                         .<ConfigAttribute>map(r -> new SecurityConfig(r.name()))
-                        .toList()));
+                        .toList()
+                ));
     }
 }

@@ -1,8 +1,8 @@
-package com.matzip.thread.security;
+package com.matzip.thread.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.matzip.thread.role.domain.Role;
-import com.matzip.thread.security.model.SignInRequest;
+import com.matzip.thread.security.SecurityTestConfiguration;
 import com.matzip.thread.user.application.port.in.UserInPort;
 import com.matzip.thread.user.domain.UserEntity;
 import org.junit.jupiter.api.DisplayName;

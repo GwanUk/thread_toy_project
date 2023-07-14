@@ -1,7 +1,7 @@
 package com.matzip.thread.role.adapter.out_;
 
 import com.matzip.thread.common.aop.ValidationAspect;
-import com.matzip.thread.common.exception.ApplicationConventionViolationException;
+import com.matzip.thread.common.exception.security.ApplicationConventionViolationException;
 import com.matzip.thread.common.exception.NotFoundDataException;
 import com.matzip.thread.common.exception.NullArgumentException;
 import com.matzip.thread.role.application.prot.out_.RoleOutPort;
