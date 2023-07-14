@@ -1,8 +1,10 @@
 package com.matzip.thread.role.adapter.out_;
 
+import com.matzip.thread.common.annotation.NullCheck;
 import com.matzip.thread.common.annotation.PersistenceAdapter;
+import com.matzip.thread.common.annotation.Validation;
+import com.matzip.thread.common.exception.ApplicationConventionViolationException;
 import com.matzip.thread.common.exception.NotFoundDataException;
-import com.matzip.thread.common.exception.NullArgumentException;
 import com.matzip.thread.role.application.prot.out_.RoleOutPort;
 import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.role.domain.RoleEntity;
@@ -19,9 +21,8 @@ class RolePersistenceAdapter implements RoleOutPort {
     private final RoleJpaRepository roleJpaRepository;
 
     @Override
+    @Validation
     public Optional<RoleEntity> findByRole(Role role) {
-        if (Objects.isNull(role)) throw new NullArgumentException(Role.class.toString());
-
         return roleJpaRepository.findByRole(role).map(RoleJpaEntity::toEntity);
     }
 
@@ -31,9 +32,8 @@ class RolePersistenceAdapter implements RoleOutPort {
     }
 
     @Override
-    public void save(RoleEntity roleEntity) {
-        if (Objects.isNull(roleEntity)) throw new NullArgumentException(RoleEntity.class.toString());
-
+    @Validation
+    public void save(@NullCheck RoleEntity roleEntity) {
         RoleJpaEntity parentRoleJpaEntity = null;
         if (Objects.nonNull(roleEntity.getParent())) {
             parentRoleJpaEntity = roleJpaRepository.findByRole(roleEntity.getParent())
@@ -52,9 +52,15 @@ class RolePersistenceAdapter implements RoleOutPort {
     }
 
     @Override
-    public void update(Role role, RoleEntity roleEntity) {
+    @Validation
+    public void update(Role role, @NullCheck RoleEntity roleEntity) {
         RoleJpaEntity findRoleJpaEntity = roleJpaRepository.findByRole(role)
                 .orElseThrow(() -> new NotFoundDataException(role.name()));
+
+        if (!role.equals(roleEntity.getRole()) &&
+                roleJpaRepository.findByRole(roleEntity.getRole()).isPresent()) {
+            throw new ApplicationConventionViolationException(roleEntity.getRole().name() + " that already exists");
+        }
 
         findRoleJpaEntity.setRole(roleEntity.getRole());
         findRoleJpaEntity.setDescription(roleEntity.getDescription());
@@ -67,8 +73,13 @@ class RolePersistenceAdapter implements RoleOutPort {
             findRoleJpaEntity.setParent(parent);
         }
 
-        findRoleJpaEntity.setChildren(
-                roleJpaRepository.findInRoles(roleEntity.getChildren())
-        );
+        if (roleEntity.getChildren().size() == 0) {
+            findRoleJpaEntity.setChildren(List.of());
+        } else {
+            List<RoleJpaEntity> children = roleJpaRepository.findInRoles(roleEntity.getChildren());
+            if (children.size() == 0) throw new NotFoundDataException(roleEntity.getChildren().toString());
+            findRoleJpaEntity.setChildren(children);
+        }
+
     }
 }
