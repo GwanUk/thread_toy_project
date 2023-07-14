@@ -1,6 +1,6 @@
 package com.matzip.thread.security.handler;
 
-import com.matzip.thread.common.exception.ApiAuthenticationException;
+import com.matzip.thread.common.exception.security.ApiAuthenticationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;

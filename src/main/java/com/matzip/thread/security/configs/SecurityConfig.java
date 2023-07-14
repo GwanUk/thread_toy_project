@@ -1,14 +1,16 @@
 package com.matzip.thread.security.configs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.matzip.thread.ipaddress.application.port.in.IpAddressInPort;
 import com.matzip.thread.role.application.prot.in.RoleInPort;
 import com.matzip.thread.security.filter.ApiAuthenticationProcessingFilter;
 import com.matzip.thread.security.handler.ApiAccessDeniedHandler;
 import com.matzip.thread.security.handler.ApiAuthenticationEntryPoint;
 import com.matzip.thread.security.handler.ApiAuthenticationFailureHandler;
 import com.matzip.thread.security.handler.ApiAuthenticationSuccessHandler;
-import com.matzip.thread.security.metadatasource.UrlFilterInvocationSecurityMetadataSource;
-import com.matzip.thread.security.provider.ApiAuthenticationProvider;
+import com.matzip.thread.security.service.ApiAuthenticationProvider;
+import com.matzip.thread.security.service.IpAddressVoter;
+import com.matzip.thread.security.service.UrlFilterInvocationSecurityMetadataSource;
 import com.matzip.thread.security.service.UserDetailsServiceImpl;
 import com.matzip.thread.uri.application.port.in.UriInPort;
 import com.matzip.thread.user.application.port.in.UserInPort;
@@ -43,6 +45,7 @@ public class SecurityConfig {
     private final UserInPort userInPort;
     private final UriInPort uriInPort;
     private final RoleInPort roleInPort;
+    private final IpAddressInPort ipAddressInPort;
 
     @Bean
     public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
@@ -109,11 +112,17 @@ public class SecurityConfig {
     }
 
     private List<AccessDecisionVoter<?>> getAccessDecisionVoters() {
-        return List.of(accessDecisionVoter());
+        return List.of(ipAddressVoter(),
+                roleHierarchyVoter());
     }
 
     @Bean
-    public AccessDecisionVoter<?> accessDecisionVoter() {
+    public AccessDecisionVoter<?> ipAddressVoter() {
+        return new IpAddressVoter(ipAddressInPort);
+    }
+
+    @Bean
+    public AccessDecisionVoter<?> roleHierarchyVoter() {
         return new RoleHierarchyVoter(roleHierarchy());
     }
 

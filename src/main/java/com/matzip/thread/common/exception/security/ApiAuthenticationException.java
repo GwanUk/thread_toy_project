@@ -1,4 +1,4 @@
-package com.matzip.thread.common.exception;
+package com.matzip.thread.common.exception.security;
 
 import org.springframework.security.core.AuthenticationException;
 

@@ -1,5 +1,6 @@
 package com.matzip.thread;
 
+import com.matzip.thread.ipaddress.application.port.in.IpAddressInPort;
 import com.matzip.thread.role.application.prot.in.RoleInPort;
 import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.role.domain.RoleEntity;
@@ -16,14 +17,15 @@ import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
-public class InitConfig {
+public class TestSetUpConfig {
 
     private final RoleInPort roleInPort;
     private final UriInPort uriInPort;
     private final UserInPort userInPort;
+    private final IpAddressInPort ipAddressInPort;
 
     @EventListener(ApplicationReadyEvent.class)
-    public void init() {
+    public void setUp() {
         roleInPort.save(new RoleEntity(Role.ROLE_ADMIN, "관리자 권한", null, List.of()));
         roleInPort.save(new RoleEntity(Role.ROLE_VIP, "특급 권한", Role.ROLE_ADMIN, List.of()));
 
@@ -31,5 +33,8 @@ public class InitConfig {
         uriInPort.save(new UriEntity("/api/vip/**", 1, List.of(Role.ROLE_VIP)));
 
         userInPort.signUp(new UserEntity("user", "kim", "1234", null), Role.ROLE_VIP);
+
+        ipAddressInPort.save("127.0.0.1");
+        ipAddressInPort.save("0:0:0:0:0:0:0:1");
     }
 }

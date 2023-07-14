@@ -1,7 +1,6 @@
-package com.matzip.thread.security.provider;
+package com.matzip.thread.security.service;
 
-import com.matzip.thread.common.exception.ApiAuthenticationException;
-import com.matzip.thread.security.model.UserContext;
+import com.matzip.thread.common.exception.security.ApiAuthenticationException;
 import com.matzip.thread.security.token.ApiAuthenticationToken;
 import com.matzip.thread.user.domain.UserEntity;
 import lombok.RequiredArgsConstructor;

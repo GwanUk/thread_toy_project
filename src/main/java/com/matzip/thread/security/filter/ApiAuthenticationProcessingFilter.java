@@ -2,7 +2,6 @@ package com.matzip.thread.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.matzip.thread.security.token.ApiAuthenticationToken;
-import com.matzip.thread.security.model.SignInRequest;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
