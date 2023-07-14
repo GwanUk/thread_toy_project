@@ -24,8 +24,8 @@ public class InitConfig {
 
     @EventListener(ApplicationReadyEvent.class)
     public void init() {
-        roleInPort.save(new RoleEntity(Role.ROLE_ADMIN, "관리자 권한", null));
-        roleInPort.save(new RoleEntity(Role.ROLE_VIP, "특급 권한", Role.ROLE_ADMIN));
+        roleInPort.save(new RoleEntity(Role.ROLE_ADMIN, "관리자 권한", null, List.of()));
+        roleInPort.save(new RoleEntity(Role.ROLE_VIP, "특급 권한", Role.ROLE_ADMIN, List.of()));
 
         uriInPort.save(new UriEntity("/api/admin/**", 1, List.of(Role.ROLE_ADMIN)));
         uriInPort.save(new UriEntity("/api/vip/**", 1, List.of(Role.ROLE_VIP)));

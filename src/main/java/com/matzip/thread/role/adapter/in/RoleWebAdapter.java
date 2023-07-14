@@ -4,8 +4,6 @@ import com.matzip.thread.common.annotation.WebAdapter;
 import com.matzip.thread.role.application.prot.in.RoleInPort;
 import com.matzip.thread.role.domain.Role;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,12 +19,12 @@ class RoleWebAdapter {
 
     @GetMapping("/{role}")
     RoleResponse findByRole(@PathVariable Role role) {
-        return RoleResponse.fromEntity(roleInPort.findByRole(role));
+        return RoleResponse.toResponse(roleInPort.findByRole(role));
     }
 
     @GetMapping
     List<RoleResponse> findAll() {
-        return roleInPort.findAll().stream().map(RoleResponse::fromEntity).toList();
+        return roleInPort.findAll().stream().map(RoleResponse::toResponse).toList();
     }
 
     @PostMapping
