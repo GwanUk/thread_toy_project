@@ -9,14 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-class RoleSaveRequest {
+class RoleSave {
     @NotNull
     private final Role role;
     private final String description;
     private final Role parent;
     private final List<Role> children = new ArrayList<>();
 
-    RoleSaveRequest(Role role, String description, Role parent, List<Role> children) {
+    RoleSave(Role role, String description, Role parent, List<Role> children) {
         this.role = role;
         this.description = description;
         this.parent = parent;

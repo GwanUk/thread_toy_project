@@ -2,7 +2,7 @@ package com.matzip.thread.security.configs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.matzip.thread.ipaddress.application.port.in.IpAddressQueryInPort;
-import com.matzip.thread.role.application.prot.in.RoleHierarchyInPort;
+import com.matzip.thread.role.application.prot.in.RoleHierarchyPort;
 import com.matzip.thread.security.filter.ApiAuthenticationProcessingFilter;
 import com.matzip.thread.security.handler.ApiAccessDeniedHandler;
 import com.matzip.thread.security.handler.ApiAuthenticationEntryPoint;
@@ -44,7 +44,7 @@ public class SecurityConfig {
     private final PasswordEncoder passwordEncoder;
     private final UserQueryInPort userQueryInPort;
     private final UriQueryInPort uriQueryInPort;
-    private final RoleHierarchyInPort roleHierarchyInPort;
+    private final RoleHierarchyPort roleHierarchyPort;
     private final IpAddressQueryInPort ipAddressQueryInPort;
 
     @Bean
@@ -129,7 +129,7 @@ public class SecurityConfig {
     @Bean
     public RoleHierarchyImpl roleHierarchy() {
         RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-        roleHierarchy.setHierarchy(roleHierarchyInPort.getHierarchy());
+        roleHierarchy.setHierarchy(roleHierarchyPort.getHierarchy());
         return roleHierarchy;
     }
 }

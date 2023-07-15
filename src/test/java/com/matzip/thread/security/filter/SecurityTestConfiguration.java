@@ -1,7 +1,7 @@
 package com.matzip.thread.security.filter;
 
 import com.matzip.thread.ipaddress.application.port.in.IpAddressQueryInPort;
-import com.matzip.thread.role.application.prot.in.RoleHierarchyInPort;
+import com.matzip.thread.role.application.prot.in.RoleHierarchyPort;
 import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.security.configs.SecurityConfig;
 import com.matzip.thread.uri.application.port.in.UriQueryInPort;
@@ -66,8 +66,8 @@ class SecurityTestConfiguration {
     }
 
     @Bean
-    public RoleHierarchyInPort roleHierarchyInPort() {
-        return new RoleHierarchyInPort() {
+    public RoleHierarchyPort roleHierarchyInPort() {
+        return new RoleHierarchyPort() {
             @Override
             public String getHierarchy() {
                 return "ROLE_VIP > ROLE_USER\n" +

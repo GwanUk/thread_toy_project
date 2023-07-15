@@ -11,4 +11,8 @@ public interface RoleWebPort {
     List<RoleEntity> findAll();
 
     void save(RoleEntity roleEntity);
+
+    void update(Role role, RoleEntity roleEntity);
+
+    void delete(Role role);
 }

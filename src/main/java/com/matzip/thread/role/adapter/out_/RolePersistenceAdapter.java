@@ -5,7 +5,7 @@ import com.matzip.thread.common.annotation.PersistenceAdapter;
 import com.matzip.thread.common.annotation.Validation;
 import com.matzip.thread.common.exception.ApplicationConventionViolationException;
 import com.matzip.thread.common.exception.NotFoundDataException;
-import com.matzip.thread.role.application.prot.out_.RoleOutPort;
+import com.matzip.thread.role.application.prot.out_.RolePersistencePort;
 import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.role.domain.RoleEntity;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ import static java.util.Objects.nonNull;
 
 @PersistenceAdapter
 @RequiredArgsConstructor
-class RolePersistenceAdapter implements RoleOutPort {
+class RolePersistenceAdapter implements RolePersistencePort {
 
     private final RoleJpaRepository roleJpaRepository;
 

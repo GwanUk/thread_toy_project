@@ -1,7 +1,7 @@
 package com.matzip.thread.role.application.service;
 
 import com.matzip.thread.common.exception.NotFoundDataException;
-import com.matzip.thread.role.application.prot.out_.RoleOutPort;
+import com.matzip.thread.role.application.prot.out_.RolePersistencePort;
 import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.role.domain.RoleEntity;
 import org.assertj.core.api.BDDAssertions;
@@ -20,7 +20,7 @@ class RoleServiceTest {
     @InjectMocks
     private RoleService roleService;
     @Mock
-    private RoleOutPort roleOutPort;
+    private RolePersistencePort rolePersistencePort;
 
     @Test
     @DisplayName("role user 저장 서비스 성공")
@@ -33,7 +33,7 @@ class RoleServiceTest {
 
         // then
         ArgumentCaptor<RoleEntity> roleEntityArgumentCaptor = ArgumentCaptor.forClass(RoleEntity.class);
-        BDDMockito.then(roleOutPort).should(Mockito.times(1)).save(roleEntityArgumentCaptor.capture());
+        BDDMockito.then(rolePersistencePort).should(Mockito.times(1)).save(roleEntityArgumentCaptor.capture());
         BDDAssertions.then(roleEntityArgumentCaptor.getValue().getRole()).isEqualTo(Role.ROLE_USER);
         BDDAssertions.then(roleEntityArgumentCaptor.getValue().getDescription()).isEqualTo("유저 권한");
     }
@@ -42,7 +42,7 @@ class RoleServiceTest {
     @DisplayName("role 조회 by user 권한 서비스 성공")
     void findByRole() {
         // given
-        BDDMockito.given(roleOutPort.findByRole(Mockito.any())).willReturn(Optional.of(new RoleEntity(Role.ROLE_USER, "유저 권한", null, List.of())));
+        BDDMockito.given(rolePersistencePort.findByRole(Mockito.any())).willReturn(Optional.of(new RoleEntity(Role.ROLE_USER, "유저 권한", null, List.of())));
 
         // when
         RoleEntity findRoleEntity = roleService.findByRole(Role.ROLE_USER);
@@ -56,7 +56,7 @@ class RoleServiceTest {
     @DisplayName("role 조회 by user 권한 서비스 실패")
     void findByRole_failure() {
         // given
-        BDDMockito.given(roleOutPort.findByRole(Mockito.any())).willReturn(Optional.empty());
+        BDDMockito.given(rolePersistencePort.findByRole(Mockito.any())).willReturn(Optional.empty());
 
         // expected
         BDDAssertions.thenThrownBy(() -> roleService.findByRole(Role.ROLE_USER)).isInstanceOf(NotFoundDataException.class);
@@ -66,7 +66,7 @@ class RoleServiceTest {
     @DisplayName("role 권한 전체 조회 성공 서비스")
     void findAll() {
         // given
-        BDDMockito.given(roleOutPort.findAll()).willReturn(List.of(
+        BDDMockito.given(rolePersistencePort.findAll()).willReturn(List.of(
                 new RoleEntity(Role.ROLE_USER, "유저 권한", null, List.of()),
                 new RoleEntity(Role.ROLE_VIP, "특별 권한", null, List.of()),
                 new RoleEntity(Role.ROLE_MANAGER, "매니저 권한", null, List.of()),
@@ -94,7 +94,7 @@ class RoleServiceTest {
     @DisplayName("롤 권한 계층화 성공")
     void getHierarchy() {
         // given
-        BDDMockito.given(roleOutPort.findAll()).willReturn(List.of(
+        BDDMockito.given(rolePersistencePort.findAll()).willReturn(List.of(
                 new RoleEntity(Role.ROLE_USER, "유저 권한", Role.ROLE_VIP, List.of()),
                 new RoleEntity(Role.ROLE_VIP, "특별 권한", Role.ROLE_ADMIN, List.of()),
                 new RoleEntity(Role.ROLE_MANAGER, "매니저 권한", Role.ROLE_ADMIN, List.of()),

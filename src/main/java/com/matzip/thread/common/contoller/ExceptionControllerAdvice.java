@@ -18,9 +18,7 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse httpMessageNotReadableException(HttpMessageNotReadableException exception) {
-        ErrorResponse errorResponse = new ErrorResponse("Http message not readable");
-        log.error("Http message not readable", exception);
-        return errorResponse;
+        return new ErrorResponse("Http message not readable");
     }
 
     @ExceptionHandler
@@ -28,7 +26,6 @@ public class ExceptionControllerAdvice {
     public ErrorResponse methodArgumentTypeMismatchException(MethodArgumentTypeMismatchException exception) {
         ErrorResponse response = new ErrorResponse("Failed to convert value");
         response.addFieldError(exception.getName(), exception.getErrorCode(), exception.getValue());
-        log.error("Failed to convert value", exception);
         return response;
     }
 
@@ -37,7 +34,6 @@ public class ExceptionControllerAdvice {
     public ErrorResponse invalidRequestHandler(MethodArgumentNotValidException exception) {
         ErrorResponse response = new ErrorResponse("Invalid argument value");
         exception.getFieldErrors().iterator().forEachRemaining(response::addFieldError);
-        log.error("Invalid argument value", exception);
         return response;
     }
 

@@ -18,4 +18,8 @@ public class RoleEntity {
         this.parent = parent;
         this.children.addAll(children);
     }
+
+    public String getHierarchyString() {
+        return parent.name() + " > " + role.name() + "\n";
+    }
 }

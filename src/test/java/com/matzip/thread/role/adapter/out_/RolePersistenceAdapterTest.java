@@ -4,7 +4,7 @@ import com.matzip.thread.common.aop.ValidationAspect;
 import com.matzip.thread.common.exception.ApplicationConventionViolationException;
 import com.matzip.thread.common.exception.NotFoundDataException;
 import com.matzip.thread.common.exception.NullArgumentException;
-import com.matzip.thread.role.application.prot.out_.RoleOutPort;
+import com.matzip.thread.role.application.prot.out_.RolePersistencePort;
 import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.role.domain.RoleEntity;
 import org.assertj.core.api.BDDAssertions;
@@ -27,7 +27,7 @@ import java.util.Optional;
 class RolePersistenceAdapterTest {
 
     @Autowired
-    private RoleOutPort rolePersistenceAdapter;
+    private RolePersistencePort rolePersistenceAdapter;
 
     @Test
     @Sql("/sql/role/role-repository-test-data.sql")
