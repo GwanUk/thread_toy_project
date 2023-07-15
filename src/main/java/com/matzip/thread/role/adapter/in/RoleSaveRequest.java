@@ -4,17 +4,19 @@ import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.role.domain.RoleEntity;
 import lombok.Getter;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 class RoleSaveRequest {
+    @NotNull
     private final Role role;
     private final String description;
     private final Role parent;
     private final List<Role> children = new ArrayList<>();
 
-    public RoleSaveRequest(Role role, String description, Role parent, List<Role> children) {
+    RoleSaveRequest(Role role, String description, Role parent, List<Role> children) {
         this.role = role;
         this.description = description;
         this.parent = parent;

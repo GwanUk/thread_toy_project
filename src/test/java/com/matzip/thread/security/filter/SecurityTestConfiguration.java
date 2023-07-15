@@ -13,7 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +29,11 @@ class SecurityTestConfiguration {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Bean
+    public SecurityTestController securityTestController() {
+        return new SecurityTestController();
+    }
 
     @Bean
     public UserQueryInPort userQueryInPort() {
@@ -76,5 +85,30 @@ class SecurityTestConfiguration {
                 return List.of("0:0:0:0:0:0:0:1");
             }
         };
+    }
+
+    @ResponseBody
+    @RequestMapping("/api")
+    static class SecurityTestController {
+
+        @GetMapping(value = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
+        String user() {
+            return "user";
+        }
+
+        @GetMapping(value = "/vip", produces = MediaType.APPLICATION_JSON_VALUE)
+        String vip() {
+            return "vip";
+        }
+
+        @GetMapping(value = "/manager", produces = MediaType.APPLICATION_JSON_VALUE)
+        String manager() {
+            return "manager";
+        }
+
+        @GetMapping(value = "/admin", produces = MediaType.APPLICATION_JSON_VALUE)
+        String admin() {
+            return "admin";
+        }
     }
 }

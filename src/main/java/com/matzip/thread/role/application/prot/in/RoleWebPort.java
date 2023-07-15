@@ -5,7 +5,7 @@ import com.matzip.thread.role.domain.RoleEntity;
 
 import java.util.List;
 
-public interface RoleInPort {
+public interface RoleWebPort {
     RoleEntity findByRole(Role role);
 
     List<RoleEntity> findAll();
