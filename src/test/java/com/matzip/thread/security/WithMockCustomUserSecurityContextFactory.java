@@ -20,11 +20,13 @@ public class WithMockCustomUserSecurityContextFactory implements WithSecurityCon
 
         String username = annotation.username();
         String role = annotation.role();
+        String ipAddress = annotation.ipAddress();
+
         UserEntity userEntity = new UserEntity(username, null, null, Role.valueOf(role));
         List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
 
         AbstractAuthenticationToken authenticationToken = new ApiAuthenticationToken(userEntity, null, authorities);
-        WebAuthenticationDetails webAuthenticationDetails = new WebAuthenticationDetails("0:0:0:0:0:0:0:1", null);
+        WebAuthenticationDetails webAuthenticationDetails = new WebAuthenticationDetails(ipAddress, null);
 
         authenticationToken.setDetails(webAuthenticationDetails);
         securityContext.setAuthentication(authenticationToken);

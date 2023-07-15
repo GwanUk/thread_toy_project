@@ -13,4 +13,5 @@ public @interface WithMockCustomUser {
 
     String role() default "ROLE_USER";
 
+    String ipAddress() default "0:0:0:0:0:0:0:1";
 }

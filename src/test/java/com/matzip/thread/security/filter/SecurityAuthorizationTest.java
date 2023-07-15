@@ -43,6 +43,18 @@ public class SecurityAuthorizationTest {
     }
 
     @Test
+    @WithMockCustomUser(ipAddress = "0:0:0:0:0:0:0:2")
+    @DisplayName("차단된 ipAddress")
+    void request_blocked_ipAddress() throws Exception {
+        // expected
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/user")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isForbidden())
+                .andExpect(MockMvcResultMatchers.content().string("Access denied"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
     @WithMockCustomUser(username = "admin", role = "ROLE_ADMIN")
     @DisplayName("요청 ROLE_ADMIN 인증 성공")
     void request_success_admin() throws Exception {

@@ -14,17 +14,17 @@ class SecurityTestController {
             return "user";
         }
 
-        @GetMapping("/vip")
+        @GetMapping(value = "/vip", produces = MediaType.APPLICATION_JSON_VALUE)
         String vip() {
             return "vip";
         }
 
-        @GetMapping("/manager")
+        @GetMapping(value = "/manager", produces = MediaType.APPLICATION_JSON_VALUE)
         String manager() {
             return "manager";
         }
 
-        @GetMapping("/admin")
+        @GetMapping(value = "/admin", produces = MediaType.APPLICATION_JSON_VALUE)
         String admin() {
             return "admin";
         }
