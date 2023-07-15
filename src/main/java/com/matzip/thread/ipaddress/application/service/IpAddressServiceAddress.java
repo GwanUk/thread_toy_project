@@ -17,7 +17,6 @@ class IpAddressServiceAddress implements IpAddressInPort {
 
     private final IpAddressOutPort ipAddressOutPort;
 
-    @Override
     public IpAddressEntity findByIpAddress(String ipAddress) {
         return ipAddressOutPort.findByIpAddress(ipAddress)
                 .orElseThrow(() -> new NotFoundDataException(ipAddress));

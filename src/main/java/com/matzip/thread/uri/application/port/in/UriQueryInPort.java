@@ -2,6 +2,8 @@ package com.matzip.thread.uri.application.port.in;
 
 import com.matzip.thread.uri.domain.UriEntity;
 
-public interface UriInPort extends UriQueryInPort{
-    void save(UriEntity uriEntity);
+import java.util.List;
+
+public interface UriQueryInPort {
+    List<UriEntity> findAll();
 }

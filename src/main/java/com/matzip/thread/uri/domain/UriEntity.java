@@ -1,7 +1,6 @@
 package com.matzip.thread.uri.domain;
 
 import com.matzip.thread.role.domain.Role;
-import com.matzip.thread.role.domain.RoleEntity;
 import lombok.Getter;
 
 import java.util.ArrayList;

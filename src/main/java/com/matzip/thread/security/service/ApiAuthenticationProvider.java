@@ -1,6 +1,6 @@
 package com.matzip.thread.security.service;
 
-import com.matzip.thread.common.exception.security.ApiAuthenticationException;
+import com.matzip.thread.common.exception.securityexception.SignInFailedException;
 import com.matzip.thread.security.token.ApiAuthenticationToken;
 import com.matzip.thread.user.domain.UserEntity;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +37,7 @@ public class ApiAuthenticationProvider implements AuthenticationProvider {
         Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
 
         if (!isPasswordMatches(password, encodedPassword)) {
-            throw new ApiAuthenticationException("Invalid password");
+            throw new SignInFailedException();
         }
 
         return new ApiAuthenticationToken(userEntity, null, authorities);

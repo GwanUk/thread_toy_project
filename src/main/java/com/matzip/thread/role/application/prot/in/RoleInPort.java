@@ -11,6 +11,4 @@ public interface RoleInPort {
     List<RoleEntity> findAll();
 
     void save(RoleEntity roleEntity);
-
-    String getHierarchy();
 }

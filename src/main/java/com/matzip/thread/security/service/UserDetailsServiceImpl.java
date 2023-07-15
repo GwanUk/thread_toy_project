@@ -1,7 +1,7 @@
 package com.matzip.thread.security.service;
 
-import com.matzip.thread.common.exception.security.ApiAuthenticationException;
-import com.matzip.thread.user.application.port.in.UserInPort;
+import com.matzip.thread.common.exception.securityexception.SignInFailedException;
+import com.matzip.thread.user.application.port.in.UserQueryInPort;
 import com.matzip.thread.user.domain.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,7 +13,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
-    private final UserInPort userInPort;
+    private final UserQueryInPort userQueryInPort;
 
     /**
      * 유저가 존재하면 UserContext 객체에 User 객체와 GrantedAuthority 리스트를 담아서 리턴
@@ -24,8 +24,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        UserEntity userEntity = userInPort.findByUsername(username)
-                .orElseThrow(() -> new ApiAuthenticationException("The user does not exist"));
+        UserEntity userEntity = userQueryInPort.findByUsername(username)
+                .orElseThrow(SignInFailedException::new);
 
         List<SimpleGrantedAuthority> roles = List.of(new SimpleGrantedAuthority(userEntity.getRole().name()));
 

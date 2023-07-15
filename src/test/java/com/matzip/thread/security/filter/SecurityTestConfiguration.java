@@ -1,0 +1,80 @@
+package com.matzip.thread.security.filter;
+
+import com.matzip.thread.ipaddress.application.port.in.IpAddressQueryInPort;
+import com.matzip.thread.role.application.prot.in.RoleHierarchyInPort;
+import com.matzip.thread.role.domain.Role;
+import com.matzip.thread.security.configs.SecurityConfig;
+import com.matzip.thread.uri.application.port.in.UriQueryInPort;
+import com.matzip.thread.uri.domain.UriEntity;
+import com.matzip.thread.user.application.port.in.UserQueryInPort;
+import com.matzip.thread.user.domain.PasswordEncoderFactoryBean;
+import com.matzip.thread.user.domain.UserEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.List;
+import java.util.Optional;
+
+@TestConfiguration
+@Import(value = {SecurityConfig.class,
+        PasswordEncoderFactoryBean.class})
+class SecurityTestConfiguration {
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Bean
+    public UserQueryInPort userQueryInPort() {
+        return new UserQueryInPort() {
+            @Override
+            public Optional<UserEntity> findByUsername(String username) {
+                return switch (username) {
+                    case "user" -> Optional.of(new UserEntity("user", "user", passwordEncoder.encode("1234"), Role.ROLE_USER));
+                    case "vip" -> Optional.of(new UserEntity("vip", "vip", passwordEncoder.encode("1234"), Role.ROLE_VIP));
+                    case "manager" -> Optional.of(new UserEntity("manager", "manager", passwordEncoder.encode("1234"), Role.ROLE_MANAGER));
+                    case "admin" -> Optional.of(new UserEntity("admin", "admin", passwordEncoder.encode("1234"), Role.ROLE_ADMIN));
+                    default -> Optional.empty();
+                };
+            }
+        };
+    }
+
+    @Bean
+    public UriQueryInPort uriInPort() {
+        return new UriQueryInPort() {
+            @Override
+            public List<UriEntity> findAll() {
+                UriEntity user = new UriEntity("/api/user", 1, List.of(Role.ROLE_USER));
+                UriEntity vip = new UriEntity("/api/vip", 2, List.of(Role.ROLE_VIP));
+                UriEntity manger = new UriEntity("/api/manger", 3, List.of(Role.ROLE_MANAGER));
+                UriEntity admin = new UriEntity("/api/admin", 4, List.of(Role.ROLE_ADMIN));
+                return List.of(user, vip, manger, admin);
+            }
+        };
+    }
+
+    @Bean
+    public RoleHierarchyInPort roleHierarchyInPort() {
+        return new RoleHierarchyInPort() {
+            @Override
+            public String getHierarchy() {
+                return "ROLE_VIP > ROLE_USER\n" +
+                        "ROLE_ADMIN > ROLE_VIP\n" +
+                        "ROLE_ADMIN > ROLE_MANAGER\n";
+            }
+        };
+    }
+
+    @Bean
+    public IpAddressQueryInPort ipAddressQueryInPort() {
+        return new IpAddressQueryInPort() {
+            @Override
+            public List<String> getIpAddresses() {
+                return List.of("0:0:0:0:0:0:0:1");
+            }
+        };
+    }
+}

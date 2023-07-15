@@ -3,7 +3,7 @@ package com.matzip.thread.role.adapter.out_;
 import com.matzip.thread.common.annotation.NullCheck;
 import com.matzip.thread.common.annotation.PersistenceAdapter;
 import com.matzip.thread.common.annotation.Validation;
-import com.matzip.thread.common.exception.security.ApplicationConventionViolationException;
+import com.matzip.thread.common.exception.ApplicationConventionViolationException;
 import com.matzip.thread.common.exception.NotFoundDataException;
 import com.matzip.thread.role.application.prot.out_.RoleOutPort;
 import com.matzip.thread.role.domain.Role;

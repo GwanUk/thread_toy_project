@@ -1,7 +1,7 @@
 package com.matzip.thread.security.service;
 
-import com.matzip.thread.ipaddress.application.port.in.IpAddressInPort;
-import com.matzip.thread.common.exception.security.AccessDeniedIpAddressException;
+import com.matzip.thread.common.exception.securityexception.AccessDeniedIpAddressException;
+import com.matzip.thread.ipaddress.application.port.in.IpAddressQueryInPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.ConfigAttribute;
@@ -14,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class IpAddressVoter implements AccessDecisionVoter<Object> {
 
-    private final IpAddressInPort ipAddressInPort;
+    private final IpAddressQueryInPort ipAddressQueryInPort;
 
     @Override
     public boolean supports(ConfigAttribute attribute) {
@@ -37,12 +37,12 @@ public class IpAddressVoter implements AccessDecisionVoter<Object> {
     public int vote(Authentication authentication, Object object, Collection<ConfigAttribute> attributes) {
         WebAuthenticationDetails details = (WebAuthenticationDetails) authentication.getDetails();
         String remoteAddress = details.getRemoteAddress();
-        List<String> ipAddresses = ipAddressInPort.getIpAddresses();
+        List<String> ipAddresses = ipAddressQueryInPort.getIpAddresses();
 
         if (ipAddresses.stream()
                 .noneMatch(remoteAddress::equals)) {
 
-            throw new AccessDeniedIpAddressException("차단된 아이피");
+            throw new AccessDeniedIpAddressException(remoteAddress);
         }
 
         return ACCESS_ABSTAIN;

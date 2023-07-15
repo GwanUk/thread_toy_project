@@ -1,6 +1,7 @@
 package com.matzip.thread.role.application.service;
 
 import com.matzip.thread.common.exception.NotFoundDataException;
+import com.matzip.thread.role.application.prot.in.RoleHierarchyInPort;
 import com.matzip.thread.role.application.prot.in.RoleInPort;
 import com.matzip.thread.role.application.prot.out_.RoleOutPort;
 import com.matzip.thread.role.domain.Role;
@@ -15,7 +16,7 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-class RoleService implements RoleInPort {
+class RoleService implements RoleInPort, RoleHierarchyInPort {
 
     private final RoleOutPort roleOutPort;
 
