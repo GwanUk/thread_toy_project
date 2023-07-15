@@ -1,6 +1,5 @@
-package com.matzip.thread.common.exception.security;
+package com.matzip.thread.common.exception;
 
-import com.matzip.thread.common.exception.ApplicationException;
 import org.springframework.http.HttpStatus;
 
 public class ApplicationConventionViolationException extends ApplicationException {

@@ -39,14 +39,14 @@ public class ApiAuthenticationProcessingFilter extends AbstractAuthenticationPro
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException {
         if (!isPostAndJson(request, response)) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            response.getWriter().print("Supports only POST HTTP Method and application/json Content-Type");
+            response.getWriter().print("Supports only POST and application/json");
             return null;
         }
 
         SignInRequest signInRequest = objectMapper.readValue(request.getReader(), SignInRequest.class);
         if (!signInRequest.validate()) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
-            response.getWriter().print("username or Password is required value");
+            response.getWriter().print("non-existent user or a wrong password");
             return null;
         }
 
@@ -54,8 +54,9 @@ public class ApiAuthenticationProcessingFilter extends AbstractAuthenticationPro
         return getAuthenticationManager().authenticate(authenticationToken);
     }
 
-    private boolean isPostAndJson(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private boolean isPostAndJson(HttpServletRequest request, HttpServletResponse response) {
         return Objects.equals(request.getMethod(), HttpMethod.POST.toString())
-                && Objects.equals(request.getContentType(), MediaType.APPLICATION_JSON_VALUE);
+                && Objects.equals(request.getContentType(), MediaType.APPLICATION_JSON_VALUE)
+                && Objects.equals(request.getHeader("accept"), MediaType.APPLICATION_JSON_VALUE);
     }
 }

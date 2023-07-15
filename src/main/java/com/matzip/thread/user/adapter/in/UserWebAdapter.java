@@ -12,7 +12,7 @@ import javax.validation.Valid;
 
 @WebAdapter(path = "/api/users")
 @RequiredArgsConstructor
-class UseWebAdapter {
+class UserWebAdapter {
 
     private final UserInPort userInPort;
 

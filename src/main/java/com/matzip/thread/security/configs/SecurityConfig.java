@@ -1,8 +1,8 @@
 package com.matzip.thread.security.configs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.matzip.thread.ipaddress.application.port.in.IpAddressInPort;
-import com.matzip.thread.role.application.prot.in.RoleInPort;
+import com.matzip.thread.ipaddress.application.port.in.IpAddressQueryInPort;
+import com.matzip.thread.role.application.prot.in.RoleHierarchyInPort;
 import com.matzip.thread.security.filter.ApiAuthenticationProcessingFilter;
 import com.matzip.thread.security.handler.ApiAccessDeniedHandler;
 import com.matzip.thread.security.handler.ApiAuthenticationEntryPoint;
@@ -12,8 +12,8 @@ import com.matzip.thread.security.service.ApiAuthenticationProvider;
 import com.matzip.thread.security.service.IpAddressVoter;
 import com.matzip.thread.security.service.UrlFilterInvocationSecurityMetadataSource;
 import com.matzip.thread.security.service.UserDetailsServiceImpl;
-import com.matzip.thread.uri.application.port.in.UriInPort;
-import com.matzip.thread.user.application.port.in.UserInPort;
+import com.matzip.thread.uri.application.port.in.UriQueryInPort;
+import com.matzip.thread.user.application.port.in.UserQueryInPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,10 +42,10 @@ public class SecurityConfig {
     private final ObjectMapper objectMapper;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final PasswordEncoder passwordEncoder;
-    private final UserInPort userInPort;
-    private final UriInPort uriInPort;
-    private final RoleInPort roleInPort;
-    private final IpAddressInPort ipAddressInPort;
+    private final UserQueryInPort userQueryInPort;
+    private final UriQueryInPort uriQueryInPort;
+    private final RoleHierarchyInPort roleHierarchyInPort;
+    private final IpAddressQueryInPort ipAddressQueryInPort;
 
     @Bean
     public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
@@ -81,7 +81,7 @@ public class SecurityConfig {
     }
     @Bean
     public UserDetailsService userDetailsService() {
-        return new UserDetailsServiceImpl(userInPort);
+        return new UserDetailsServiceImpl(userQueryInPort);
     }
 
     @Bean
@@ -104,7 +104,7 @@ public class SecurityConfig {
 
     @Bean
     public UrlFilterInvocationSecurityMetadataSource urlFilterInvocationSecurityMetadataSource() {
-        return new UrlFilterInvocationSecurityMetadataSource(uriInPort);
+        return new UrlFilterInvocationSecurityMetadataSource(uriQueryInPort);
     }
 
     private AffirmativeBased affirmativeBased() {
@@ -118,7 +118,7 @@ public class SecurityConfig {
 
     @Bean
     public AccessDecisionVoter<?> ipAddressVoter() {
-        return new IpAddressVoter(ipAddressInPort);
+        return new IpAddressVoter(ipAddressQueryInPort);
     }
 
     @Bean
@@ -129,7 +129,7 @@ public class SecurityConfig {
     @Bean
     public RoleHierarchyImpl roleHierarchy() {
         RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-        roleHierarchy.setHierarchy(roleInPort.getHierarchy());
+        roleHierarchy.setHierarchy(roleHierarchyInPort.getHierarchy());
         return roleHierarchy;
     }
 }
