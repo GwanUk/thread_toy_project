@@ -3,7 +3,7 @@ package com.matzip.thread.role.adapter.out_;
 import com.matzip.thread.common.annotation.NullCheck;
 import com.matzip.thread.common.annotation.PersistenceAdapter;
 import com.matzip.thread.common.annotation.Validation;
-import com.matzip.thread.common.exception.ApplicationConventionViolationException;
+import com.matzip.thread.common.exception.DuplicationApplicationConvention;
 import com.matzip.thread.common.exception.NotFoundDataException;
 import com.matzip.thread.role.application.prot.out_.RolePersistencePort;
 import com.matzip.thread.role.domain.Role;
@@ -62,9 +62,15 @@ class RolePersistenceAdapter implements RolePersistencePort {
     @Override
     @Validation
     public void update(Role role, @NullCheck RoleEntity roleEntity) {
-        RoleJpaEntity findRoleJpaEntity = roleJpaRepository.findByRole(role)
-                .orElseThrow(() -> new NotFoundDataException(role.name()));
+        Optional<RoleJpaEntity> optionalRoleJpaEntity = roleJpaRepository.findByRole(role);
+        if (optionalRoleJpaEntity.isEmpty()) {
+            save(roleEntity);
+            return;
+        }
 
+        RoleJpaEntity findRoleJpaEntity = optionalRoleJpaEntity.get();
+
+        roleEntity.validate();
         Role updatingRole = roleEntity.getRole();
         String updatingDescription = roleEntity.getDescription();
         Role updatingParent = roleEntity.getParent();
@@ -95,7 +101,7 @@ class RolePersistenceAdapter implements RolePersistencePort {
     private void checkDuplication(Role role, Role updatingRole) {
         if (!role.equals(updatingRole)
                 && roleJpaRepository.findByRole(updatingRole).isPresent()) {
-            throw new ApplicationConventionViolationException(updatingRole.name() + " that already exists");
+            throw new DuplicationApplicationConvention(updatingRole.name());
         }
     }
 

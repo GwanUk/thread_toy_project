@@ -1,7 +1,7 @@
 package com.matzip.thread.role.adapter.out_;
 
 import com.matzip.thread.common.aop.ValidationAspect;
-import com.matzip.thread.common.exception.ApplicationConventionViolationException;
+import com.matzip.thread.common.exception.DuplicationApplicationConvention;
 import com.matzip.thread.common.exception.NotFoundDataException;
 import com.matzip.thread.common.exception.NullArgumentException;
 import com.matzip.thread.role.application.prot.out_.RolePersistencePort;
@@ -114,7 +114,7 @@ class RolePersistenceAdapterTest {
         // expected
         BDDAssertions.thenThrownBy(() -> rolePersistenceAdapter.save(null))
                 .isInstanceOf(NullArgumentException.class)
-                .hasMessage("RoleEntity");
+                .hasMessage("Argument is empty: RoleEntity");
     }
 
     @Test
@@ -233,19 +233,7 @@ class RolePersistenceAdapterTest {
         // expected
         BDDAssertions.thenThrownBy(() -> rolePersistenceAdapter.update(Role.ROLE_USER, null))
                 .isInstanceOf(NullArgumentException.class)
-                .hasMessage("RoleEntity");
-    }
-
-    @Test
-    @DisplayName("등록 되지 않은 권한을 업데이트 시도. 예외 발생")
-    void update_not_exist_role() {
-        // given
-        RoleEntity roleEntity = new RoleEntity(Role.ROLE_MANAGER, "매니저 권한", null, List.of());
-
-        // expected
-        BDDAssertions.thenThrownBy(() -> rolePersistenceAdapter.update(Role.ROLE_USER, roleEntity))
-                .isInstanceOf(NotFoundDataException.class)
-                .hasMessage(Role.ROLE_USER.name());
+                .hasMessage("Argument is empty: RoleEntity");
     }
 
     @Test
@@ -257,8 +245,8 @@ class RolePersistenceAdapterTest {
 
         // expected
         BDDAssertions.thenThrownBy(() -> rolePersistenceAdapter.update(Role.ROLE_USER, roleEntity))
-                .isInstanceOf(ApplicationConventionViolationException.class)
-                .hasMessage("ROLE_ADMIN that already exists");
+                .isInstanceOf(DuplicationApplicationConvention.class)
+                .hasMessage("Already exists: ROLE_ADMIN");
     }
 
     @Test

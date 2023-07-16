@@ -12,4 +12,7 @@ public interface RoleJpaRepository extends JpaRepository<RoleJpaEntity, Long> {
 
     @Query("select r from RoleJpaEntity r where r.role in :roles")
     List<RoleJpaEntity> findInRoles(List<Role> roles);
+
+    //TODO findAllWithChildren
+    //TODO findByRoleWithOptimisticLock
 }

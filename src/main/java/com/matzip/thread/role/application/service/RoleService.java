@@ -1,6 +1,5 @@
 package com.matzip.thread.role.application.service;
 
-import com.matzip.thread.common.exception.NotFoundDataException;
 import com.matzip.thread.role.application.prot.in.RoleHierarchyPort;
 import com.matzip.thread.role.application.prot.in.RoleWebPort;
 import com.matzip.thread.role.application.prot.out_.RolePersistencePort;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.joining;
@@ -23,8 +23,8 @@ class RoleService implements RoleWebPort, RoleHierarchyPort {
     private final RolePersistencePort rolePersistencePort;
 
     @Override
-    public RoleEntity findByRole(Role role) {
-        return rolePersistencePort.findByRole(role).orElseThrow(() -> new NotFoundDataException(role.name()));
+    public Optional<RoleEntity> findByRole(Role role) {
+        return rolePersistencePort.findByRole(role);
     }
 
     @Override
@@ -47,12 +47,14 @@ class RoleService implements RoleWebPort, RoleHierarchyPort {
     }
 
     @Override
+    @Transactional
     public void update(Role role, RoleEntity roleEntity) {
-
+        rolePersistencePort.update(role, roleEntity);
     }
 
     @Override
+    @Transactional
     public void delete(Role role) {
-
+        rolePersistencePort.delete(role);
     }
 }

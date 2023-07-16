@@ -14,6 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.matzip.thread.role.domain.Role.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -70,7 +71,7 @@ class RoleWebAdapterTest {
     @DisplayName("단건 조회 요청")
     void findByRole() throws Exception {
         // given
-        given(roleWebPort.findByRole(any())).willReturn(new RoleEntity(ROLE_USER, "유저 권한", null, List.of()));
+        given(roleWebPort.findByRole(any())).willReturn(Optional.of(new RoleEntity(ROLE_USER, "유저 권한", null, List.of())));
 
         // expected
         mockMvc.perform(get("/api/role/{role}", ROLE_USER)
@@ -206,12 +207,12 @@ class RoleWebAdapterTest {
                 .andDo(print());
 
         // then
-        ArgumentCaptor<RoleEntity> roleEntityArgumentCaptor = ArgumentCaptor.forClass(RoleEntity.class);
-        then(roleWebPort).should(times(1)).save(roleEntityArgumentCaptor.capture());
-        assertThat(roleEntityArgumentCaptor.getValue().getRole()).isEqualTo(ROLE_VIP);
-        assertThat(roleEntityArgumentCaptor.getValue().getDescription()).isEqualTo("유저 권한");
-        assertThat(roleEntityArgumentCaptor.getValue().getParent()).isEqualTo(ROLE_ADMIN);
-        assertThat(roleEntityArgumentCaptor.getValue().getChildren().get(0)).isEqualTo(ROLE_USER);
+        ArgumentCaptor<RoleEntity> ac = ArgumentCaptor.forClass(RoleEntity.class);
+        then(roleWebPort).should(times(1)).save(ac.capture());
+        assertThat(ac.getValue().getRole()).isEqualTo(ROLE_VIP);
+        assertThat(ac.getValue().getDescription()).isEqualTo("유저 권한");
+        assertThat(ac.getValue().getParent()).isEqualTo(ROLE_ADMIN);
+        assertThat(ac.getValue().getChildren().get(0)).isEqualTo(ROLE_USER);
     }
 
     @Test
@@ -313,12 +314,12 @@ class RoleWebAdapterTest {
                 .andExpect(status().isOk())
                 .andDo(print());
 
-        ArgumentCaptor<RoleEntity> args = ArgumentCaptor.forClass(RoleEntity.class);
-        then(roleWebPort).should(times(1)).update(any(Role.class), args.capture());
-        assertThat(args.getValue().getRole()).isEqualTo(ROLE_VIP);
-        assertThat(args.getValue().getDescription()).isEqualTo("유저 권한");
-        assertThat(args.getValue().getParent()).isEqualTo(ROLE_ADMIN);
-        assertThat(args.getValue().getChildren().get(0)).isEqualTo(ROLE_USER);
+        ArgumentCaptor<RoleEntity> ac = ArgumentCaptor.forClass(RoleEntity.class);
+        then(roleWebPort).should(times(1)).update(any(Role.class), ac.capture());
+        assertThat(ac.getValue().getRole()).isEqualTo(ROLE_VIP);
+        assertThat(ac.getValue().getDescription()).isEqualTo("유저 권한");
+        assertThat(ac.getValue().getParent()).isEqualTo(ROLE_ADMIN);
+        assertThat(ac.getValue().getChildren().get(0)).isEqualTo(ROLE_USER);
     }
 
     @Test

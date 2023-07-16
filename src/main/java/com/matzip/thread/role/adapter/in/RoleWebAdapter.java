@@ -8,6 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @WebAdapter(path = "/api/role")
@@ -16,8 +17,8 @@ class RoleWebAdapter {
     private final RoleWebPort roleWebPort;
 
     @GetMapping("/{role}")
-    RoleResponse findByRole(@PathVariable Role role) {
-        return RoleResponse.toResponse(roleWebPort.findByRole(role));
+    Optional<RoleResponse> findByRole(@PathVariable Role role) {
+        return roleWebPort.findByRole(role).map(RoleResponse::toResponse);
     }
 
     @GetMapping
