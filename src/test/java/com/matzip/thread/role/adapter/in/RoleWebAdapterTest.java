@@ -71,7 +71,7 @@ class RoleWebAdapterTest {
     @DisplayName("단건 조회 요청")
     void findByRole() throws Exception {
         // given
-        given(roleWebPort.findByRole(any())).willReturn(Optional.of(new RoleEntity(ROLE_USER, "유저 권한", null, List.of())));
+        given(roleWebPort.findByRole(any())).willReturn(Optional.of(new RoleEntity(ROLE_USER, "유저 권한", List.of())));
 
         // expected
         mockMvc.perform(get("/api/role/{role}", ROLE_USER)
@@ -89,10 +89,10 @@ class RoleWebAdapterTest {
     void findAll() throws Exception {
         // given
         given(roleWebPort.findAll()).willReturn(List.of(
-                new RoleEntity(ROLE_USER, "유저 권한", null, List.of()),
-                new RoleEntity(ROLE_VIP, "특별 권한", null, List.of()),
-                new RoleEntity(ROLE_MANAGER, "매니저 권한", null, List.of()),
-                new RoleEntity(ROLE_ADMIN, "관리자 권한", null, List.of())
+                new RoleEntity(ROLE_USER, "유저 권한", List.of()),
+                new RoleEntity(ROLE_VIP, "특별 권한", List.of()),
+                new RoleEntity(ROLE_MANAGER, "매니저 권한", List.of()),
+                new RoleEntity(ROLE_ADMIN, "관리자 권한", List.of())
         ));
 
         // expected
@@ -211,7 +211,6 @@ class RoleWebAdapterTest {
         then(roleWebPort).should(times(1)).save(ac.capture());
         assertThat(ac.getValue().getRole()).isEqualTo(ROLE_VIP);
         assertThat(ac.getValue().getDescription()).isEqualTo("유저 권한");
-        assertThat(ac.getValue().getParent()).isEqualTo(ROLE_ADMIN);
         assertThat(ac.getValue().getChildren().get(0)).isEqualTo(ROLE_USER);
     }
 
@@ -318,7 +317,6 @@ class RoleWebAdapterTest {
         then(roleWebPort).should(times(1)).update(any(Role.class), ac.capture());
         assertThat(ac.getValue().getRole()).isEqualTo(ROLE_VIP);
         assertThat(ac.getValue().getDescription()).isEqualTo("유저 권한");
-        assertThat(ac.getValue().getParent()).isEqualTo(ROLE_ADMIN);
         assertThat(ac.getValue().getChildren().get(0)).isEqualTo(ROLE_USER);
     }
 

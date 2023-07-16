@@ -59,9 +59,8 @@ public class RoleJpaEntity extends JpaBaseEntity {
         return new RoleEntity(
                 role,
                 description,
-                Objects.nonNull(parent) ? parent.getRole() : null,
                 children.stream()
-                        .map(RoleJpaEntity::getRole)
+                        .map(RoleJpaEntity::toEntity)
                         .toList()
         );
     }

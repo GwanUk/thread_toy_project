@@ -22,6 +22,6 @@ class RoleResponse {
     }
 
     static RoleResponse toResponse(RoleEntity roleEntity) {
-        return new RoleResponse(roleEntity.getRole(), roleEntity.getDescription(), roleEntity.getParent(), roleEntity.getChildren());
+        return new RoleResponse(roleEntity.getRole(), roleEntity.getDescription(), null, List.of());
     }
 }

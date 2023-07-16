@@ -12,13 +12,11 @@ import static java.util.Objects.isNull;
 public class RoleEntity {
     private final Role role;
     private final String description;
-    private final Role parent;
-    private final List<Role> children = new ArrayList<>();
+    private final List<RoleEntity> children = new ArrayList<>();
 
-    public RoleEntity(Role role, String description, Role parent, List<Role> children) {
+    public RoleEntity(Role role, String description, List<RoleEntity> children) {
         this.role = role;
         this.description = description;
-        this.parent = parent;
         this.children.addAll(children);
         validate();
     }
@@ -27,7 +25,11 @@ public class RoleEntity {
         if (isNull(role)) throw new NullArgumentException("role");
     }
 
-    public String getHierarchyString() {
-        return parent.name() + " > " + role.name() + "\n";
+//    public String getHierarchyString() {
+//        return parent.name() + " > " + role.name() + "\n";
+//    }
+
+    public void addChild(RoleEntity roleEntity) {
+        children.add(roleEntity);
     }
 }

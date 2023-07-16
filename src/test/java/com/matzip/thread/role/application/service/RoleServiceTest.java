@@ -28,10 +28,10 @@ class RoleServiceTest {
     void getHierarchy() {
         // given
         given(rolePersistencePort.findAll()).willReturn(List.of(
-                new RoleEntity(ROLE_USER, "유저 권한", ROLE_VIP, List.of()),
-                new RoleEntity(ROLE_VIP, "특별 권한", ROLE_ADMIN, List.of()),
-                new RoleEntity(ROLE_MANAGER, "매니저 권한", ROLE_ADMIN, List.of()),
-                new RoleEntity(ROLE_ADMIN, "관리자 권한", null, List.of())
+                new RoleEntity(ROLE_USER, "유저 권한", List.of()),
+                new RoleEntity(ROLE_VIP, "특별 권한", List.of()),
+                new RoleEntity(ROLE_MANAGER, "매니저 권한", List.of()),
+                new RoleEntity(ROLE_ADMIN, "관리자 권한", List.of())
         ));
 
         // when
@@ -65,10 +65,10 @@ class RoleServiceTest {
     void getHierarchy_non_hierarchy() {
         // given
         given(rolePersistencePort.findAll()).willReturn(List.of(
-                new RoleEntity(ROLE_USER, "유저 권한", null, List.of()),
-                new RoleEntity(ROLE_VIP, "특별 권한", null, List.of()),
-                new RoleEntity(ROLE_MANAGER, "매니저 권한", null, List.of()),
-                new RoleEntity(ROLE_ADMIN, "관리자 권한", null, List.of())
+                new RoleEntity(ROLE_USER, "유저 권한", List.of()),
+                new RoleEntity(ROLE_VIP, "특별 권한", List.of()),
+                new RoleEntity(ROLE_MANAGER, "매니저 권한", List.of()),
+                new RoleEntity(ROLE_ADMIN, "관리자 권한", List.of())
         ));
 
         // when

@@ -26,8 +26,9 @@ public class TestSetUpConfig {
 
     @EventListener(ApplicationReadyEvent.class)
     public void setUp() {
-        roleWebPort.save(new RoleEntity(Role.ROLE_ADMIN, "관리자 권한", null, List.of()));
-        roleWebPort.save(new RoleEntity(Role.ROLE_VIP, "특급 권한", Role.ROLE_ADMIN, List.of()));
+        roleWebPort.save(new RoleEntity(Role.ROLE_ADMIN, "관리자 권한", List.of()));
+        roleWebPort.save(new RoleEntity(Role.ROLE_VIP, "특급 권한", List.of()));
+        roleWebPort.save(new RoleEntity(Role.ROLE_USER, "유저 권한", List.of()));
 
         uriInPort.save(new UriEntity("/api/admin/**", 1, List.of(Role.ROLE_ADMIN)));
         uriInPort.save(new UriEntity("/api/vip/**", 1, List.of(Role.ROLE_VIP)));

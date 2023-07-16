@@ -24,6 +24,6 @@ public class RoleUpdate {
     }
 
     RoleEntity toEntity() {
-        return new RoleEntity(role, description, parent, children);
+        return new RoleEntity(role, description, List.of());
     }
 }
