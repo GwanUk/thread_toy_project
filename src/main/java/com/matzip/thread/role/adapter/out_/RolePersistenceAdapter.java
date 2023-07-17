@@ -21,21 +21,38 @@ class RolePersistenceAdapter implements RolePersistencePort {
     private final RoleJdbcTemplateRepository roleJdbcTemplateRepository;
 
     @Override
-    @Validation
     public Optional<RoleEntity> findByRole(Role role) {
-        return roleJpaRepository.findByRole(role)
-                .map(RoleJpaEntity::toEntity);
+        Map<Long, RoleEntity> map = new HashMap<>();
+        RoleEntity result = null;
+
+        for (RoleJdbcDto dto : roleJdbcTemplateRepository.findByRoleWithChildren(role)) {
+            Long id = dto.getRoleId();
+            Long parentId = dto.getParentId();
+            RoleEntity jpaEntity = dto.toJpaEntity();
+
+            map.put(id, jpaEntity);
+
+            String roleName = role.name();
+            String findRoleName = jpaEntity.getRole().name();
+
+            if (roleName.equals(findRoleName)) {
+                result = jpaEntity;
+            } else {
+                map.get(parentId).addChild(jpaEntity);
+            }
+        }
+        return Optional.ofNullable(result);
     }
 
     @Override
     public List<RoleEntity> findAll() {
         List<RoleEntity> list = new ArrayList<>();
-
         Map<Long, RoleEntity> map = new HashMap<>();
+
         for (RoleJdbcDto dto : roleJdbcTemplateRepository.findAll()) {
             Long id = dto.getRoleId();
             Long parentId = dto.getParentId();
-            RoleEntity jpaEntity = dto.getJpaEntity();
+            RoleEntity jpaEntity = dto.toJpaEntity();
 
             map.put(id, jpaEntity);
 

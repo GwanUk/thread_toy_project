@@ -15,7 +15,7 @@ public class RoleJdbcDto {
     private String roleName;
     private Long parentId;
 
-    public RoleEntity getJpaEntity() {
+    public RoleEntity toJpaEntity() {
         return new RoleEntity(Role.valueOf(roleName), description, List.of());
     }
 }

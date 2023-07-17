@@ -32,4 +32,8 @@ public class RoleEntity {
     public void addChild(RoleEntity roleEntity) {
         children.add(roleEntity);
     }
+
+    public String getName() {
+        return role.name();
+    }
 }

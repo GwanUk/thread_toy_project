@@ -2,7 +2,6 @@ package com.matzip.thread.role.adapter.out_;
 
 import com.matzip.thread.common.aop.ValidationAspect;
 import com.matzip.thread.role.application.prot.out_.RolePersistencePort;
-import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.role.domain.RoleEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,6 +13,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 
+import static com.matzip.thread.role.domain.Role.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -26,20 +26,20 @@ class RolePersistenceAdapterTest {
     @Autowired
     private RolePersistencePort rolePersistenceAdapter;
 
-//    @Test
-//    @Sql("/sql/role/role-repository-test-data.sql")
-//    @DisplayName("단건 조회")
-//    void findByRole() {
-//        // given
-//        // when
-//        RoleEntity findRoleEntity = rolePersistenceAdapter.findByRole(Role.ROLE_USER).orElseThrow(() -> new RuntimeException("해당 권한을 찾을 수 없습니다."));
-//
-//        // then
-//        BDDAssertions.then(findRoleEntity.getRole()).isEqualTo(Role.ROLE_USER);
-//        BDDAssertions.then(findRoleEntity.getDescription()).isEqualTo("유저 권한");
-//        BDDAssertions.then(findRoleEntity.getParent()).isEqualTo(Role.ROLE_VIP);
-//        BDDAssertions.then(findRoleEntity.getChildren()).isEmpty();
-//    }
+    @Test
+    @Sql("/sql/role/role-repository-test-data.sql")
+    @DisplayName("단건 조회")
+    void findByRole() {
+        // given
+        // when
+        RoleEntity findRoleEntity = rolePersistenceAdapter.findByRole(ROLE_ADMIN).orElseThrow(() -> new RuntimeException("해당 권한을 찾을 수 없습니다."));
+
+        // then
+        assertThat(findRoleEntity.getRole()).isEqualTo(ROLE_ADMIN);
+        assertThat(findRoleEntity.getChildren().get(0).getRole()).isEqualTo(ROLE_MANAGER);
+        assertThat(findRoleEntity.getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_VIP);
+        assertThat(findRoleEntity.getChildren().get(0).getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_USER);
+    }
 //
 //    @Test
 //    @Sql("/sql/role/role-repository-test-data.sql")
@@ -73,10 +73,10 @@ class RolePersistenceAdapterTest {
         List<RoleEntity> roleEntities = rolePersistenceAdapter.findAll();
 
         // then
-        assertThat(roleEntities.get(0).getRole()).isEqualTo(Role.ROLE_ADMIN);
-        assertThat(roleEntities.get(0).getChildren().get(0).getRole()).isEqualTo(Role.ROLE_MANAGER);
-        assertThat(roleEntities.get(0).getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(Role.ROLE_VIP);
-        assertThat(roleEntities.get(0).getChildren().get(0).getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(Role.ROLE_USER);
+        assertThat(roleEntities.get(0).getRole()).isEqualTo(ROLE_ADMIN);
+        assertThat(roleEntities.get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_MANAGER);
+        assertThat(roleEntities.get(0).getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_VIP);
+        assertThat(roleEntities.get(0).getChildren().get(0).getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_USER);
     }
 //
 //    @Test
