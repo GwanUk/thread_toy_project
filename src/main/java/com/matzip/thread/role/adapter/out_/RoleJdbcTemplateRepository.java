@@ -18,18 +18,18 @@ public class RoleJdbcTemplateRepository {
         String sql =
                 "  WITH r (ROLE_ID, ROLE_NAME, DESCRIPTION, PARENT_ID) AS ( \n" +
                         "SELECT ROLE_ID, ROLE_NAME, DESCRIPTION, PARENT_ID \n" +
-                        "  FROM ROLE \n" +
-                        " WHERE ROLE_NAME = :role \n" +
+                        "  FROM ROLE_ \n" +
+                        " WHERE ROLE_NAME = :roleName \n" +
                         " UNION ALL \n" +
                         "SELECT c.ROLE_ID, c.ROLE_NAME, c.DESCRIPTION, c.PARENT_ID \n" +
-                        "  FROM ROLE c \n" +
+                        "  FROM ROLE_ c \n" +
                         "  JOIN r p \n" +
                         "    ON c.PARENT_ID = p.ROLE_ID) \n" +
                         "SELECT * FROM r";
 
 
         MapSqlParameterSource param = new MapSqlParameterSource()
-                .addValue("role", role.name());
+                .addValue("roleName", role.name());
 
         return jdbcTemplate.query(sql, param, roleRowMapper());
     }
@@ -38,11 +38,11 @@ public class RoleJdbcTemplateRepository {
         String sql =
                 "  WITH r (ROLE_ID, ROLE_NAME, DESCRIPTION, PARENT_ID) AS ( \n" +
                 "SELECT ROLE_ID, ROLE_NAME, DESCRIPTION, PARENT_ID \n" +
-                "  FROM ROLE \n" +
+                "  FROM ROLE_ \n" +
                 " WHERE PARENT_ID IS NULL \n" +
                 " UNION ALL \n" +
                 "SELECT c.ROLE_ID, c.ROLE_NAME, c.DESCRIPTION, c.PARENT_ID \n" +
-                "  FROM ROLE c \n" +
+                "  FROM ROLE_ c \n" +
                 "  JOIN r p \n" +
                 "    ON c.PARENT_ID = p.ROLE_ID) \n" +
                 "SELECT * FROM r";

@@ -11,16 +11,17 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+
+import static java.util.Objects.isNull;
 
 @Entity
 @Getter
-@Table(name = "ROLE")
+@Table(name = "ROLE_")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RoleJpaEntity extends JpaBaseEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ROLE_ID")
     private Long id;
 
@@ -36,7 +37,7 @@ public class RoleJpaEntity extends JpaBaseEntity {
     @JoinColumn(name = "PARENT_ID")
     private RoleJpaEntity parent;
 
-    @OneToMany(mappedBy = "parent")
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.PERSIST)
     private final List<RoleJpaEntity> children = new ArrayList<>();
 
     public RoleJpaEntity(Role role, String description, RoleJpaEntity parent, List<RoleJpaEntity> children) {
@@ -46,12 +47,14 @@ public class RoleJpaEntity extends JpaBaseEntity {
         setChildren(children);
     }
 
-    public static RoleJpaEntity from(RoleEntity roleEntity, RoleJpaEntity parent) {
+    public static RoleJpaEntity from(RoleEntity roleEntity) {
         return new RoleJpaEntity(
                 roleEntity.getRole(),
                 roleEntity.getDescription(),
-                parent,
-                List.of()
+                null,
+                roleEntity.getChildren().stream()
+                        .map(RoleJpaEntity::from)
+                        .toList()
         );
     }
 
@@ -66,7 +69,7 @@ public class RoleJpaEntity extends JpaBaseEntity {
     }
 
     public void setRole(Role role) {
-        if (Objects.isNull(role)) throw new NullArgumentException(Role.class.getSimpleName());
+        if (isNull(role)) throw new NullArgumentException(Role.class.getSimpleName());
         this.role = role;
     }
 
@@ -74,22 +77,19 @@ public class RoleJpaEntity extends JpaBaseEntity {
         this.description = description;
     }
 
-    public void setParent(RoleJpaEntity parent) {
-        if (Objects.nonNull(this.parent)) {
-            this.parent.getChildren().remove(this);
-        }
-
+    private void setParent(RoleJpaEntity parent) {
         this.parent = parent;
-
-        if (Objects.nonNull(parent)) {
-            parent.getChildren().add(this);
-        }
     }
 
     public void setChildren(List<RoleJpaEntity> children)  {
-        if (Objects.isNull(children)) throw new NullArgumentException(Role.class.getSimpleName());
+        if (isNull(children)) throw new NullArgumentException(Role.class.getSimpleName());
 
-        List.copyOf(getChildren()).forEach(c -> c.setParent(null));
+        this.children.forEach(c -> c.setParent(null));
+
+        this.children.clear();
+
+        this.children.addAll(children);
+
         children.forEach(c -> c.setParent(this));
     }
 }

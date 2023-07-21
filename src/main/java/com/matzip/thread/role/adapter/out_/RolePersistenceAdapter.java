@@ -3,7 +3,6 @@ package com.matzip.thread.role.adapter.out_;
 import com.matzip.thread.common.annotation.NullCheck;
 import com.matzip.thread.common.annotation.PersistenceAdapter;
 import com.matzip.thread.common.annotation.Validation;
-import com.matzip.thread.common.exception.DuplicationApplicationConvention;
 import com.matzip.thread.role.application.prot.out_.RolePersistencePort;
 import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.role.domain.RoleEntity;
@@ -68,71 +67,13 @@ class RolePersistenceAdapter implements RolePersistencePort {
     @Override
     @Validation
     public void save(@NullCheck RoleEntity roleEntity) {
-//        RoleJpaEntity parentRoleJpaEntity = null;
-//        Role parent = roleEntity.getParent();
-//        List<Role> children = roleEntity.getChildren();
-//
-//        if (nonNull(parent)) {
-//            parentRoleJpaEntity = roleJpaRepository.findByRole(parent)
-//                    .orElseThrow(() -> new NotFoundDataException(parent.name()));
-//        }
-//
-//        RoleJpaEntity roleJpaEntity = RoleJpaEntity.from(roleEntity, parentRoleJpaEntity);
-//        RoleJpaEntity savedRoleJpaEntity = roleJpaRepository.save(roleJpaEntity);
-//
-//        List<RoleJpaEntity> findChildren = roleJpaRepository.findInRoles(children);
-//
-//        if (children.size() != 0 && findChildren.size() == 0) {
-//            throw new NotFoundDataException(children.toString());
-//        }
-//
-//        savedRoleJpaEntity.setChildren(findChildren);
+        roleJpaRepository.save(RoleJpaEntity.from(roleEntity));
     }
 
     @Override
     @Validation
     public void update(Role role, @NullCheck RoleEntity roleEntity) {
-//        Optional<RoleJpaEntity> optionalRoleJpaEntity = roleJpaRepository.findByRole(role);
-//        if (optionalRoleJpaEntity.isEmpty()) {
-//            save(roleEntity);
-//            return;
-//        }
-//
-//        RoleJpaEntity findRoleJpaEntity = optionalRoleJpaEntity.get();
-//
-//        roleEntity.validate();
-//        Role updatingRole = roleEntity.getRole();
-//        String updatingDescription = roleEntity.getDescription();
-//        Role updatingParent = roleEntity.getParent();
-//        List<Role> updatingChildren = roleEntity.getChildren();
-//
-//        checkDuplication(role, updatingRole);
-//
-//        findRoleJpaEntity.setRole(updatingRole);
-//        findRoleJpaEntity.setDescription(updatingDescription);
-//
-//        if (isNull(updatingParent)) {
-//            findRoleJpaEntity.setParent(null);
-//        } else {
-//            RoleJpaEntity parent = roleJpaRepository.findByRole(updatingParent)
-//                    .orElseThrow(() -> new NotFoundDataException(updatingParent.name()));
-//            findRoleJpaEntity.setParent(parent);
-//        }
-//
-//        if (updatingChildren.size() == 0) {
-//            findRoleJpaEntity.setChildren(List.of());
-//        } else {
-//            List<RoleJpaEntity> children = roleJpaRepository.findInRoles(updatingChildren);
-//            if (children.size() == 0) throw new NotFoundDataException(updatingChildren.toString());
-//            findRoleJpaEntity.setChildren(children);
-//        }
-    }
 
-    private void checkDuplication(Role role, Role updatingRole) {
-        if (!role.equals(updatingRole)
-                && roleJpaRepository.findByRole(updatingRole).isPresent()) {
-            throw new DuplicationApplicationConvention(updatingRole.name());
-        }
     }
 
     @Override

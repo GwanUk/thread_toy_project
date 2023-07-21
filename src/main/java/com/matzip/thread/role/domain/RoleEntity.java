@@ -1,12 +1,9 @@
 package com.matzip.thread.role.domain;
 
-import com.matzip.thread.common.exception.NullArgumentException;
 import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.util.Objects.isNull;
 
 @Getter
 public class RoleEntity {
@@ -18,16 +15,15 @@ public class RoleEntity {
         this.role = role;
         this.description = description;
         this.children.addAll(children);
-        validate();
     }
 
-    public void validate() throws NullArgumentException {
-        if (isNull(role)) throw new NullArgumentException("role");
+    public String getHierarchyString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        children.forEach(c -> stringBuilder.append(role.name())
+                .append(" > ")
+                .append(c.role.name()));
+        return stringBuilder.toString();
     }
-
-//    public String getHierarchyString() {
-//        return parent.name() + " > " + role.name() + "\n";
-//    }
 
     public void addChild(RoleEntity roleEntity) {
         children.add(roleEntity);

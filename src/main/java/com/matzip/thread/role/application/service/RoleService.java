@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,11 +32,9 @@ class RoleService implements RoleWebPort, RoleHierarchyPort {
 
     @Override
     public String getHierarchy() {
-//        return rolePersistencePort.findAll().stream()
-//                .filter(r -> nonNull(r.getParent()))
-//                .map(RoleEntity::getHierarchyString)
-//                .collect(joining());
-        return "";
+        return rolePersistencePort.findAll().stream()
+                .map(RoleEntity::getHierarchyString)
+                .collect(Collectors.joining());
     }
 
     @Override
