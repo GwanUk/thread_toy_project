@@ -2,7 +2,7 @@ package com.matzip.thread.common.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class NotFoundDataException extends ApplicationException{
+public class NotFoundDataException extends ApplicationException {
 
     private static final String msg = "Doesn't exists data: ";
 

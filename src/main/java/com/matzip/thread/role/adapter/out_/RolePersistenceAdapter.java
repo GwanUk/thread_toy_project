@@ -1,8 +1,6 @@
 package com.matzip.thread.role.adapter.out_;
 
-import com.matzip.thread.common.annotation.NullCheck;
 import com.matzip.thread.common.annotation.PersistenceAdapter;
-import com.matzip.thread.common.annotation.Validation;
 import com.matzip.thread.role.application.prot.out_.RolePersistencePort;
 import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.role.domain.RoleEntity;
@@ -27,7 +25,7 @@ class RolePersistenceAdapter implements RolePersistencePort {
         for (RoleJdbcDto dto : roleJdbcTemplateRepository.findByRoleWithChildren(role)) {
             Long id = dto.getRoleId();
             Long parentId = dto.getParentId();
-            RoleEntity jpaEntity = dto.toJpaEntity();
+            RoleEntity jpaEntity = dto.toEntity();
 
             map.put(id, jpaEntity);
 
@@ -51,7 +49,7 @@ class RolePersistenceAdapter implements RolePersistencePort {
         for (RoleJdbcDto dto : roleJdbcTemplateRepository.findAll()) {
             Long id = dto.getRoleId();
             Long parentId = dto.getParentId();
-            RoleEntity jpaEntity = dto.toJpaEntity();
+            RoleEntity jpaEntity = dto.toEntity();
 
             map.put(id, jpaEntity);
 
@@ -65,14 +63,12 @@ class RolePersistenceAdapter implements RolePersistencePort {
     }
 
     @Override
-    @Validation
-    public void save(@NullCheck RoleEntity roleEntity) {
-        roleJpaRepository.save(RoleJpaEntity.from(roleEntity));
+    public void save(RoleEntity roleEntity) {
+        roleJdbcTemplateRepository.save(RoleJdbcDto.from(roleEntity));
     }
 
     @Override
-    @Validation
-    public void update(Role role, @NullCheck RoleEntity roleEntity) {
+    public void update(Role role, RoleEntity roleEntity) {
 
     }
 

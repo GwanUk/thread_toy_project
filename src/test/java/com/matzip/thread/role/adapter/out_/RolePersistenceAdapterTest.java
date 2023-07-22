@@ -89,7 +89,7 @@ class RolePersistenceAdapterTest {
 //    }
 //
     @Test
-    @Sql("/sql/role/role-repository-insert-test.sql")
+    @Sql("/sql/role/role-ddl.sql")
     @DisplayName("권한 등록")
     void save() {
         // given

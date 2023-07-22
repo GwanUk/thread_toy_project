@@ -13,17 +13,19 @@ class RoleSave {
     @NotNull
     private final Role role;
     private final String description;
-    private final Role parent;
-    private final List<Role> children = new ArrayList<>();
+    private final List<RoleSave> children = new ArrayList<>();
 
-    RoleSave(Role role, String description, Role parent, List<Role> children) {
+    RoleSave(Role role, String description, List<RoleSave> children) {
         this.role = role;
         this.description = description;
-        this.parent = parent;
         this.children.addAll(children);
     }
 
     RoleEntity toEntity() {
-        return new RoleEntity(role, description, List.of());
+        return new RoleEntity(role,
+                description,
+                children.stream()
+                        .map(RoleSave::toEntity)
+                        .toList());
     }
 }
