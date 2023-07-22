@@ -69,7 +69,7 @@ class RolePersistenceAdapter implements RolePersistencePort {
 
     @Override
     public void update(Role role, RoleEntity roleEntity) {
-
+        roleJdbcTemplateRepository.update(role, RoleJdbcDto.from(roleEntity));
     }
 
     @Override

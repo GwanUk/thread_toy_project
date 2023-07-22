@@ -7,10 +7,14 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
+
+import static java.util.Objects.*;
+import static java.util.stream.Collectors.toMap;
 
 @Repository
 @RequiredArgsConstructor
@@ -56,69 +60,108 @@ public class RoleJdbcTemplateRepository {
 
     public void save(List<RoleJdbcDto> roleDtoList) {
         String sql = """
-                     INSERT INTO role_ (ROLE_NAME, DESCRIPTION, PARENT_ID, CREATED_DATE, LAST_MODIFIED_DATE, CREATED_BY, LAST_MODIFIED_BY)
-                     VALUES (:roleName, :description, (select r.ROLE_ID from role_ r where ROLE_NAME = :parentRoleName), now(), now(), :createdBy, :lastModifiedBy);
+                     INSERT INTO role_ (
+                        ROLE_NAME,
+                        DESCRIPTION,
+                        PARENT_ID,
+                        CREATED_DATE,
+                        LAST_MODIFIED_DATE,
+                        CREATED_BY,
+                        LAST_MODIFIED_BY
+                     )
+                     VALUES (
+                        :roleName,
+                        :description,
+                        (SELECT r.ROLE_ID
+                           FROM role_ r
+                          WHERE r.ROLE_NAME = :parentRoleName),
+                        now(),
+                        now(),
+                        :createdBy,
+                        :lastModifiedBy
+                     );
                      """;
 
-        int size = roleDtoList.size();
-        BeanPropertySqlParameterSource[] parameterSources = new BeanPropertySqlParameterSource[size];
-
-        for (int i = 0; i < size; i++) {
-            RoleJdbcDto param = roleDtoList.get(i);
-            BeanPropertySqlParameterSource parameterSource = new BeanPropertySqlParameterSource(param);
-            parameterSources[i] = parameterSource;
-        }
+        BeanPropertySqlParameterSource[] parameterSources = getParameterSources(roleDtoList);
 
         jdbcTemplate.batchUpdate(sql, parameterSources);
     }
 
     public void update(Role role, List<RoleJdbcDto> roleDtoList) throws UpdateFailureException {
         List<RoleJdbcDto> findDtoList = findByRoleWithChildren(role);
-        Map<String, RoleJdbcDto> dtoMap = new HashMap<>();
-        Map<String, Boolean> checkMap = new HashMap<>();
-        ArrayList<RoleJdbcDto> params = new ArrayList<>();
-        ArrayList<RoleJdbcDto> deleteList = new ArrayList<>();
-        ArrayList<RoleJdbcDto> saveList = new ArrayList<>();
+        fillParentRoleName(findDtoList);
 
-        roleDtoList.forEach(dto -> {
-            String roleName = dto.getRoleName();
-            dtoMap.put(roleName, dto);
-            checkMap.put(roleName, false);
-        });
+        Map<String, RoleJdbcDto> updateDtoMap = roleDtoList.stream()
+                .collect(toMap(RoleJdbcDto::getRoleName, r -> r));
+        ArrayList<RoleJdbcDto> params = new ArrayList<>();
+        HashSet<RoleJdbcDto> updatedSet = new HashSet<>();
 
         for (RoleJdbcDto dto : findDtoList) {
             String roleName = dto.getRoleName();
-            if (!dtoMap.containsKey(roleName)) {
-                deleteList.add(dto);
-                continue;
+            RoleJdbcDto param = new RoleJdbcDto();
+
+            param.setRoleName(roleName);
+
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (nonNull(authentication)) {
+                param.setLastModifiedBy(authentication.getName());
             }
 
-            checkMap.put(roleName, true);
-            RoleJdbcDto updateDto = dtoMap.get(roleName);
+            if (updateDtoMap.containsKey(roleName)) {
+                RoleJdbcDto updateDto = updateDtoMap.get(roleName);
+                updatedSet.add(updateDto);
 
-            if (dto.equals(updateDto)) continue;
+                if (dto.equals(updateDto)) continue;
 
-            dto.setDescription(updateDto.getDescription());
-            dto.setParentId(updateDto.getParentId());
-            dto.setLastModifiedBy(SecurityContextHolder.getContext().getAuthentication().getName());
-            params.add(dto);
+                param.setDescription(updateDto.getDescription());
+
+                if (roleName.equals(role.name())) {
+                    param.setParentRoleName(dto.getParentRoleName());
+                } else {
+                    param.setParentRoleName(updateDto.getParentRoleName());
+                }
+            } else {
+                param.setDescription(dto.getDescription());
+                param.setParentRoleName(null);
+            }
+
+            params.add(param);
         }
 
-        checkMap.keySet().stream()
-                .filter(k -> !checkMap.get(k))
-                .forEach(k -> saveList.add(dtoMap.get(k)));
-
+        roleDtoList.stream()
+                .filter(dto -> !updatedSet.contains(dto))
+                .forEach(params::add);
 
         String sql = """
                      UPDATE role_
                         SET DESCRIPTION = :description,
-                            PARENT_ID = :parentId,
+                            PARENT_ID = (
+                                         SELECT r.ROLE_ID
+                                           FROM (
+                                                 SELECT ROLE_ID
+                                                   FROM role_
+                                                  WHERE ROLE_NAME = :parentRoleName
+                                                 ) r
+                                        ),
                             LAST_MODIFIED_DATE = now(),
                             LAST_MODIFIED_BY = :lastModifiedBy
-                      WHERE ROLE_ID = :roleId
-                        AND LAST_MODIFIED_DATE = :lastModifiedBy;
+                      WHERE ROLE_NAME = :roleName
                      """;
 
+        BeanPropertySqlParameterSource[] parameterSources = getParameterSources(params);
+
+        int[] result = jdbcTemplate.batchUpdate(sql, parameterSources);
+        int count = Arrays.stream(result).sum();
+        int size = params.size();
+        if (count < size) throw new UpdateFailureException(size - count + " updates failed");
+        //TODO retry aop 만들기
+    }
+
+    public void delete(List<RoleJdbcDto> roleDtoList) {
+        //TODO
+    }
+
+    private static BeanPropertySqlParameterSource[] getParameterSources(List<RoleJdbcDto> params) {
         int size = params.size();
         BeanPropertySqlParameterSource[] parameterSources = new BeanPropertySqlParameterSource[size];
 
@@ -127,34 +170,17 @@ public class RoleJdbcTemplateRepository {
             BeanPropertySqlParameterSource parameterSource = new BeanPropertySqlParameterSource(param);
             parameterSources[i] = parameterSource;
         }
-
-        int[] result = jdbcTemplate.batchUpdate(sql, parameterSources);
-        int sum = Arrays.stream(result).sum();
-        if (sum < size) throw new UpdateFailureException("Successful update of " + sum + " out of " + size);
-
-
+        return parameterSources;
     }
 
-    public void delete(List<RoleJdbcDto> roleDtoList) {
 
-    }
+    private void fillParentRoleName(List<RoleJdbcDto> roleDtoList) {
+        Map<Long, String> map = roleDtoList.stream()
+                .collect(toMap(RoleJdbcDto::getRoleId, RoleJdbcDto::getRoleName));
 
-    RoleJdbcDto findByRole(Role role) {
-        String sql = """
-                     SELECT ROLE_ID, ROLE_NAME, DESCRIPTION, PARENT_ID
-                       FROM role_
-                      WHERE ROLE_NAME = :roleName; 
-                     """;
-        return jdbcTemplate.queryForObject(sql, Map.of("roleName", role.name()), RoleJdbcDto.class);
-    }
-
-    List<RoleJdbcDto> findChildrenById(Long roleId) {
-        String sql = """
-                     SELECT ROLE_ID, ROLE_NAME, DESCRIPTION, PARENT_ID
-                       FROM role_
-                      WHERE PARENT_ID = :roleId;
-                     """;
-        return jdbcTemplate.query(sql, Map.of("roleId", roleId), roleRowMapper());
+        roleDtoList.stream()
+                .filter(r -> map.containsKey(r.getParentId()))
+                .forEach(r -> r.setParentRoleName(map.get(r.getParentId())));
     }
 
     private static BeanPropertyRowMapper<RoleJdbcDto> roleRowMapper() {

@@ -13,17 +13,19 @@ public class RoleUpdate {
     @NotNull
     private final Role role;
     private final String description;
-    private final Role parent;
-    private final List<Role> children = new ArrayList<>();
+    private final List<RoleUpdate> children = new ArrayList<>();
 
-    RoleUpdate(Role role, String description, Role parent, List<Role> children) {
+    RoleUpdate(Role role, String description, List<RoleUpdate> children) {
         this.role = role;
         this.description = description;
-        this.parent = parent;
         this.children.addAll(children);
     }
 
     RoleEntity toEntity() {
-        return new RoleEntity(role, description, List.of());
+        return new RoleEntity(role,
+                description,
+                children.stream()
+                        .map(RoleUpdate::toEntity)
+                        .toList());
     }
 }

@@ -11,17 +11,19 @@ import java.util.List;
 class RoleResponse {
     private final Role role;
     private final String description;
-    private final Role parent;
-    private final List<Role> children = new ArrayList<>();
+    private final List<RoleResponse> children = new ArrayList<>();
 
-    public RoleResponse(Role role, String description, Role parent, List<Role> children) {
+    public RoleResponse(Role role, String description, List<RoleResponse> children) {
         this.role = role;
         this.description = description;
-        this.parent = parent;
         this.children.addAll(children);
     }
 
-    static RoleResponse toResponse(RoleEntity roleEntity) {
-        return new RoleResponse(roleEntity.getRole(), roleEntity.getDescription(), null, List.of());
+    static RoleResponse from(RoleEntity roleEntity) {
+        return new RoleResponse(roleEntity.getRole(),
+                roleEntity.getDescription(),
+                roleEntity.getChildren().stream()
+                        .map(RoleResponse::from)
+                        .toList());
     }
 }

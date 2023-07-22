@@ -15,7 +15,4 @@ public interface RoleJpaRepository extends JpaRepository<RoleJpaEntity, Long> {
 
     @Query("select r from RoleJpaEntity r join fetch r.children c")
     List<RoleJpaEntity> findAllChildren();
-
-    //TODO findAllWithChildren
-    //TODO findByRoleWithOptimisticLock
 }

@@ -69,12 +69,12 @@ public class RoleJdbcDto implements Comparable<RoleJdbcDto>{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RoleJdbcDto that = (RoleJdbcDto) o;
-        return Objects.equals(description, that.description) && Objects.equals(roleName, that.roleName) && Objects.equals(parentId, that.parentId);
+        return Objects.equals(roleName, that.roleName) && Objects.equals(description, that.description) && Objects.equals(parentRoleName, that.parentRoleName);
     }
 
     @Override
     public int hashCode() {
-        return hash(description, roleName, parentId);
+        return hash(roleName, description, parentRoleName);
     }
 
     @Override

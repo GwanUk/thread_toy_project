@@ -18,12 +18,12 @@ class RoleWebAdapter {
 
     @GetMapping("/{role}")
     Optional<RoleResponse> findByRole(@PathVariable Role role) {
-        return roleWebPort.findByRole(role).map(RoleResponse::toResponse);
+        return roleWebPort.findByRole(role).map(RoleResponse::from);
     }
 
     @GetMapping
     List<RoleResponse> findAll() {
-        return roleWebPort.findAll().stream().map(RoleResponse::toResponse).toList();
+        return roleWebPort.findAll().stream().map(RoleResponse::from).toList();
     }
 
     @PostMapping
