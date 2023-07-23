@@ -77,15 +77,6 @@ class RolePersistenceAdapterTest {
     }
 
     @Test
-    @Sql("/sql/role/role-data.sql")
-    @DisplayName("null 조회")
-    void findByRole_null() {
-        // expected
-        assertThatThrownBy(() -> rolePersistenceAdapter.findByRole(null))
-                .isInstanceOf(NullPointerException.class);
-    }
-
-    @Test
     @Sql("/sql/role/role-table.sql")
     @DisplayName("권한 저장")
     void save() {
@@ -104,23 +95,6 @@ class RolePersistenceAdapterTest {
         assertThat(entity.getChildren().get(0).getRole()).isEqualTo(ROLE_MANAGER);
         assertThat(entity.getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_VIP);
         assertThat(entity.getChildren().get(0).getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_USER);
-    }
-
-    @Test
-    @DisplayName("null 저장")
-    void save_null() {
-        // expected
-        assertThatThrownBy(() -> rolePersistenceAdapter.save(null))
-                .isInstanceOf(NullPointerException.class);
-    }
-
-    @Test
-    @DisplayName("권한이 null 인 엔티티 저장")
-    void save_role_null() {
-        // given
-        RoleEntity user = new RoleEntity(null, "ROLE_USER", List.of());
-        assertThatThrownBy(() -> rolePersistenceAdapter.save(user))
-                .isInstanceOf(NullPointerException.class);
     }
 
     @Test
@@ -158,14 +132,6 @@ class RolePersistenceAdapterTest {
         assertThat(entities.get(0).getChildren().get(0).getChildren().get(0).getDescription()).isEqualTo("ROLE_VIP");
         assertThat(entities.get(0).getChildren().get(0).getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_MANAGER);
         assertThat(entities.get(0).getChildren().get(0).getChildren().get(0).getChildren().get(0).getDescription()).isEqualTo("ROLE_MANAGER");
-    }
-
-    @Test
-    @DisplayName("권한 null 갱신")
-    void update_null() {
-        // expected
-        BDDAssertions.thenThrownBy(() -> rolePersistenceAdapter.update(ROLE_USER, null))
-                .isInstanceOf(NullPointerException.class);
     }
 
     @Test

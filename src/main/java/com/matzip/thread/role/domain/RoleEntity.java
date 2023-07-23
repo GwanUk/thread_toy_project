@@ -1,6 +1,7 @@
 package com.matzip.thread.role.domain;
 
 import lombok.Getter;
+import org.springframework.lang.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,7 @@ public class RoleEntity{
     private final String description;
     private final List<RoleEntity> children = new ArrayList<>();
 
-    public RoleEntity(Role role, String description, List<RoleEntity> children) {
+    public RoleEntity(@NonNull Role role, String description, List<RoleEntity> children) {
         this.role = role;
         this.description = description;
         this.children.addAll(children);
