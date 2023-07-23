@@ -12,6 +12,10 @@ spring:
         highlight_sql: true
         use_sql_comments: true
         ddl-auto: update
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
 logging:
   level:
     org:

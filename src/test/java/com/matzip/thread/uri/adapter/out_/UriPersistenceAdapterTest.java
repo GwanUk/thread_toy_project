@@ -35,7 +35,7 @@ class UriPersistenceAdapterTest {
     }
 
     @Test
-    @Sql("/sql/role/role-repository-test-data.sql")
+    @Sql("/sql/role/role-data.sql")
     @DisplayName("uri with role 자원 디비 저장 성공")
     void save_uri_role() {
         // given

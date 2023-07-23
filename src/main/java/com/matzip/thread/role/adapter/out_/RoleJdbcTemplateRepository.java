@@ -23,32 +23,76 @@ public class RoleJdbcTemplateRepository {
 
     List<RoleJdbcDto> findAll() {
         String sql = """
-                       WITH recursive r (ROLE_ID, ROLE_NAME, DESCRIPTION, PARENT_ID, CREATED_DATE, LAST_MODIFIED_DATE, CREATED_BY, LAST_MODIFIED_BY) AS (
-                     SELECT ROLE_ID, ROLE_NAME, DESCRIPTION, PARENT_ID, CREATED_DATE, LAST_MODIFIED_DATE, CREATED_BY, LAST_MODIFIED_BY
-                       FROM role_
-                      WHERE PARENT_ID IS NULL
-                      UNION ALL
-                     SELECT c.ROLE_ID, c.ROLE_NAME, c.DESCRIPTION, c.PARENT_ID, c.CREATED_DATE, c.LAST_MODIFIED_DATE, c.CREATED_BY, c.LAST_MODIFIED_BY
-                       FROM role_ c
-                       JOIN r p
-                         ON c.PARENT_ID = p.ROLE_ID)
-                     SELECT ROLE_ID, ROLE_NAME, DESCRIPTION, PARENT_ID, CREATED_DATE, LAST_MODIFIED_DATE, CREATED_BY, LAST_MODIFIED_BY FROM r;
+                     WITH recursive r (ROLE_ID, ROLE_NAME, DESCRIPTION, PARENT_ID, CREATED_DATE, LAST_MODIFIED_DATE, CREATED_BY,
+                                       LAST_MODIFIED_BY) AS (SELECT ROLE_ID,
+                                                                    ROLE_NAME,
+                                                                    DESCRIPTION,
+                                                                    PARENT_ID,
+                                                                    CREATED_DATE,
+                                                                    LAST_MODIFIED_DATE,
+                                                                    CREATED_BY,
+                                                                    LAST_MODIFIED_BY
+                                                             FROM ROLE_
+                                                             WHERE PARENT_ID IS NULL
+                                                             UNION ALL
+                                                             SELECT c.ROLE_ID,
+                                                                    c.ROLE_NAME,
+                                                                    c.DESCRIPTION,
+                                                                    c.PARENT_ID,
+                                                                    c.CREATED_DATE,
+                                                                    c.LAST_MODIFIED_DATE,
+                                                                    c.CREATED_BY,
+                                                                    c.LAST_MODIFIED_BY
+                                                             FROM ROLE_ c
+                                                                      JOIN r p
+                                                                           ON c.PARENT_ID = p.ROLE_ID)
+                     SELECT ROLE_ID,
+                            ROLE_NAME,
+                            DESCRIPTION,
+                            PARENT_ID,
+                            CREATED_DATE,
+                            LAST_MODIFIED_DATE,
+                            CREATED_BY,
+                            LAST_MODIFIED_BY
+                     FROM r
                      """;
         return jdbcTemplate.query(sql, roleRowMapper());
     }
 
     List<RoleJdbcDto> findByRoleWithChildren(Role role) {
         String sql = """
-                       WITH recursive r (ROLE_ID, ROLE_NAME, DESCRIPTION, PARENT_ID, CREATED_DATE, LAST_MODIFIED_DATE, CREATED_BY, LAST_MODIFIED_BY) AS (
-                     SELECT ROLE_ID, ROLE_NAME, DESCRIPTION, PARENT_ID, CREATED_DATE, LAST_MODIFIED_DATE, CREATED_BY, LAST_MODIFIED_BY
-                       FROM role_
-                      WHERE ROLE_NAME = :roleName
-                      UNION ALL
-                     SELECT c.ROLE_ID, c.ROLE_NAME, c.DESCRIPTION, c.PARENT_ID, c.CREATED_DATE, c.LAST_MODIFIED_DATE, c.CREATED_BY, c.LAST_MODIFIED_BY
-                       FROM role_ c
-                       JOIN r p
-                         ON c.PARENT_ID = p.ROLE_ID)
-                     SELECT ROLE_ID, ROLE_NAME, DESCRIPTION, PARENT_ID, CREATED_DATE, LAST_MODIFIED_DATE, CREATED_BY, LAST_MODIFIED_BY FROM r;
+                     WITH recursive r (ROLE_ID, ROLE_NAME, DESCRIPTION, PARENT_ID, CREATED_DATE, LAST_MODIFIED_DATE, CREATED_BY,
+                                       LAST_MODIFIED_BY) AS (SELECT ROLE_ID,
+                                                                    ROLE_NAME,
+                                                                    DESCRIPTION,
+                                                                    PARENT_ID,
+                                                                    CREATED_DATE,
+                                                                    LAST_MODIFIED_DATE,
+                                                                    CREATED_BY,
+                                                                    LAST_MODIFIED_BY
+                                                             FROM ROLE_
+                                                             WHERE ROLE_NAME = :roleName
+                                                             UNION ALL
+                                                             SELECT c.ROLE_ID,
+                                                                    c.ROLE_NAME,
+                                                                    c.DESCRIPTION,
+                                                                    c.PARENT_ID,
+                                                                    c.CREATED_DATE,
+                                                                    c.LAST_MODIFIED_DATE,
+                                                                    c.CREATED_BY,
+                                                                    c.LAST_MODIFIED_BY
+                                                             FROM ROLE_ c
+                                                                      JOIN r p
+                                                                           ON c.PARENT_ID = p.ROLE_ID)
+                     SELECT ROLE_ID,
+                            ROLE_NAME,
+                            DESCRIPTION,
+                            PARENT_ID,
+                            CREATED_DATE,
+                            LAST_MODIFIED_DATE,
+                            CREATED_BY,
+                            LAST_MODIFIED_BY
+                     FROM r
                      """;
 
 
@@ -60,26 +104,22 @@ public class RoleJdbcTemplateRepository {
 
     public void save(List<RoleJdbcDto> roleDtoList) {
         String sql = """
-                     INSERT INTO role_ (
-                        ROLE_NAME,
-                        DESCRIPTION,
-                        PARENT_ID,
-                        CREATED_DATE,
-                        LAST_MODIFIED_DATE,
-                        CREATED_BY,
-                        LAST_MODIFIED_BY
-                     )
-                     VALUES (
-                        :roleName,
-                        :description,
-                        (SELECT r.ROLE_ID
-                           FROM role_ r
-                          WHERE r.ROLE_NAME = :parentRoleName),
-                        now(),
-                        now(),
-                        :createdBy,
-                        :lastModifiedBy
-                     );
+                     INSERT INTO ROLE_ (ROLE_NAME,
+                                        DESCRIPTION,
+                                        PARENT_ID,
+                                        CREATED_DATE,
+                                        LAST_MODIFIED_DATE,
+                                        CREATED_BY,
+                                        LAST_MODIFIED_BY)
+                     VALUES (:roleName,
+                             :description,
+                             (SELECT r.ROLE_ID
+                              FROM ROLE_ r
+                              WHERE r.ROLE_NAME = :parentRoleName),
+                             now(),
+                             now(),
+                             :createdBy,
+                             :lastModifiedBy)
                      """;
 
         BeanPropertySqlParameterSource[] parameterSources = getParameterSources(roleDtoList);
@@ -133,19 +173,17 @@ public class RoleJdbcTemplateRepository {
                 .forEach(params::add);
 
         String sql = """
-                     UPDATE role_
-                        SET DESCRIPTION = :description,
-                            PARENT_ID = (
-                                         SELECT r.ROLE_ID
-                                           FROM (
-                                                 SELECT ROLE_ID
-                                                   FROM role_
-                                                  WHERE ROLE_NAME = :parentRoleName
-                                                 ) r
-                                        ),
-                            LAST_MODIFIED_DATE = now(),
-                            LAST_MODIFIED_BY = :lastModifiedBy
-                      WHERE ROLE_NAME = :roleName
+                     UPDATE ROLE_
+                     SET DESCRIPTION        = :description,
+                         PARENT_ID          = CASE
+                                                  WHEN :parentRoleName IS NULL THEN NULL
+                                                  ELSE (SELECT r.ROLE_ID
+                                                        FROM (SELECT ROLE_ID
+                                                              FROM ROLE_
+                                                              WHERE ROLE_NAME = :parentRoleName) r) END,
+                         LAST_MODIFIED_DATE = now(),
+                         LAST_MODIFIED_BY   = :lastModifiedBy
+                     WHERE ROLE_NAME = :roleName
                      """;
 
         BeanPropertySqlParameterSource[] parameterSources = getParameterSources(params);

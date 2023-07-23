@@ -74,6 +74,5 @@ class RolePersistenceAdapter implements RolePersistencePort {
 
     @Override
     public void delete(Role role) {
-
     }
 }

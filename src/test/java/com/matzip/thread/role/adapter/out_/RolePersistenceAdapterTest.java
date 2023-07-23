@@ -2,9 +2,7 @@ package com.matzip.thread.role.adapter.out_;
 
 import com.matzip.thread.common.aop.ValidationAspect;
 import com.matzip.thread.role.application.prot.out_.RolePersistencePort;
-import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.role.domain.RoleEntity;
-import org.assertj.core.api.BDDAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +27,7 @@ class RolePersistenceAdapterTest {
     private RolePersistencePort rolePersistenceAdapter;
 
     @Test
-    @Sql("/sql/role/role-repository-test-data.sql")
+    @Sql("/sql/role/role-data.sql")
     @DisplayName("단건 조회")
     void findByRole() {
         // given
@@ -44,7 +42,7 @@ class RolePersistenceAdapterTest {
     }
 //
 //    @Test
-//    @Sql("/sql/role/role-repository-test-data.sql")
+//    @Sql("/sql/role/role-data.sql")
 //    @DisplayName("단건 admin 조회")
 //    void findByRole_admin() {
 //        // given
@@ -67,7 +65,7 @@ class RolePersistenceAdapterTest {
 //    }
 
     @Test
-    @Sql("/sql/role/role-repository-test-data.sql")
+    @Sql("/sql/role/role-data.sql")
     @DisplayName("전체 조회")
     void findAll() {
         // given
@@ -119,7 +117,7 @@ class RolePersistenceAdapterTest {
 //    }
 //
 //    @Test
-//    @Sql("/sql/role/role-repository-test-data.sql")
+//    @Sql("/sql/role/role-data.sql")
 //    @DisplayName("권한 중복 등록 시도. 예외 발생")
 //    void save_duplication() {
 //        // given
@@ -131,7 +129,7 @@ class RolePersistenceAdapterTest {
 //    }
 //
 //    @Test
-//    @Sql("/sql/role/role-repository-test-data.sql")
+//    @Sql("/sql/role/role-data.sql")
 //    @DisplayName("부모와 자식 가지고 권한 등록")
 //    void save_parent_children() {
 //        // given
@@ -149,7 +147,7 @@ class RolePersistenceAdapterTest {
 //    }
 //
 //    @Test
-//    @Sql("/sql/role/role-repository-test-data.sql")
+//    @Sql("/sql/role/role-data.sql")
 //    @DisplayName("등록 되지 않은 부모를 가지고 권한 등록")
 //    void save_not_exist_parent() {
 //        // given
@@ -162,7 +160,7 @@ class RolePersistenceAdapterTest {
 //    }
 //
 //    @Test
-//    @Sql("/sql/role/role-repository-test-data.sql")
+//    @Sql("/sql/role/role-data.sql")
 //    @DisplayName("등록 되지 않은 자식을 가지고 권한 등록")
 //    void save_not_exist_child() {
 //        // given
@@ -175,24 +173,28 @@ class RolePersistenceAdapterTest {
 //    }
 
     @Test
-    @Sql("/sql/role/role-repository-test-data.sql")
+    @Sql("/sql/role/role-data.sql")
     @DisplayName("업데이트")
     void update() {
         // given
-        RoleEntity roleEntity = new RoleEntity(null, "매니저 권한한한", List.of());
+        RoleEntity admin = new RoleEntity(ROLE_ADMIN, "ROLE_ADMIN", List.of());
+        RoleEntity manager = new RoleEntity(ROLE_MANAGER, "ROLE_MANAGER", List.of(admin));
+        RoleEntity vip = new RoleEntity(ROLE_VIP, "ROLE_VIP", List.of(manager));
+        RoleEntity user = new RoleEntity(ROLE_USER, "ROLE_USER", List.of(vip));
 
         // when
-        rolePersistenceAdapter.update(ROLE_ADMIN, roleEntity);
+        rolePersistenceAdapter.update(ROLE_ADMIN, user);
 
         // then
-        RoleEntity findRoleEntity = rolePersistenceAdapter.findByRole(Role.ROLE_MANAGER).orElseThrow(() -> new RuntimeException("해당 권한을 찾을 수 없습니다."));
-        BDDAssertions.then(findRoleEntity.getRole()).isEqualTo(Role.ROLE_MANAGER);
-        BDDAssertions.then(findRoleEntity.getDescription()).isEqualTo("유저 to 매니저 권한");
-        BDDAssertions.then(findRoleEntity.getChildren()).isEmpty();
+        List<RoleEntity> roleEntities = rolePersistenceAdapter.findAll();
+        assertThat(roleEntities.get(0).getRole()).isEqualTo(ROLE_ADMIN);
+        assertThat(roleEntities.get(1).getRole()).isEqualTo(ROLE_USER);
+        assertThat(roleEntities.get(1).getChildren().get(0).getRole()).isEqualTo(ROLE_VIP);
+        assertThat(roleEntities.get(1).getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_MANAGER);
     }
 //
 //    @Test
-//    @Sql("/sql/role/role-repository-test-data.sql")
+//    @Sql("/sql/role/role-data.sql")
 //    @DisplayName("부모를 자식으로 바꿔서 등록")
 //    void update_parent_to_children() {
 //        // given
@@ -210,7 +212,7 @@ class RolePersistenceAdapterTest {
 //    }
 //
 //    @Test
-//    @Sql("/sql/role/role-repository-test-data.sql")
+//    @Sql("/sql/role/role-data.sql")
 //    @DisplayName("자식을 부모로 바꿔서 등록")
 //    void update_children_to_parent() {
 //        // given
@@ -237,7 +239,7 @@ class RolePersistenceAdapterTest {
 //    }
 //
 //    @Test
-//    @Sql("/sql/role/role-repository-test-data.sql")
+//    @Sql("/sql/role/role-data.sql")
 //    @DisplayName("이미 등록된 권한으로 업데이트 시도. 예외 발생")
 //    void update_exist_role() {
 //        // given
@@ -250,7 +252,7 @@ class RolePersistenceAdapterTest {
 //    }
 //
 //    @Test
-//    @Sql("/sql/role/role-repository-test-data.sql")
+//    @Sql("/sql/role/role-data.sql")
 //    @DisplayName("등록 되지 않은 부모로 업데이트 시도. 예외 발생")
 //    void update_not_exist_parent() {
 //        // given
@@ -263,7 +265,7 @@ class RolePersistenceAdapterTest {
 //    }
 //
 //    @Test
-//    @Sql("/sql/role/role-repository-test-data.sql")
+//    @Sql("/sql/role/role-data.sql")
 //    @DisplayName("등록 되지 않은 자식으로 업데이트 시도. 예외 발생")
 //    void update_not_exist_children() {
 //        // given
