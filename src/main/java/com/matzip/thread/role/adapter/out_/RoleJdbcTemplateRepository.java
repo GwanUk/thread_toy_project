@@ -191,7 +191,7 @@ public class RoleJdbcTemplateRepository {
         int[] result = jdbcTemplate.batchUpdate(sql, parameterSources);
         int count = Arrays.stream(result).sum();
         int size = params.size();
-        if (count < size) throw new UpdateFailureException(size - count + " updates failed");
+        if (count < size) throw new UpdateFailureException();
         //TODO retry aop 만들기
     }
 

@@ -26,8 +26,6 @@ public class RoleJdbcDto{
     private String lastModifiedBy;
 
     public static List<RoleJdbcDto> from(RoleEntity roleEntity) {
-        if (isNull(roleEntity) || isNull(roleEntity.getRole())) return null;
-
         ArrayList<RoleJdbcDto> dtoList = new ArrayList<>();
         Map<String, String> map = new HashMap<>();
         Queue<RoleEntity> queue = new LinkedList<>();

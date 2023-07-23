@@ -1,8 +1,7 @@
 package com.matzip.thread.role.adapter.out_;
 
-import com.matzip.thread.common.annotation.NullCheck;
 import com.matzip.thread.common.annotation.PersistenceAdapter;
-import com.matzip.thread.common.annotation.Validation;
+import com.matzip.thread.common.exception.UpdateTargetMismatchException;
 import com.matzip.thread.role.application.prot.out_.RolePersistencePort;
 import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.role.domain.RoleEntity;
@@ -19,8 +18,7 @@ class RolePersistenceAdapter implements RolePersistencePort {
     private final RoleJdbcTemplateRepository roleJdbcTemplateRepository;
 
     @Override
-    @Validation
-    public Optional<RoleEntity> findByRole(@NullCheck Role role) {
+    public Optional<RoleEntity> findByRole(Role role) {
         Map<Long, RoleEntity> map = new HashMap<>();
         RoleEntity result = null;
 
@@ -65,13 +63,17 @@ class RolePersistenceAdapter implements RolePersistencePort {
     }
 
     @Override
-    @Validation
-    public void save(@NullCheck RoleEntity roleEntity) {
+    public void save(RoleEntity roleEntity) {
         roleJdbcTemplateRepository.save(RoleJdbcDto.from(roleEntity));
     }
 
     @Override
     public void update(Role role, RoleEntity roleEntity) {
+        String roleName = role.name();
+        String updateRoleName = roleEntity.getRole().name();
+        if (!roleName.equals(updateRoleName)) {
+            throw new UpdateTargetMismatchException(" (" + roleName + " <> " + updateRoleName + ")");
+        }
         roleJdbcTemplateRepository.update(role, RoleJdbcDto.from(roleEntity));
     }
 
