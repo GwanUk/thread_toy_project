@@ -74,6 +74,7 @@ class RolePersistenceAdapter implements RolePersistencePort {
         if (!roleName.equals(updateRoleName)) {
             throw new UpdateTargetMismatchException(" (" + roleName + " <> " + updateRoleName + ")");
         }
+
         roleJdbcTemplateRepository.update(role, RoleJdbcDto.from(roleEntity));
     }
 

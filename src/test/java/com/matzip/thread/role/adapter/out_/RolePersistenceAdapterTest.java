@@ -135,8 +135,6 @@ class RolePersistenceAdapterTest {
                 .isInstanceOf(DataIntegrityViolationException.class);
     }
 
-
-
     @Test
     @Sql("/sql/role/role-data.sql")
     @DisplayName("갱신")
@@ -185,21 +183,49 @@ class RolePersistenceAdapterTest {
 
     @Test
     @Sql("/sql/role/role-table.sql")
-    @DisplayName("등록 되지 않은 자식 추가 갱신")
-    void update_not_exist_children() {
+    @DisplayName("DB에 없는 권한 갱신")
+    void update_not_exist() {
         // given
-        RoleEntity savedUser = new RoleEntity(ROLE_USER, "ROLE_USER", List.of());
-        rolePersistenceAdapter.save(savedUser);
-        RoleEntity admin = new RoleEntity(ROLE_ADMIN, "ROLE_ADMIN", List.of());
-        RoleEntity user = new RoleEntity(ROLE_USER, "ROLE_USER", List.of(admin));
+        RoleEntity admin = new RoleEntity(ROLE_ADMIN, "관리자 권한", List.of());
 
         /*
          * ENUM Role 권한은 전부 다 DB에 저장되어 있어야 함.
-         * DB에 저장되어 있지 않은 권한으로 업데이트를 시도할 경우
-         * 업데이트 되지 않음.
-         * 낙관적 락 재시도를 위한 예외가 발생함.
+         * DB에 저장되어 있지 않은 권한은 업데이트 안됨.
+         * 업데이트 시도한 권한 개수보다 업데이트 된 권한 개수가 적어서 낙관적 락 재시도를 위한 예외가 발생함.
          */
-        // expected
-        assertThatThrownBy(() -> rolePersistenceAdapter.update(ROLE_USER, user)).isInstanceOf(UpdateFailureException.class);
+        // when
+        BDDAssertions.thenThrownBy(() -> rolePersistenceAdapter.update(ROLE_ADMIN, admin))
+                .isInstanceOf(UpdateFailureException.class);
+
+        // then
+        List<RoleEntity> entities = rolePersistenceAdapter.findAll();
+        assertThat(entities).isEmpty();
+    }
+
+    @Test
+    @Sql("/sql/role/role-table.sql")
+    @DisplayName("DB에 없는 자식 추가 갱신")
+    void update_not_exist_children() {
+        // given
+        RoleEntity save = new RoleEntity(ROLE_ADMIN, "관리자", List.of());
+        rolePersistenceAdapter.save(save);
+
+        RoleEntity user = new RoleEntity(ROLE_USER, "ROLE_USER", List.of());
+        RoleEntity admin = new RoleEntity(ROLE_ADMIN, "ROLE_ADMIN", List.of(user));
+
+        /*
+         * ENUM Role 권한은 전부 다 DB에 저장되어 있어야 함.
+         * DB에 저장되어 있지 않은 권한은 자식으로 추가 안됨.
+         * 다른 속성은 변경됨.
+         * 업데이트 시도한 권한 개수보다 업데이트 된 권한 개수가 적어서 낙관적 락 재시도를 위한 예외가 발생함.
+         */
+        // when
+        assertThatThrownBy(() -> rolePersistenceAdapter.update(ROLE_ADMIN, admin)).isInstanceOf(UpdateFailureException.class);
+
+        // then
+        List<RoleEntity> entities = rolePersistenceAdapter.findAll();
+        assertThat(entities.size()).isEqualTo(1);
+        assertThat(entities.get(0).getRole()).isEqualTo(ROLE_ADMIN);
+        assertThat(entities.get(0).getDescription()).isEqualTo("ROLE_ADMIN");
     }
 }
