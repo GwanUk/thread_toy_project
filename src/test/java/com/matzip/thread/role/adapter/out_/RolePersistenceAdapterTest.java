@@ -190,8 +190,46 @@ class RolePersistenceAdapterTest {
 
         // then
         List<RoleEntity> entities = rolePersistenceAdapter.findAll();
-        assertThat(entities.size()).isEqualTo(1);
         assertThat(entities.get(0).getRole()).isEqualTo(ROLE_ADMIN);
         assertThat(entities.get(0).getDescription()).isEqualTo("ROLE_ADMIN");
+        assertThat(entities.get(0).getChildren()).isEmpty();
+    }
+
+    @Test
+    @Sql("/sql/role/role-data.sql")
+    @DisplayName("삭제")
+    void delete() {
+        // when
+        rolePersistenceAdapter.delete(ROLE_ADMIN);
+
+        // then
+        Optional<RoleEntity> entity = rolePersistenceAdapter.findByRole(ROLE_ADMIN);
+        assertThat(entity).isEqualTo(Optional.empty());
+
+        List<RoleEntity> entities = rolePersistenceAdapter.findAll();
+        assertThat(entities.get(0).getRole()).isEqualTo(ROLE_MANAGER);
+        assertThat(entities.get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_VIP);
+        assertThat(entities.get(0).getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_USER);
+        assertThat(entities.get(0).getChildren().get(0).getChildren().get(0).getChildren()).isEmpty();
+    }
+
+    @Test
+    @Sql("/sql/role/role-data.sql")
+    @DisplayName("자식 권한 삭제")
+    void delete_children() {
+        // when
+        rolePersistenceAdapter.delete(ROLE_MANAGER);
+
+        // then
+        RoleEntity entity = rolePersistenceAdapter.findByRole(ROLE_ADMIN).orElseThrow(() -> new RuntimeException("권한을 찾을 수 없습니다."));
+        assertThat(entity.getChildren()).isEmpty();
+    }
+
+    @Test
+    @Sql("/sql/role/role-table.sql")
+    @DisplayName("DB에 없는 권한 삭제")
+    void delete_not_exist() {
+        // expected
+        rolePersistenceAdapter.delete(ROLE_ADMIN);
     }
 }

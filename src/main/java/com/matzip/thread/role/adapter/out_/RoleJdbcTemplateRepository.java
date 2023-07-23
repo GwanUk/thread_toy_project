@@ -195,8 +195,12 @@ public class RoleJdbcTemplateRepository {
         //TODO retry aop 만들기
     }
 
-    public void delete(List<RoleJdbcDto> roleDtoList) {
-        //TODO
+    public void delete(Role role) {
+        String sql = """
+                     DELETE FROM ROLE_ WHERE ROLE_NAME = :roleName
+                     """;
+
+        jdbcTemplate.update(sql, Map.of("roleName", role.name()));
     }
 
     private static BeanPropertySqlParameterSource[] getParameterSources(List<RoleJdbcDto> params) {

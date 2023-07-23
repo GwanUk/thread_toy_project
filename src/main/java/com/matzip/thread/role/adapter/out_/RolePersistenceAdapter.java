@@ -67,6 +67,11 @@ class RolePersistenceAdapter implements RolePersistencePort {
         roleJdbcTemplateRepository.save(RoleJdbcDto.from(roleEntity));
     }
 
+    /**
+     * Role 권한은 변경 불가
+     * @param role 변경 주체
+     * @param roleEntity 변경 내용
+     */
     @Override
     public void update(Role role, RoleEntity roleEntity) {
         String roleName = role.name();
@@ -80,5 +85,6 @@ class RolePersistenceAdapter implements RolePersistencePort {
 
     @Override
     public void delete(Role role) {
+        roleJdbcTemplateRepository.delete(role);
     }
 }
