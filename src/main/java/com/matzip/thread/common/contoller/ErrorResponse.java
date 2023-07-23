@@ -2,7 +2,6 @@ package com.matzip.thread.common.contoller;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,12 +17,15 @@ public class ErrorResponse {
         fieldErrors.add(new FieldError(fieldError.getField(), fieldError.getDefaultMessage(), fieldError.getRejectedValue()));
     }
 
+    public void addFieldError(String field, String errorMessage, Object rejectedValue) {
+        fieldErrors.add(new FieldError(field, errorMessage, rejectedValue));
+    }
+
     @Getter
     @RequiredArgsConstructor
     static class FieldError {
         private final String field;
         private final String errorMessage;
-        @Nullable
         private final Object rejectedValue;
     }
 }

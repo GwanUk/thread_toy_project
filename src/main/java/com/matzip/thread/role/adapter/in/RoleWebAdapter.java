@@ -1,39 +1,43 @@
 package com.matzip.thread.role.adapter.in;
 
 import com.matzip.thread.common.annotation.WebAdapter;
-import com.matzip.thread.role.application.prot.in.RoleInPort;
+import com.matzip.thread.role.application.prot.in.RoleWebPort;
 import com.matzip.thread.role.domain.Role;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @WebAdapter(path = "/api/role")
 class RoleWebAdapter {
 
-    private final RoleInPort roleInPort;
+    private final RoleWebPort roleWebPort;
 
     @GetMapping("/{role}")
-    RoleResponse findByRole(@PathVariable Role role) {
-        return RoleResponse.toResponse(roleInPort.findByRole(role));
+    Optional<RoleResponse> findByRole(@PathVariable Role role) {
+        return roleWebPort.findByRole(role).map(RoleResponse::from);
     }
 
     @GetMapping
     List<RoleResponse> findAll() {
-        return roleInPort.findAll().stream().map(RoleResponse::toResponse).toList();
+        return roleWebPort.findAll().stream().map(RoleResponse::from).toList();
     }
 
     @PostMapping
-    void save(@RequestBody RoleSaveRequest roleSaveRequest) {
-        roleInPort.save(roleSaveRequest.toEntity());
+    void save(@RequestBody @Validated RoleSave roleSave) {
+        roleWebPort.save(roleSave.toEntity());
     }
 
-    @GetMapping("/test")
-    void test() {
-        roleInPort.findByRole(null);
+    @PutMapping("/{role}")
+    void update(@PathVariable Role role, @RequestBody @Validated RoleUpdate roleUpdate) {
+        roleWebPort.update(role, roleUpdate.toEntity());
+    }
+
+    @DeleteMapping("/{role}")
+    void delete(@PathVariable Role role) {
+        roleWebPort.delete(role);
     }
 }

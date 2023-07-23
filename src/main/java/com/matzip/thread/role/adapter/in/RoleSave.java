@@ -4,26 +4,28 @@ import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.role.domain.RoleEntity;
 import lombok.Getter;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-class RoleResponse {
+class RoleSave {
+    @NotNull
     private final Role role;
     private final String description;
-    private final List<RoleResponse> children = new ArrayList<>();
+    private final List<RoleSave> children = new ArrayList<>();
 
-    public RoleResponse(Role role, String description, List<RoleResponse> children) {
+    RoleSave(Role role, String description, List<RoleSave> children) {
         this.role = role;
         this.description = description;
         this.children.addAll(children);
     }
 
-    static RoleResponse from(RoleEntity roleEntity) {
-        return new RoleResponse(roleEntity.getRole(),
-                roleEntity.getDescription(),
-                roleEntity.getChildren().stream()
-                        .map(RoleResponse::from)
+    RoleEntity toEntity() {
+        return new RoleEntity(role,
+                description,
+                children.stream()
+                        .map(RoleSave::toEntity)
                         .toList());
     }
 }

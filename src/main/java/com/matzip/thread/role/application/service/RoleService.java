@@ -1,9 +1,8 @@
 package com.matzip.thread.role.application.service;
 
-import com.matzip.thread.common.exception.NotFoundDataException;
-import com.matzip.thread.role.application.prot.in.RoleHierarchyInPort;
-import com.matzip.thread.role.application.prot.in.RoleInPort;
-import com.matzip.thread.role.application.prot.out_.RoleOutPort;
+import com.matzip.thread.role.application.prot.in.RoleHierarchyPort;
+import com.matzip.thread.role.application.prot.in.RoleWebPort;
+import com.matzip.thread.role.application.prot.out_.RolePersistencePort;
 import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.role.domain.RoleEntity;
 import lombok.RequiredArgsConstructor;
@@ -11,42 +10,48 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-class RoleService implements RoleInPort, RoleHierarchyInPort {
+class RoleService implements RoleWebPort, RoleHierarchyPort {
 
-    private final RoleOutPort roleOutPort;
+    private final RolePersistencePort rolePersistencePort;
 
     @Override
-    public RoleEntity findByRole(Role role) {
-        return roleOutPort.findByRole(role).orElseThrow(() -> new NotFoundDataException(role.name()));
+    public Optional<RoleEntity> findByRole(Role role) {
+        return rolePersistencePort.findByRole(role);
     }
 
     @Override
     public List<RoleEntity> findAll() {
-        return roleOutPort.findAll();
+        return rolePersistencePort.findAll();
     }
 
     @Override
     public String getHierarchy() {
-        StringBuilder concatenateRoles = new StringBuilder();
-        roleOutPort.findAll().stream()
-                .filter(r -> Objects.nonNull(r.getParent()))
-                .forEach(r -> {
-                    concatenateRoles.append(r.getParent().name())
-                            .append(" > ")
-                            .append(r.getRole().name())
-                            .append("\n");
-                });
-        return concatenateRoles.toString();
+        return rolePersistencePort.findAll().stream()
+                .map(RoleEntity::getHierarchyString)
+                .collect(Collectors.joining());
     }
 
     @Override
     @Transactional
     public void save(RoleEntity roleEntity) {
-        roleOutPort.save(roleEntity);
+        rolePersistencePort.save(roleEntity);
+    }
+
+    @Override
+    @Transactional
+    public void update(Role role, RoleEntity roleEntity) {
+        rolePersistencePort.update(role, roleEntity);
+    }
+
+    @Override
+    @Transactional
+    public void delete(Role role) {
+        rolePersistencePort.delete(role);
     }
 }

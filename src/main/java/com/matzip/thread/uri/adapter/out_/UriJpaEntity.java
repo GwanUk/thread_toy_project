@@ -17,7 +17,7 @@ import java.util.List;
 class UriJpaEntity extends JpaBaseEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "URI_ID")
     private Long id;
 

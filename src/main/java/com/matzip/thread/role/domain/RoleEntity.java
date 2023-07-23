@@ -9,13 +9,27 @@ import java.util.List;
 public class RoleEntity {
     private final Role role;
     private final String description;
-    private final Role parent;
-    private final List<Role> children = new ArrayList<>();
+    private final List<RoleEntity> children = new ArrayList<>();
 
-    public RoleEntity(Role role, String description, Role parent, List<Role> children) {
+    public RoleEntity(Role role, String description, List<RoleEntity> children) {
         this.role = role;
         this.description = description;
-        this.parent = parent;
         this.children.addAll(children);
+    }
+
+    public String getHierarchyString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        children.forEach(c -> stringBuilder.append(role.name())
+                .append(" > ")
+                .append(c.role.name()));
+        return stringBuilder.toString();
+    }
+
+    public void addChild(RoleEntity roleEntity) {
+        children.add(roleEntity);
+    }
+
+    public String getName() {
+        return role.name();
     }
 }

@@ -13,9 +13,10 @@ import javax.persistence.MappedSuperclass;
 public class JpaBaseEntity extends JpaBaseTimeEntity{
 
     @CreatedBy
-    @Column(updatable = false)
+    @Column(name = "CREATED_BY", updatable = false)
     private String createdBy;
 
     @LastModifiedBy
+    @Column(name = "LAST_MODIFIED_BY")
     private String lastModifiedBy;
 }

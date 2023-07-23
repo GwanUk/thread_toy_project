@@ -12,7 +12,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-@WebMvcTest(SecurityTestController.class)
+@WebMvcTest(SecurityTestConfiguration.SecurityTestController.class)
 @Import(SecurityTestConfiguration.class)
 public class SecurityAuthorizationTest {
 
@@ -26,7 +26,7 @@ public class SecurityAuthorizationTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/admin")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized())
-                .andExpect(MockMvcResultMatchers.content().string("UnAuthorized. Only authorized users have access"))
+                .andExpect(MockMvcResultMatchers.content().string("Access denied"))
                 .andDo(MockMvcResultHandlers.print());
     }
 
@@ -38,7 +38,7 @@ public class SecurityAuthorizationTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/admin")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isForbidden())
-                .andExpect(MockMvcResultMatchers.content().string("Access denied. Authorization is required"))
+                .andExpect(MockMvcResultMatchers.content().string("Access denied"))
                 .andDo(MockMvcResultHandlers.print());
     }
 

@@ -1,9 +1,9 @@
 package com.matzip.thread.user.adapter.in;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.matzip.thread.user.domain.PasswordEncoderFactoryBean;
 import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.user.application.port.in.UserInPort;
+import com.matzip.thread.user.domain.PasswordEncoderFactoryBean;
 import com.matzip.thread.user.domain.UserEntity;
 import org.assertj.core.api.BDDAssertions;
 import org.junit.jupiter.api.DisplayName;
@@ -16,7 +16,6 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
@@ -73,7 +72,7 @@ class UserWebAdapterTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(HttpStatus.BAD_REQUEST.toString()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Invalid argument value"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.fieldErrors[0].field").value("username"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.fieldErrors[0].errorMessage").value("must not be blank"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.fieldErrors[0].rejectedValue").isEmpty())
@@ -92,7 +91,7 @@ class UserWebAdapterTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(HttpStatus.BAD_REQUEST.toString()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Invalid argument value"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.fieldErrors[0].field").value("username"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.fieldErrors[0].errorMessage").value("must not be blank"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.fieldErrors[0].rejectedValue").isEmpty())
@@ -111,7 +110,7 @@ class UserWebAdapterTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(HttpStatus.BAD_REQUEST.toString()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Invalid argument value"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.fieldErrors[0].field").value("username"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.fieldErrors[0].errorMessage").value("must not be blank"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.fieldErrors[0].rejectedValue").value(" "))
