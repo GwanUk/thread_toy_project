@@ -9,6 +9,6 @@ public class UpdateFailureException extends ApplicationException {
 
     @Override
     public HttpStatus getHttpStatus() {
-        return HttpStatus.INTERNAL_SERVER_ERROR;
+        return HttpStatus.REQUEST_TIMEOUT;
     }
 }

@@ -2,11 +2,11 @@ package com.matzip.thread.common.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class DuplicationApplicationConvention extends ApplicationException {
+public class DuplicationDataException extends ApplicationException {
 
     private static final String msg = "Already exists: ";
 
-    public DuplicationApplicationConvention(String message) {
+    public DuplicationDataException(String message) {
         super(msg + message);
     }
 

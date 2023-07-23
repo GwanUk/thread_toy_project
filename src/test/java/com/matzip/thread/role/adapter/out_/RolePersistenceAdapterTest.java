@@ -1,8 +1,10 @@
 package com.matzip.thread.role.adapter.out_;
 
 import com.matzip.thread.common.aop.ValidationAspect;
+import com.matzip.thread.common.exception.NullArgumentException;
 import com.matzip.thread.role.application.prot.out_.RolePersistencePort;
 import com.matzip.thread.role.domain.RoleEntity;
+import org.assertj.core.api.BDDAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +14,11 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.matzip.thread.role.domain.Role.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataJpaTest
 @Import({RolePersistenceAdapter.class,
@@ -28,47 +32,8 @@ class RolePersistenceAdapterTest {
 
     @Test
     @Sql("/sql/role/role-data.sql")
-    @DisplayName("단건 조회")
-    void findByRole() {
-        // given
-        // when
-        RoleEntity findRoleEntity = rolePersistenceAdapter.findByRole(ROLE_ADMIN).orElseThrow(() -> new RuntimeException("해당 권한을 찾을 수 없습니다."));
-
-        // then
-        assertThat(findRoleEntity.getRole()).isEqualTo(ROLE_ADMIN);
-        assertThat(findRoleEntity.getChildren().get(0).getRole()).isEqualTo(ROLE_MANAGER);
-        assertThat(findRoleEntity.getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_VIP);
-        assertThat(findRoleEntity.getChildren().get(0).getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_USER);
-    }
-//
-//    @Test
-//    @Sql("/sql/role/role-data.sql")
-//    @DisplayName("단건 admin 조회")
-//    void findByRole_admin() {
-//        // given
-//        // when
-//        RoleEntity findRoleEntity = rolePersistenceAdapter.findByRole(Role.ROLE_ADMIN).orElseThrow(() -> new RuntimeException("해당 권한을 찾을 수 없습니다."));
-//
-//        // then
-//        BDDAssertions.then(findRoleEntity.getRole()).isEqualTo(Role.ROLE_ADMIN);
-//        BDDAssertions.then(findRoleEntity.getDescription()).isEqualTo("관리자 권한");
-//        BDDAssertions.then(findRoleEntity.getParent()).isNull();
-//        BDDAssertions.then(findRoleEntity.getChildren().get(0)).isEqualTo(Role.ROLE_USER);
-//    }
-//
-//    @Test
-//    @DisplayName("DB에 존재하지 않는 권한 단건 조회. empty 반환")
-//    void findByRole_not_exist() {
-//        // expected
-//        BDDAssertions.then(rolePersistenceAdapter.findByRole(null)).isEqualTo(Optional.empty());
-//        BDDAssertions.then(rolePersistenceAdapter.findByRole(Role.ROLE_USER)).isEqualTo(Optional.empty());
-//    }
-
-    @Test
-    @Sql("/sql/role/role-data.sql")
     @DisplayName("전체 조회")
     void findAll() {
-        // given
         // when
         List<RoleEntity> roleEntities = rolePersistenceAdapter.findAll();
 
@@ -78,17 +43,50 @@ class RolePersistenceAdapterTest {
         assertThat(roleEntities.get(0).getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_VIP);
         assertThat(roleEntities.get(0).getChildren().get(0).getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_USER);
     }
-//
-//    @Test
-//    @DisplayName("데이터가 없는 상태에서 전체 조회. empty list 반환")
-//    void findAll_failure_no_data() {
-//        // expected
-//        BDDAssertions.then(rolePersistenceAdapter.findAll()).isEmpty();
-//    }
-//
+
     @Test
-    @Sql("/sql/role/role-ddl.sql")
-    @DisplayName("권한 등록")
+    @Sql("/sql/role/role-table.sql")
+    @DisplayName("데이터가 없는 상태에서 전체 조회")
+    void findAll_failure_no_data() {
+        // expected
+        BDDAssertions.then(rolePersistenceAdapter.findAll()).isEmpty();
+    }
+
+    @Test
+    @Sql("/sql/role/role-data.sql")
+    @DisplayName("단건 조회")
+    void findByRole() {
+        // when
+        RoleEntity findRoleEntity = rolePersistenceAdapter.findByRole(ROLE_ADMIN).orElseThrow(() -> new RuntimeException("해당 권한을 찾을 수 없습니다."));
+
+        // then
+        assertThat(findRoleEntity.getRole()).isEqualTo(ROLE_ADMIN);
+        assertThat(findRoleEntity.getChildren().get(0).getRole()).isEqualTo(ROLE_MANAGER);
+        assertThat(findRoleEntity.getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_VIP);
+        assertThat(findRoleEntity.getChildren().get(0).getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_USER);
+    }
+
+    @Test
+    @Sql("/sql/role/role-table.sql")
+    @DisplayName("DB에 없는 권한 조회")
+    void findByRole_not_exist() {
+        // expected
+        assertThat(rolePersistenceAdapter.findByRole(ROLE_USER)).isEqualTo(Optional.empty());
+    }
+
+    @Test
+    @Sql("/sql/role/role-data.sql")
+    @DisplayName("null 조회")
+    void findByRole_null() {
+        // expected
+        assertThatThrownBy(() -> rolePersistenceAdapter.findByRole(null))
+                .isInstanceOf(NullArgumentException.class)
+                .hasMessage("Argument is empty: Role");
+    }
+
+    @Test
+    @Sql("/sql/role/role-table.sql")
+    @DisplayName("권한 저장")
     void save() {
         // given
         RoleEntity user = new RoleEntity(ROLE_USER, "ROLE_USER", List.of());
@@ -106,15 +104,27 @@ class RolePersistenceAdapterTest {
         assertThat(findRoleEntity.getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_VIP);
         assertThat(findRoleEntity.getChildren().get(0).getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_USER);
     }
-//
-//    @Test
-//    @DisplayName("null 저장 시도. 예외 발생")
-//    void save_null() {
-//        // expected
-//        BDDAssertions.thenThrownBy(() -> rolePersistenceAdapter.save(null))
+
+    @Test
+    @DisplayName("null 저장")
+    void save_null() {
+        // expected
+        assertThatThrownBy(() -> rolePersistenceAdapter.save(null))
+                .isInstanceOf(NullArgumentException.class)
+                .hasMessage("Argument is empty: RoleEntity");
+    }
+
+    @Test
+    @DisplayName("권한이 null 인 엔티티 저장")
+    void save_role_null() {
+        // given
+//        RoleEntity user = new RoleEntity(null, "ROLE_USER", List.of());
+//        rolePersistenceAdapter.save(user);
+        // expected
+//        assertThatThrownBy(() -> rolePersistenceAdapter.save(user))
 //                .isInstanceOf(NullArgumentException.class)
 //                .hasMessage("Argument is empty: RoleEntity");
-//    }
+    }
 //
 //    @Test
 //    @Sql("/sql/role/role-data.sql")

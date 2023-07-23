@@ -14,7 +14,7 @@ import static java.util.Objects.*;
 
 @Getter
 @Setter
-public class RoleJdbcDto implements Comparable<RoleJdbcDto>{
+public class RoleJdbcDto{
     private Long roleId;
     private String roleName;
     private String description;
@@ -26,6 +26,8 @@ public class RoleJdbcDto implements Comparable<RoleJdbcDto>{
     private String lastModifiedBy;
 
     public static List<RoleJdbcDto> from(RoleEntity roleEntity) {
+        if (isNull(roleEntity) || isNull(roleEntity.getRole())) return null;
+
         ArrayList<RoleJdbcDto> dtoList = new ArrayList<>();
         Map<String, String> map = new HashMap<>();
         Queue<RoleEntity> queue = new LinkedList<>();
@@ -75,10 +77,5 @@ public class RoleJdbcDto implements Comparable<RoleJdbcDto>{
     @Override
     public int hashCode() {
         return hash(roleName, description, parentRoleName);
-    }
-
-    @Override
-    public int compareTo(RoleJdbcDto o) {
-        return Long.compare(this.roleId, o.roleId);
     }
 }

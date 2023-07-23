@@ -1,6 +1,8 @@
 package com.matzip.thread.role.adapter.out_;
 
+import com.matzip.thread.common.annotation.NullCheck;
 import com.matzip.thread.common.annotation.PersistenceAdapter;
+import com.matzip.thread.common.annotation.Validation;
 import com.matzip.thread.role.application.prot.out_.RolePersistencePort;
 import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.role.domain.RoleEntity;
@@ -14,11 +16,11 @@ import static java.util.Objects.isNull;
 @RequiredArgsConstructor
 class RolePersistenceAdapter implements RolePersistencePort {
 
-    private final RoleJpaRepository roleJpaRepository;
     private final RoleJdbcTemplateRepository roleJdbcTemplateRepository;
 
     @Override
-    public Optional<RoleEntity> findByRole(Role role) {
+    @Validation
+    public Optional<RoleEntity> findByRole(@NullCheck Role role) {
         Map<Long, RoleEntity> map = new HashMap<>();
         RoleEntity result = null;
 
@@ -63,7 +65,8 @@ class RolePersistenceAdapter implements RolePersistencePort {
     }
 
     @Override
-    public void save(RoleEntity roleEntity) {
+    @Validation
+    public void save(@NullCheck RoleEntity roleEntity) {
         roleJdbcTemplateRepository.save(RoleJdbcDto.from(roleEntity));
     }
 

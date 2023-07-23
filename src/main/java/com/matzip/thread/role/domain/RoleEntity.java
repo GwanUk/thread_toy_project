@@ -1,12 +1,13 @@
 package com.matzip.thread.role.domain;
 
+import com.matzip.thread.common.interfaces.Validation;
 import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-public class RoleEntity {
+public class RoleEntity implements Validation {
     private final Role role;
     private final String description;
     private final List<RoleEntity> children = new ArrayList<>();
@@ -31,5 +32,10 @@ public class RoleEntity {
 
     public String getName() {
         return role.name();
+    }
+
+    @Override
+    public void validate() {
+
     }
 }
