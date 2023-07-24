@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-public class RoleUpdate {
+class RoleUpdate {
     @NotNull
     private final Role role;
     private final String description;

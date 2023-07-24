@@ -4,17 +4,15 @@ import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.role.domain.RoleEntity;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static java.util.Objects.*;
+import static java.util.Objects.hash;
 
 @Getter
 @Setter
-public class RoleJdbcDto implements Comparable<RoleJdbcDto>{
+class RoleJdbcDto{
     private Long roleId;
     private String roleName;
     private String description;
@@ -25,42 +23,40 @@ public class RoleJdbcDto implements Comparable<RoleJdbcDto>{
     private String createdBy;
     private String lastModifiedBy;
 
-    public static List<RoleJdbcDto> from(RoleEntity roleEntity) {
+    RoleJdbcDto() {
+    }
+
+    private RoleJdbcDto(String roleName, String description, String parentRoleName) {
+        this.roleName = roleName;
+        this.description = description;
+        this.parentRoleName = parentRoleName;
+    }
+
+    static List<RoleJdbcDto> from(RoleEntity roleEntity) {
         ArrayList<RoleJdbcDto> dtoList = new ArrayList<>();
-        Map<String, String> map = new HashMap<>();
+        RoleJdbcDto roleJdbcDto = new RoleJdbcDto(roleEntity.getName(), roleEntity.getDescription(), roleEntity.getName());
+        dtoList.add(roleJdbcDto);
+
         Queue<RoleEntity> queue = new LinkedList<>();
         queue.offer(roleEntity);
 
         while (!queue.isEmpty()) {
-            RoleEntity entity = queue.poll();
-            RoleJdbcDto dto = new RoleJdbcDto();
-            String roleName = entity.getName();
+            RoleEntity parent = queue.poll();
+            List<RoleEntity> children = parent.getChildren();
 
-            dto.setRoleName(roleName);
-            dto.setDescription(entity.getDescription());
+            children.stream()
+                    .map(c -> new RoleJdbcDto(
+                            c.getName(),
+                            c.getDescription(),
+                            parent.getName()))
+                    .forEach(dtoList::add);
 
-            if (map.containsKey(roleName)) {
-                dto.setParentRoleName(map.get(roleName));
-            }
-
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (nonNull(authentication)) {
-                String username = authentication.getName();
-                dto.setCreatedBy(username);
-                dto.setLastModifiedBy(username);
-            }
-
-            entity.getChildren().forEach(c -> {
-                map.put(c.getName(), roleName);
-                queue.offer(c);
-            });
-
-            dtoList.add(dto);
+            queue.addAll(children);
         }
         return dtoList;
     }
 
-    public RoleEntity toEntity() {
+    RoleEntity toEntity() {
         return new RoleEntity(Role.valueOf(roleName), description, List.of());
     }
 
@@ -75,10 +71,5 @@ public class RoleJdbcDto implements Comparable<RoleJdbcDto>{
     @Override
     public int hashCode() {
         return hash(roleName, description, parentRoleName);
-    }
-
-    @Override
-    public int compareTo(RoleJdbcDto o) {
-        return Long.compare(this.roleId, o.roleId);
     }
 }

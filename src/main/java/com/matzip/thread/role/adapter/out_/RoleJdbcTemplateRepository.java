@@ -18,7 +18,7 @@ import static java.util.stream.Collectors.toMap;
 
 @Repository
 @RequiredArgsConstructor
-public class RoleJdbcTemplateRepository {
+class RoleJdbcTemplateRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
     List<RoleJdbcDto> findAll() {
@@ -56,7 +56,7 @@ public class RoleJdbcTemplateRepository {
                             LAST_MODIFIED_BY
                      FROM r
                      """;
-        return jdbcTemplate.query(sql, roleRowMapper());
+        return jdbcTemplate.query(sql, rowMapper());
     }
 
     List<RoleJdbcDto> findByRoleWithChildren(Role role) {
@@ -99,10 +99,10 @@ public class RoleJdbcTemplateRepository {
         MapSqlParameterSource param = new MapSqlParameterSource()
                 .addValue("roleName", role.name());
 
-        return jdbcTemplate.query(sql, param, roleRowMapper());
+        return jdbcTemplate.query(sql, param, rowMapper());
     }
 
-    public void save(List<RoleJdbcDto> roleDtoList) {
+    void save(List<RoleJdbcDto> roleDtoList) {
         String sql = """
                      INSERT INTO ROLE_ (ROLE_NAME,
                                         DESCRIPTION,
@@ -122,12 +122,13 @@ public class RoleJdbcTemplateRepository {
                              :lastModifiedBy)
                      """;
 
-        BeanPropertySqlParameterSource[] parameterSources = getParameterSources(roleDtoList);
+        roleDtoList.forEach(this::fillUserName);
+        BeanPropertySqlParameterSource[] parameterSources = parametersMapper(roleDtoList);
 
         jdbcTemplate.batchUpdate(sql, parameterSources);
     }
 
-    public void update(Role role, List<RoleJdbcDto> roleDtoList) throws UpdateFailureException {
+    void update(Role role, List<RoleJdbcDto> roleDtoList) throws UpdateFailureException {
         List<RoleJdbcDto> findDtoList = findByRoleWithChildren(role);
         fillParentRoleName(findDtoList);
 
@@ -141,11 +142,7 @@ public class RoleJdbcTemplateRepository {
             RoleJdbcDto param = new RoleJdbcDto();
 
             param.setRoleName(roleName);
-
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (nonNull(authentication)) {
-                param.setLastModifiedBy(authentication.getName());
-            }
+            fillUserName(param);
 
             if (updateDtoMap.containsKey(roleName)) {
                 RoleJdbcDto updateDto = updateDtoMap.get(roleName);
@@ -186,20 +183,42 @@ public class RoleJdbcTemplateRepository {
                      WHERE ROLE_NAME = :roleName
                      """;
 
-        BeanPropertySqlParameterSource[] parameterSources = getParameterSources(params);
+        BeanPropertySqlParameterSource[] parameterSources = parametersMapper(params);
 
         int[] result = jdbcTemplate.batchUpdate(sql, parameterSources);
         int count = Arrays.stream(result).sum();
         int size = params.size();
-        if (count < size) throw new UpdateFailureException(size - count + " updates failed");
+        if (count < size) throw new UpdateFailureException();
         //TODO retry aop 만들기
     }
 
-    public void delete(List<RoleJdbcDto> roleDtoList) {
-        //TODO
+    void delete(Role role) {
+        String sql = """
+                     DELETE FROM ROLE_ WHERE ROLE_NAME = :roleName
+                     """;
+
+        jdbcTemplate.update(sql, Map.of("roleName", role.name()));
     }
 
-    private static BeanPropertySqlParameterSource[] getParameterSources(List<RoleJdbcDto> params) {
+    private void fillUserName(RoleJdbcDto roleJdbcDto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (nonNull(authentication)) {
+            String username = authentication.getName();
+            roleJdbcDto.setCreatedBy(username);
+            roleJdbcDto.setLastModifiedBy(username);
+        }
+    }
+
+    private void fillParentRoleName(List<RoleJdbcDto> roleDtoList) {
+        Map<Long, String> map = roleDtoList.stream()
+                .collect(toMap(RoleJdbcDto::getRoleId, RoleJdbcDto::getRoleName));
+
+        roleDtoList.stream()
+                .filter(r -> map.containsKey(r.getParentId()))
+                .forEach(r -> r.setParentRoleName(map.get(r.getParentId())));
+    }
+
+    private BeanPropertySqlParameterSource[] parametersMapper(List<RoleJdbcDto> params) {
         int size = params.size();
         BeanPropertySqlParameterSource[] parameterSources = new BeanPropertySqlParameterSource[size];
 
@@ -211,17 +230,7 @@ public class RoleJdbcTemplateRepository {
         return parameterSources;
     }
 
-
-    private void fillParentRoleName(List<RoleJdbcDto> roleDtoList) {
-        Map<Long, String> map = roleDtoList.stream()
-                .collect(toMap(RoleJdbcDto::getRoleId, RoleJdbcDto::getRoleName));
-
-        roleDtoList.stream()
-                .filter(r -> map.containsKey(r.getParentId()))
-                .forEach(r -> r.setParentRoleName(map.get(r.getParentId())));
-    }
-
-    private static BeanPropertyRowMapper<RoleJdbcDto> roleRowMapper() {
+    private BeanPropertyRowMapper<RoleJdbcDto> rowMapper() {
         return BeanPropertyRowMapper.newInstance(RoleJdbcDto.class);
     }
 }

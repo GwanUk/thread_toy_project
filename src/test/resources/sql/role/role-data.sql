@@ -19,10 +19,10 @@ CREATE UNIQUE INDEX IU_ROLE_01 ON ROLE_ (ROLE_NAME);
 CREATE INDEX IX_ROLE_02 ON ROLE_ (PARENT_ID);
 
 insert into ROLE_ (ROLE_NAME, DESCRIPTION, PARENT_ID, CREATED_DATE, LAST_MODIFIED_DATE, CREATED_BY, LAST_MODIFIED_BY)
-values ('ROLE_ADMIN', '관리자 권한', null, now(), now(), 'jake', 'jake');
+values ('ROLE_ADMIN', '관리자 권한', null, now(), now(), 'system', 'system');
 insert into ROLE_ (ROLE_NAME, DESCRIPTION, PARENT_ID, CREATED_DATE, LAST_MODIFIED_DATE, CREATED_BY, LAST_MODIFIED_BY)
-values ('ROLE_MANAGER', '매니저 권한', 1, now(), now(), 'jake', 'jake');
+values ('ROLE_MANAGER', '매니저 권한', 1, now(), now(), 'system', 'system');
 insert into ROLE_ (ROLE_NAME, DESCRIPTION, PARENT_ID, CREATED_DATE, LAST_MODIFIED_DATE, CREATED_BY, LAST_MODIFIED_BY)
-values ('ROLE_VIP', '특급 권한', 2, now(), now(), 'jake', 'jake');
+values ('ROLE_VIP', '특급 권한', 2, now(), now(), 'system', 'system');
 insert into ROLE_ (ROLE_NAME, DESCRIPTION, PARENT_ID, CREATED_DATE, LAST_MODIFIED_DATE, CREATED_BY, LAST_MODIFIED_BY)
-values ('ROLE_USER', '유저 권한', 3, now(), now(), 'jake', 'jake');
+values ('ROLE_USER', '유저 권한', 3, now(), now(), 'system', 'system');

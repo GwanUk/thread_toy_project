@@ -13,7 +13,7 @@ class RoleResponse {
     private final String description;
     private final List<RoleResponse> children = new ArrayList<>();
 
-    public RoleResponse(Role role, String description, List<RoleResponse> children) {
+    RoleResponse(Role role, String description, List<RoleResponse> children) {
         this.role = role;
         this.description = description;
         this.children.addAll(children);

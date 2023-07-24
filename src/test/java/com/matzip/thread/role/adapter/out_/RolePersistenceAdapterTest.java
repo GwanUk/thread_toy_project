@@ -1,20 +1,26 @@
 package com.matzip.thread.role.adapter.out_;
 
 import com.matzip.thread.common.aop.ValidationAspect;
+import com.matzip.thread.common.exception.UpdateFailureException;
+import com.matzip.thread.common.exception.UpdateTargetMismatchException;
 import com.matzip.thread.role.application.prot.out_.RolePersistencePort;
 import com.matzip.thread.role.domain.RoleEntity;
+import org.assertj.core.api.BDDAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.matzip.thread.role.domain.Role.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataJpaTest
 @Import({RolePersistenceAdapter.class,
@@ -28,67 +34,51 @@ class RolePersistenceAdapterTest {
 
     @Test
     @Sql("/sql/role/role-data.sql")
-    @DisplayName("단건 조회")
-    void findByRole() {
-        // given
+    @DisplayName("전체 조회")
+    void findAll() {
         // when
-        RoleEntity findRoleEntity = rolePersistenceAdapter.findByRole(ROLE_ADMIN).orElseThrow(() -> new RuntimeException("해당 권한을 찾을 수 없습니다."));
+        List<RoleEntity> entity = rolePersistenceAdapter.findAll();
 
         // then
-        assertThat(findRoleEntity.getRole()).isEqualTo(ROLE_ADMIN);
-        assertThat(findRoleEntity.getChildren().get(0).getRole()).isEqualTo(ROLE_MANAGER);
-        assertThat(findRoleEntity.getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_VIP);
-        assertThat(findRoleEntity.getChildren().get(0).getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_USER);
+        assertThat(entity.get(0).getRole()).isEqualTo(ROLE_ADMIN);
+        assertThat(entity.get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_MANAGER);
+        assertThat(entity.get(0).getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_VIP);
+        assertThat(entity.get(0).getChildren().get(0).getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_USER);
     }
-//
-//    @Test
-//    @Sql("/sql/role/role-data.sql")
-//    @DisplayName("단건 admin 조회")
-//    void findByRole_admin() {
-//        // given
-//        // when
-//        RoleEntity findRoleEntity = rolePersistenceAdapter.findByRole(Role.ROLE_ADMIN).orElseThrow(() -> new RuntimeException("해당 권한을 찾을 수 없습니다."));
-//
-//        // then
-//        BDDAssertions.then(findRoleEntity.getRole()).isEqualTo(Role.ROLE_ADMIN);
-//        BDDAssertions.then(findRoleEntity.getDescription()).isEqualTo("관리자 권한");
-//        BDDAssertions.then(findRoleEntity.getParent()).isNull();
-//        BDDAssertions.then(findRoleEntity.getChildren().get(0)).isEqualTo(Role.ROLE_USER);
-//    }
-//
-//    @Test
-//    @DisplayName("DB에 존재하지 않는 권한 단건 조회. empty 반환")
-//    void findByRole_not_exist() {
-//        // expected
-//        BDDAssertions.then(rolePersistenceAdapter.findByRole(null)).isEqualTo(Optional.empty());
-//        BDDAssertions.then(rolePersistenceAdapter.findByRole(Role.ROLE_USER)).isEqualTo(Optional.empty());
-//    }
+
+    @Test
+    @Sql("/sql/role/role-table.sql")
+    @DisplayName("데이터가 없는 상태에서 전체 조회")
+    void findAll_failure_no_data() {
+        // expected
+        BDDAssertions.then(rolePersistenceAdapter.findAll()).isEmpty();
+    }
 
     @Test
     @Sql("/sql/role/role-data.sql")
-    @DisplayName("전체 조회")
-    void findAll() {
-        // given
+    @DisplayName("단건 조회")
+    void findByRole() {
         // when
-        List<RoleEntity> roleEntities = rolePersistenceAdapter.findAll();
+        RoleEntity entity = rolePersistenceAdapter.findByRole(ROLE_ADMIN).orElseThrow(() -> new RuntimeException("해당 권한을 찾을 수 없습니다."));
 
         // then
-        assertThat(roleEntities.get(0).getRole()).isEqualTo(ROLE_ADMIN);
-        assertThat(roleEntities.get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_MANAGER);
-        assertThat(roleEntities.get(0).getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_VIP);
-        assertThat(roleEntities.get(0).getChildren().get(0).getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_USER);
+        assertThat(entity.getRole()).isEqualTo(ROLE_ADMIN);
+        assertThat(entity.getChildren().get(0).getRole()).isEqualTo(ROLE_MANAGER);
+        assertThat(entity.getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_VIP);
+        assertThat(entity.getChildren().get(0).getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_USER);
     }
-//
-//    @Test
-//    @DisplayName("데이터가 없는 상태에서 전체 조회. empty list 반환")
-//    void findAll_failure_no_data() {
-//        // expected
-//        BDDAssertions.then(rolePersistenceAdapter.findAll()).isEmpty();
-//    }
-//
+
     @Test
-    @Sql("/sql/role/role-ddl.sql")
-    @DisplayName("권한 등록")
+    @Sql("/sql/role/role-table.sql")
+    @DisplayName("DB에 없는 권한 조회")
+    void findByRole_not_exist() {
+        // expected
+        assertThat(rolePersistenceAdapter.findByRole(ROLE_USER)).isEqualTo(Optional.empty());
+    }
+
+    @Test
+    @Sql("/sql/role/role-table.sql")
+    @DisplayName("권한 저장")
     void save() {
         // given
         RoleEntity user = new RoleEntity(ROLE_USER, "ROLE_USER", List.of());
@@ -100,180 +90,146 @@ class RolePersistenceAdapterTest {
         rolePersistenceAdapter.save(admin);
 
         // then
-        RoleEntity findRoleEntity = rolePersistenceAdapter.findByRole(ROLE_ADMIN).orElseThrow(() -> new RuntimeException("해당 권한을 찾을 수 없습니다."));
-        assertThat(findRoleEntity.getRole()).isEqualTo(ROLE_ADMIN);
-        assertThat(findRoleEntity.getChildren().get(0).getRole()).isEqualTo(ROLE_MANAGER);
-        assertThat(findRoleEntity.getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_VIP);
-        assertThat(findRoleEntity.getChildren().get(0).getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_USER);
+        RoleEntity entity = rolePersistenceAdapter.findByRole(ROLE_ADMIN).orElseThrow(() -> new RuntimeException("해당 권한을 찾을 수 없습니다."));
+        assertThat(entity.getRole()).isEqualTo(ROLE_ADMIN);
+        assertThat(entity.getChildren().get(0).getRole()).isEqualTo(ROLE_MANAGER);
+        assertThat(entity.getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_VIP);
+        assertThat(entity.getChildren().get(0).getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_USER);
     }
-//
-//    @Test
-//    @DisplayName("null 저장 시도. 예외 발생")
-//    void save_null() {
-//        // expected
-//        BDDAssertions.thenThrownBy(() -> rolePersistenceAdapter.save(null))
-//                .isInstanceOf(NullArgumentException.class)
-//                .hasMessage("Argument is empty: RoleEntity");
-//    }
-//
-//    @Test
-//    @Sql("/sql/role/role-data.sql")
-//    @DisplayName("권한 중복 등록 시도. 예외 발생")
-//    void save_duplication() {
-//        // given
-//        RoleEntity roleEntity = new RoleEntity(Role.ROLE_USER, "유저 권한", null, List.of());
-//
-//        // expected
-//        BDDAssertions.thenThrownBy(() -> rolePersistenceAdapter.save(roleEntity))
-//                .isInstanceOf(DataIntegrityViolationException.class);
-//    }
-//
-//    @Test
-//    @Sql("/sql/role/role-data.sql")
-//    @DisplayName("부모와 자식 가지고 권한 등록")
-//    void save_parent_children() {
-//        // given
-//        RoleEntity roleEntity = new RoleEntity(Role.ROLE_MANAGER, "매니저 권한", Role.ROLE_ADMIN, List.of(Role.ROLE_USER));
-//
-//        // when
-//        rolePersistenceAdapter.save(roleEntity);
-//
-//        // then
-//        RoleEntity findRoleEntity = rolePersistenceAdapter.findByRole(Role.ROLE_MANAGER).orElseThrow(() -> new RuntimeException("해당 권한을 찾을 수 없습니다."));
-//        BDDAssertions.then(findRoleEntity.getRole()).isEqualTo(Role.ROLE_MANAGER);
-//        BDDAssertions.then(findRoleEntity.getDescription()).isEqualTo("매니저 권한");
-//        BDDAssertions.then(findRoleEntity.getParent()).isEqualTo(Role.ROLE_ADMIN);
-//        BDDAssertions.then(findRoleEntity.getChildren().get(0)).isEqualTo(Role.ROLE_USER);
-//    }
-//
-//    @Test
-//    @Sql("/sql/role/role-data.sql")
-//    @DisplayName("등록 되지 않은 부모를 가지고 권한 등록")
-//    void save_not_exist_parent() {
-//        // given
-//        RoleEntity roleEntity = new RoleEntity(Role.ROLE_VIP, "특급 권한", Role.ROLE_MANAGER, List.of());
-//
-//        // expected
-//        BDDAssertions.thenThrownBy(() -> rolePersistenceAdapter.save(roleEntity))
-//                .isInstanceOf(NotFoundDataException.class)
-//                .hasMessageContaining("ROLE_MANAGER");
-//    }
-//
-//    @Test
-//    @Sql("/sql/role/role-data.sql")
-//    @DisplayName("등록 되지 않은 자식을 가지고 권한 등록")
-//    void save_not_exist_child() {
-//        // given
-//        RoleEntity roleEntity = new RoleEntity(Role.ROLE_MANAGER, "매니저 권한", null, List.of(Role.ROLE_VIP));
-//
-//        // expected
-//        BDDAssertions.thenThrownBy(() -> rolePersistenceAdapter.save(roleEntity))
-//                .isInstanceOf(NotFoundDataException.class)
-//                .hasMessageContaining("ROLE_VIP");
-//    }
 
     @Test
     @Sql("/sql/role/role-data.sql")
-    @DisplayName("업데이트")
+    @DisplayName("권한 중복 등록 시도. 예외 발생")
+    void save_duplication() {
+        // given
+        RoleEntity entity = new RoleEntity(ROLE_USER, "ROLE_USER", List.of());
+
+        // expected
+        BDDAssertions.thenThrownBy(() -> rolePersistenceAdapter.save(entity))
+                .isInstanceOf(DataIntegrityViolationException.class);
+    }
+
+    @Test
+    @Sql("/sql/role/role-data.sql")
+    @DisplayName("갱신")
     void update() {
         // given
-        RoleEntity admin = new RoleEntity(ROLE_ADMIN, "ROLE_ADMIN", List.of());
-        RoleEntity manager = new RoleEntity(ROLE_MANAGER, "ROLE_MANAGER", List.of(admin));
+        RoleEntity manager = new RoleEntity(ROLE_MANAGER, "ROLE_MANAGER", List.of());
         RoleEntity vip = new RoleEntity(ROLE_VIP, "ROLE_VIP", List.of(manager));
         RoleEntity user = new RoleEntity(ROLE_USER, "ROLE_USER", List.of(vip));
+        RoleEntity admin = new RoleEntity(ROLE_ADMIN, "ROLE_ADMIN", List.of(user));
 
         // when
-        rolePersistenceAdapter.update(ROLE_ADMIN, user);
+        rolePersistenceAdapter.update(ROLE_ADMIN, admin);
 
         // then
-        List<RoleEntity> roleEntities = rolePersistenceAdapter.findAll();
-        assertThat(roleEntities.get(0).getRole()).isEqualTo(ROLE_ADMIN);
-        assertThat(roleEntities.get(1).getRole()).isEqualTo(ROLE_USER);
-        assertThat(roleEntities.get(1).getChildren().get(0).getRole()).isEqualTo(ROLE_VIP);
-        assertThat(roleEntities.get(1).getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_MANAGER);
+        List<RoleEntity> entities = rolePersistenceAdapter.findAll();
+        assertThat(entities.get(0).getRole()).isEqualTo(ROLE_ADMIN);
+        assertThat(entities.get(0).getDescription()).isEqualTo("ROLE_ADMIN");
+        assertThat(entities.get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_USER);
+        assertThat(entities.get(0).getChildren().get(0).getDescription()).isEqualTo("ROLE_USER");
+        assertThat(entities.get(0).getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_VIP);
+        assertThat(entities.get(0).getChildren().get(0).getChildren().get(0).getDescription()).isEqualTo("ROLE_VIP");
+        assertThat(entities.get(0).getChildren().get(0).getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_MANAGER);
+        assertThat(entities.get(0).getChildren().get(0).getChildren().get(0).getChildren().get(0).getDescription()).isEqualTo("ROLE_MANAGER");
     }
-//
-//    @Test
-//    @Sql("/sql/role/role-data.sql")
-//    @DisplayName("부모를 자식으로 바꿔서 등록")
-//    void update_parent_to_children() {
-//        // given
-//        RoleEntity roleEntity = new RoleEntity(Role.ROLE_USER, "유저 권한", null, List.of(Role.ROLE_ADMIN));
-//
-//        // when
-//        rolePersistenceAdapter.update(Role.ROLE_USER, roleEntity);
-//
-//        // then
-//        RoleEntity findRoleEntity = rolePersistenceAdapter.findByRole(Role.ROLE_USER).orElseThrow(() -> new RuntimeException("해당 권한을 찾을 수 없습니다."));
-//        BDDAssertions.then(findRoleEntity.getRole()).isEqualTo(Role.ROLE_USER);
-//        BDDAssertions.then(findRoleEntity.getDescription()).isEqualTo("유저 권한");
-//        BDDAssertions.then(findRoleEntity.getParent()).isNull();
-//        BDDAssertions.then(findRoleEntity.getChildren().get(0)).isEqualTo(Role.ROLE_ADMIN);
-//    }
-//
-//    @Test
-//    @Sql("/sql/role/role-data.sql")
-//    @DisplayName("자식을 부모로 바꿔서 등록")
-//    void update_children_to_parent() {
-//        // given
-//        RoleEntity roleEntity = new RoleEntity(Role.ROLE_ADMIN, "관리자 권한", Role.ROLE_USER, List.of());
-//
-//        // when
-//        rolePersistenceAdapter.update(Role.ROLE_ADMIN, roleEntity);
-//
-//        // then
-//        RoleEntity findRoleEntity = rolePersistenceAdapter.findByRole(Role.ROLE_ADMIN).orElseThrow(() -> new RuntimeException("해당 권한을 찾을 수 없습니다."));
-//        BDDAssertions.then(findRoleEntity.getRole()).isEqualTo(Role.ROLE_ADMIN);
-//        BDDAssertions.then(findRoleEntity.getDescription()).isEqualTo("관리자 권한");
-//        BDDAssertions.then(findRoleEntity.getParent()).isEqualTo(Role.ROLE_USER);
-//        BDDAssertions.then(findRoleEntity.getChildren()).isEmpty();
-//    }
-//
-//    @Test
-//    @DisplayName("권한을 null 업데이트 시도. 예외 발생")
-//    void update_null() {
-//        // expected
-//        BDDAssertions.thenThrownBy(() -> rolePersistenceAdapter.update(Role.ROLE_USER, null))
-//                .isInstanceOf(NullArgumentException.class)
-//                .hasMessage("Argument is empty: RoleEntity");
-//    }
-//
-//    @Test
-//    @Sql("/sql/role/role-data.sql")
-//    @DisplayName("이미 등록된 권한으로 업데이트 시도. 예외 발생")
-//    void update_exist_role() {
-//        // given
-//        RoleEntity roleEntity = new RoleEntity(Role.ROLE_ADMIN, "관리자 권한", null, List.of());
-//
-//        // expected
-//        BDDAssertions.thenThrownBy(() -> rolePersistenceAdapter.update(Role.ROLE_USER, roleEntity))
-//                .isInstanceOf(DuplicationApplicationConvention.class)
-//                .hasMessage("Already exists: ROLE_ADMIN");
-//    }
-//
-//    @Test
-//    @Sql("/sql/role/role-data.sql")
-//    @DisplayName("등록 되지 않은 부모로 업데이트 시도. 예외 발생")
-//    void update_not_exist_parent() {
-//        // given
-//        RoleEntity roleEntity = new RoleEntity(Role.ROLE_USER, "매니저 권한", Role.ROLE_MANAGER, List.of());
-//
-//        // expected
-//        BDDAssertions.thenThrownBy(() -> rolePersistenceAdapter.update(Role.ROLE_USER, roleEntity))
-//                .isInstanceOf(NotFoundDataException.class)
-//                .hasMessage(Role.ROLE_MANAGER.name());
-//    }
-//
-//    @Test
-//    @Sql("/sql/role/role-data.sql")
-//    @DisplayName("등록 되지 않은 자식으로 업데이트 시도. 예외 발생")
-//    void update_not_exist_children() {
-//        // given
-//        RoleEntity roleEntity = new RoleEntity(Role.ROLE_USER, "매니저 권한", null, List.of(Role.ROLE_MANAGER));
-//
-//        // expected
-//        BDDAssertions.thenThrownBy(() -> rolePersistenceAdapter.update(Role.ROLE_USER, roleEntity))
-//                .isInstanceOf(NotFoundDataException.class)
-//                .hasMessage("[ROLE_MANAGER]");
-//    }
+
+    @Test
+    @Sql("/sql/role/role-data.sql")
+    @DisplayName("업데이트 대상과 다른 권한 갱신")
+    void update_exist_role() {
+        // given
+        RoleEntity admin = new RoleEntity(ROLE_ADMIN, "관리자 권한", List.of());
+
+        // expected
+        BDDAssertions.thenThrownBy(() -> rolePersistenceAdapter.update(ROLE_USER, admin))
+                .isInstanceOf(UpdateTargetMismatchException.class)
+                .hasMessage("Update target is different (ROLE_USER <> ROLE_ADMIN)");
+    }
+
+    @Test
+    @Sql("/sql/role/role-table.sql")
+    @DisplayName("DB에 없는 권한 갱신")
+    void update_not_exist() {
+        // given
+        RoleEntity admin = new RoleEntity(ROLE_ADMIN, "관리자 권한", List.of());
+
+        /*
+         * ENUM Role 권한은 전부 다 DB에 저장되어 있어야 함.
+         * DB에 저장되어 있지 않은 권한은 업데이트 안됨.
+         * 업데이트 시도한 권한 개수보다 업데이트 된 권한 개수가 적어서 낙관적 락 재시도를 위한 예외가 발생함.
+         */
+        // when
+        BDDAssertions.thenThrownBy(() -> rolePersistenceAdapter.update(ROLE_ADMIN, admin))
+                .isInstanceOf(UpdateFailureException.class);
+
+        // then
+        List<RoleEntity> entities = rolePersistenceAdapter.findAll();
+        assertThat(entities).isEmpty();
+    }
+
+    @Test
+    @Sql("/sql/role/role-table.sql")
+    @DisplayName("DB에 없는 자식 추가 갱신")
+    void update_not_exist_children() {
+        // given
+        RoleEntity save = new RoleEntity(ROLE_ADMIN, "관리자", List.of());
+        rolePersistenceAdapter.save(save);
+
+        RoleEntity user = new RoleEntity(ROLE_USER, "ROLE_USER", List.of());
+        RoleEntity admin = new RoleEntity(ROLE_ADMIN, "ROLE_ADMIN", List.of(user));
+
+        /*
+         * ENUM Role 권한은 전부 다 DB에 저장되어 있어야 함.
+         * DB에 저장되어 있지 않은 권한은 자식으로 추가 안됨.
+         * 다른 속성은 변경됨.
+         * 업데이트 시도한 권한 개수보다 업데이트 된 권한 개수가 적어서 낙관적 락 재시도를 위한 예외가 발생함.
+         */
+        // when
+        assertThatThrownBy(() -> rolePersistenceAdapter.update(ROLE_ADMIN, admin)).isInstanceOf(UpdateFailureException.class);
+
+        // then
+        List<RoleEntity> entities = rolePersistenceAdapter.findAll();
+        assertThat(entities.get(0).getRole()).isEqualTo(ROLE_ADMIN);
+        assertThat(entities.get(0).getDescription()).isEqualTo("ROLE_ADMIN");
+        assertThat(entities.get(0).getChildren()).isEmpty();
+    }
+
+    @Test
+    @Sql("/sql/role/role-data.sql")
+    @DisplayName("삭제")
+    void delete() {
+        // when
+        rolePersistenceAdapter.delete(ROLE_ADMIN);
+
+        // then
+        Optional<RoleEntity> entity = rolePersistenceAdapter.findByRole(ROLE_ADMIN);
+        assertThat(entity).isEqualTo(Optional.empty());
+
+        List<RoleEntity> entities = rolePersistenceAdapter.findAll();
+        assertThat(entities.get(0).getRole()).isEqualTo(ROLE_MANAGER);
+        assertThat(entities.get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_VIP);
+        assertThat(entities.get(0).getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_USER);
+        assertThat(entities.get(0).getChildren().get(0).getChildren().get(0).getChildren()).isEmpty();
+    }
+
+    @Test
+    @Sql("/sql/role/role-data.sql")
+    @DisplayName("자식 권한 삭제")
+    void delete_children() {
+        // when
+        rolePersistenceAdapter.delete(ROLE_MANAGER);
+
+        // then
+        RoleEntity entity = rolePersistenceAdapter.findByRole(ROLE_ADMIN).orElseThrow(() -> new RuntimeException("권한을 찾을 수 없습니다."));
+        assertThat(entity.getChildren()).isEmpty();
+    }
+
+    @Test
+    @Sql("/sql/role/role-table.sql")
+    @DisplayName("DB에 없는 권한 삭제")
+    void delete_not_exist() {
+        // expected
+        rolePersistenceAdapter.delete(ROLE_ADMIN);
+    }
 }

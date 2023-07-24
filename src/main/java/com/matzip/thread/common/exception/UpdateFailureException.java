@@ -2,13 +2,18 @@ package com.matzip.thread.common.exception;
 
 import org.springframework.http.HttpStatus;
 
+/**
+ * 낙관적 락 재시도를 위한 예외
+ */
 public class UpdateFailureException extends ApplicationException {
-    public UpdateFailureException(String message) {
-        super(message);
+    private static final String msg = "Update failed. Please try again in a few minutes";
+
+    public UpdateFailureException() {
+        super(msg);
     }
 
     @Override
     public HttpStatus getHttpStatus() {
-        return HttpStatus.INTERNAL_SERVER_ERROR;
+        return HttpStatus.REQUEST_TIMEOUT;
     }
 }
