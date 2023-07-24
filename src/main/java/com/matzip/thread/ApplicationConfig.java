@@ -14,14 +14,7 @@ public class ApplicationConfig {
 
     @Bean
     public AuditorAware<String> auditorAware() {
-        return () -> {
-            return Optional.of(SecurityContextHolder.getContext().getAuthentication().getName());
-//            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//            if (authentication instanceof ApiAuthenticationToken) {
-//                return Optional.of(((UserEntity) authentication.getPrincipal()).getUsername());
-//            }
-//
-//            return Optional.of("ANONYMOUS");
-        };
+        return () -> Optional.of(SecurityContextHolder.getContext().getAuthentication().getName());
+
     }
 }
