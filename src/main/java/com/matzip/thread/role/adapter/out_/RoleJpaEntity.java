@@ -1,7 +1,6 @@
 package com.matzip.thread.role.adapter.out_;
 
 import com.matzip.thread.common.JpaEntity.JpaBaseEntity;
-import com.matzip.thread.common.exception.NullArgumentException;
 import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.role.domain.RoleEntity;
 import lombok.AccessLevel;
@@ -11,8 +10,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.util.Objects.isNull;
 
 @Entity
 @Getter
@@ -40,24 +37,24 @@ public class RoleJpaEntity extends JpaBaseEntity {
     @OneToMany(mappedBy = "parent", cascade = CascadeType.PERSIST)
     private final List<RoleJpaEntity> children = new ArrayList<>();
 
-    public RoleJpaEntity(Role role, String description, RoleJpaEntity parent, List<RoleJpaEntity> children) {
-        setRole(role);
-        setDescription(description);
-        setParent(parent);
-        setChildren(children);
-    }
-
-    public static RoleJpaEntity from(RoleEntity roleEntity) {
-        return new RoleJpaEntity(
-                roleEntity.getRole(),
-                roleEntity.getDescription(),
-                null,
-                roleEntity.getChildren().stream()
-                        .map(RoleJpaEntity::from)
-                        .toList()
-        );
-    }
-
+//    public RoleJpaEntity(Role role, String description, RoleJpaEntity parent, List<RoleJpaEntity> children) {
+//        setRole(role);
+//        setDescription(description);
+//        setParent(parent);
+//        setChildren(children);
+//    }
+//
+//    public static RoleJpaEntity from(RoleEntity roleEntity) {
+//        return new RoleJpaEntity(
+//                roleEntity.getRole(),
+//                roleEntity.getDescription(),
+//                null,
+//                roleEntity.getChildren().stream()
+//                        .map(RoleJpaEntity::from)
+//                        .toList()
+//        );
+//    }
+//
     public RoleEntity toEntity() {
         return new RoleEntity(
                 role,
@@ -67,29 +64,29 @@ public class RoleJpaEntity extends JpaBaseEntity {
                         .toList()
         );
     }
-
-    public void setRole(Role role) {
-        if (isNull(role)) throw new NullArgumentException(Role.class.getSimpleName());
-        this.role = role;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    private void setParent(RoleJpaEntity parent) {
-        this.parent = parent;
-    }
-
-    public void setChildren(List<RoleJpaEntity> children)  {
-        if (isNull(children)) throw new NullArgumentException(Role.class.getSimpleName());
-
-        this.children.forEach(c -> c.setParent(null));
-
-        this.children.clear();
-
-        this.children.addAll(children);
-
-        children.forEach(c -> c.setParent(this));
-    }
+//
+//    public void setRole(Role role) {
+//        if (isNull(role)) throw new NullArgumentException(Role.class.getSimpleName());
+//        this.role = role;
+//    }
+//
+//    public void setDescription(String description) {
+//        this.description = description;
+//    }
+//
+//    private void setParent(RoleJpaEntity parent) {
+//        this.parent = parent;
+//    }
+//
+//    public void setChildren(List<RoleJpaEntity> children)  {
+//        if (isNull(children)) throw new NullArgumentException(Role.class.getSimpleName());
+//
+//        this.children.forEach(c -> c.setParent(null));
+//
+//        this.children.clear();
+//
+//        this.children.addAll(children);
+//
+//        children.forEach(c -> c.setParent(this));
+//    }
 }

@@ -18,7 +18,7 @@ import static java.util.stream.Collectors.toMap;
 
 @Repository
 @RequiredArgsConstructor
-public class RoleJdbcTemplateRepository {
+class RoleJdbcTemplateRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
     List<RoleJdbcDto> findAll() {
@@ -56,7 +56,7 @@ public class RoleJdbcTemplateRepository {
                             LAST_MODIFIED_BY
                      FROM r
                      """;
-        return jdbcTemplate.query(sql, roleRowMapper());
+        return jdbcTemplate.query(sql, rowMapper());
     }
 
     List<RoleJdbcDto> findByRoleWithChildren(Role role) {
@@ -99,10 +99,10 @@ public class RoleJdbcTemplateRepository {
         MapSqlParameterSource param = new MapSqlParameterSource()
                 .addValue("roleName", role.name());
 
-        return jdbcTemplate.query(sql, param, roleRowMapper());
+        return jdbcTemplate.query(sql, param, rowMapper());
     }
 
-    public void save(List<RoleJdbcDto> roleDtoList) {
+    void save(List<RoleJdbcDto> roleDtoList) {
         String sql = """
                      INSERT INTO ROLE_ (ROLE_NAME,
                                         DESCRIPTION,
@@ -128,7 +128,7 @@ public class RoleJdbcTemplateRepository {
         jdbcTemplate.batchUpdate(sql, parameterSources);
     }
 
-    public void update(Role role, List<RoleJdbcDto> roleDtoList) throws UpdateFailureException {
+    void update(Role role, List<RoleJdbcDto> roleDtoList) throws UpdateFailureException {
         List<RoleJdbcDto> findDtoList = findByRoleWithChildren(role);
         fillParentRoleName(findDtoList);
 
@@ -192,7 +192,7 @@ public class RoleJdbcTemplateRepository {
         //TODO retry aop 만들기
     }
 
-    public void delete(Role role) {
+    void delete(Role role) {
         String sql = """
                      DELETE FROM ROLE_ WHERE ROLE_NAME = :roleName
                      """;
@@ -230,7 +230,7 @@ public class RoleJdbcTemplateRepository {
         return parameterSources;
     }
 
-    private BeanPropertyRowMapper<RoleJdbcDto> roleRowMapper() {
+    private BeanPropertyRowMapper<RoleJdbcDto> rowMapper() {
         return BeanPropertyRowMapper.newInstance(RoleJdbcDto.class);
     }
 }

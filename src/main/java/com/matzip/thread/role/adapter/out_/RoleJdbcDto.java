@@ -12,7 +12,7 @@ import static java.util.Objects.hash;
 
 @Getter
 @Setter
-public class RoleJdbcDto{
+class RoleJdbcDto{
     private Long roleId;
     private String roleName;
     private String description;
@@ -23,7 +23,7 @@ public class RoleJdbcDto{
     private String createdBy;
     private String lastModifiedBy;
 
-    public RoleJdbcDto() {
+    RoleJdbcDto() {
     }
 
     private RoleJdbcDto(String roleName, String description, String parentRoleName) {
@@ -32,7 +32,7 @@ public class RoleJdbcDto{
         this.parentRoleName = parentRoleName;
     }
 
-    public static List<RoleJdbcDto> from(RoleEntity roleEntity) {
+    static List<RoleJdbcDto> from(RoleEntity roleEntity) {
         ArrayList<RoleJdbcDto> dtoList = new ArrayList<>();
         RoleJdbcDto roleJdbcDto = new RoleJdbcDto(roleEntity.getName(), roleEntity.getDescription(), roleEntity.getName());
         dtoList.add(roleJdbcDto);
@@ -55,42 +55,8 @@ public class RoleJdbcDto{
         }
         return dtoList;
     }
-//    public static List<RoleJdbcDto> from(RoleEntity roleEntity) {
-//        ArrayList<RoleJdbcDto> dtoList = new ArrayList<>();
-//        Map<String, String> map = new HashMap<>();
-//        Queue<RoleEntity> queue = new LinkedList<>();
-//        queue.offer(roleEntity);
-//
-//        while (!queue.isEmpty()) {
-//            RoleEntity entity = queue.poll();
-//            RoleJdbcDto dto = new RoleJdbcDto();
-//            String roleName = entity.getName();
-//
-//            dto.setRoleName(roleName);
-//            dto.setDescription(entity.getDescription());
-//
-//            if (map.containsKey(roleName)) {
-//                dto.setParentRoleName(map.get(roleName));
-//            }
-//
-//            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//            if (nonNull(authentication)) {
-//                String username = authentication.getName();
-//                dto.setCreatedBy(username);
-//                dto.setLastModifiedBy(username);
-//            }
-//
-//            entity.getChildren().forEach(c -> {
-//                map.put(c.getName(), roleName);
-//                queue.offer(c);
-//            });
-//
-//            dtoList.add(dto);
-//        }
-//        return dtoList;
-//    }
 
-    public RoleEntity toEntity() {
+    RoleEntity toEntity() {
         return new RoleEntity(Role.valueOf(roleName), description, List.of());
     }
 

@@ -13,20 +13,20 @@ import java.util.List;
 @RequiredArgsConstructor
 class UriPersistenceAdapter implements UriOutPort {
 
-    private final UriJapRepository uriJapRepository;
+    private final UriJpaRepository uriJpaRepository;
     private final RoleJpaRepository roleJpaRepository;
     private final UriRoleJpaRepository uriRoleJpaRepository;
 
     @Override
     public List<UriEntity> findAllWithRoles() {
-        return uriJapRepository.findAllWithRoles().stream().map(UriJpaEntity::toEntity).toList();
+        return uriJpaRepository.findAllWithRoles().stream().map(UriJpaEntity::toEntity).toList();
     }
 
     @Override
     public void save(UriEntity uriEntity) {
         UriJpaEntity uriJpaEntity = UriJpaEntity.fromEntity(uriEntity);
 
-        uriJapRepository.save(uriJpaEntity);
+        uriJpaRepository.save(uriJpaEntity);
 
         roleJpaRepository.findInRoles(uriEntity.getRoles()).stream()
                 .map(roleJpaEntity -> new UriRoleJpaEntity(uriJpaEntity, roleJpaEntity))
