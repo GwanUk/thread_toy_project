@@ -1,5 +1,6 @@
 package com.matzip.thread.role.adapter.out_;
 
+import com.matzip.thread.common.exception.InfiniteLoopException;
 import com.matzip.thread.common.exception.NotFoundDataException;
 import com.matzip.thread.common.exception.UpdateTargetMismatchException;
 import com.matzip.thread.role.application.prot.out_.RolePersistencePort;
@@ -131,6 +132,43 @@ class RolePersistenceAdapterTest {
     }
 
     @Test
+    @Sql("/sql/role/role-data.sql")
+    @DisplayName("차상위 권한 갱신. 업데이트 대상 권한의 부모가 변경되면 안됨")
+    void update_second() {
+        // given
+        RoleEntity vip = new RoleEntity(ROLE_VIP, "ROLE_VIP", List.of());
+        RoleEntity user = new RoleEntity(ROLE_USER, "ROLE_USER", List.of(vip));
+        RoleEntity manager = new RoleEntity(ROLE_MANAGER, "ROLE_MANAGER", List.of(user));
+
+        // when
+        rolePersistenceAdapter.update(ROLE_MANAGER, manager);
+
+        // then
+        List<RoleEntity> entities = rolePersistenceAdapter.findAll();
+        assertThat(entities.get(0).getRole()).isEqualTo(ROLE_ADMIN);
+        assertThat(entities.get(0).getDescription()).isEqualTo("관리자 권한");
+        assertThat(entities.get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_MANAGER);
+        assertThat(entities.get(0).getChildren().get(0).getDescription()).isEqualTo("ROLE_MANAGER");
+        assertThat(entities.get(0).getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_USER);
+        assertThat(entities.get(0).getChildren().get(0).getChildren().get(0).getDescription()).isEqualTo("ROLE_USER");
+        assertThat(entities.get(0).getChildren().get(0).getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_VIP);
+        assertThat(entities.get(0).getChildren().get(0).getChildren().get(0).getChildren().get(0).getDescription()).isEqualTo("ROLE_VIP");
+    }
+
+    @Test
+    @Sql("/sql/role/role-data.sql")
+    @DisplayName("권한 순환 참조 싸이클 갱신")
+    void update_recursive() {
+        // given
+        RoleEntity manager = new RoleEntity(ROLE_MANAGER, "매니저 권한", List.of());
+        RoleEntity vip = new RoleEntity(ROLE_VIP, "특급 권한", List.of(manager));
+
+        // expected
+        assertThatThrownBy(() -> rolePersistenceAdapter.update(ROLE_VIP, vip))
+                .isInstanceOf(InfiniteLoopException.class);
+    }
+
+    @Test
     @Sql("/sql/role/role-table.sql")
     @DisplayName("자식 추가 갱신")
     void update_children() {
@@ -196,7 +234,8 @@ class RolePersistenceAdapterTest {
 
         // expected
         BDDAssertions.thenThrownBy(() -> rolePersistenceAdapter.update(ROLE_ADMIN, admin))
-                .isInstanceOf(NotFoundDataException.class);
+                .isInstanceOf(NotFoundDataException.class)
+                .hasMessage("Doesn't exists data: ROLE_ADMIN");
     }
 
     @Test
@@ -211,7 +250,9 @@ class RolePersistenceAdapterTest {
         RoleEntity admin = new RoleEntity(ROLE_ADMIN, "ROLE_ADMIN", List.of(user));
 
         // expected
-        assertThatThrownBy(() -> rolePersistenceAdapter.update(ROLE_ADMIN, admin)).isInstanceOf(NotFoundDataException.class);
+        assertThatThrownBy(() -> rolePersistenceAdapter.update(ROLE_ADMIN, admin))
+                .isInstanceOf(NotFoundDataException.class)
+                .hasMessage("Doesn't exists data: 1 data");
     }
 
     @Test
