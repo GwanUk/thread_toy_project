@@ -1,5 +1,6 @@
 package com.matzip.thread.role.adapter.out_;
 
+import com.matzip.thread.common.exception.InfiniteLoopException;
 import com.matzip.thread.common.exception.NotFoundDataException;
 import com.matzip.thread.common.exception.UpdateFailureException;
 import com.matzip.thread.role.domain.Role;
@@ -22,7 +23,7 @@ class RoleJdbcTemplateRepository {
 
     List<RoleJdbcDto> findAll() {
         String sql = """
-                     WITH recursive r (ROLE_ID, ROLE_NAME, DESCRIPTION, PARENT_ID, CREATED_DATE, LAST_MODIFIED_DATE, CREATED_BY,
+                     WITH RECURSIVE r (ROLE_ID, ROLE_NAME, DESCRIPTION, PARENT_ID, CREATED_DATE, LAST_MODIFIED_DATE, CREATED_BY,
                                        LAST_MODIFIED_BY) AS (SELECT ROLE_ID,
                                                                     ROLE_NAME,
                                                                     DESCRIPTION,
@@ -60,7 +61,7 @@ class RoleJdbcTemplateRepository {
 
     List<RoleJdbcDto> findByRoleWithChildren(Role role) {
         String sql = """
-                     WITH recursive r (ROLE_ID, ROLE_NAME, DESCRIPTION, PARENT_ID, CREATED_DATE, LAST_MODIFIED_DATE, CREATED_BY,
+                     WITH RECURSIVE r (ROLE_ID, ROLE_NAME, DESCRIPTION, PARENT_ID, CREATED_DATE, LAST_MODIFIED_DATE, CREATED_BY,
                                        LAST_MODIFIED_BY) AS (SELECT ROLE_ID,
                                                                     ROLE_NAME,
                                                                     DESCRIPTION,
@@ -132,6 +133,12 @@ class RoleJdbcTemplateRepository {
 
         List<RoleJdbcDto> findRoleDto = findByRoleWithChildren(role);
 
+        if (findRoleDto.isEmpty()) {
+            throw new NotFoundDataException(role.name());
+        }
+
+        Long ancestorId = findRoleDto.get(0).getParentId();
+
         Set<String> roleSet = findRoleDto.stream()
                 .map(RoleJdbcDto::getRoleName)
                 .collect(Collectors.toSet());
@@ -142,7 +149,6 @@ class RoleJdbcTemplateRepository {
                 .toList();
 
         if (toFind.size() != 0) {
-
             List<RoleJdbcDto> inRoles = findInRoles(toFind);
 
             int notFoundCnt = toFind.size() - inRoles.size();
@@ -156,23 +162,27 @@ class RoleJdbcTemplateRepository {
         Map<String, Long> nameIdMap = findRoleDto.stream()
                 .collect(Collectors.toMap(RoleJdbcDto::getRoleName, RoleJdbcDto::getRoleId));
 
-        Map<String, RoleJdbcDto> dtoMap = roleDtoList.stream()
-                .collect(Collectors.toMap(RoleJdbcDto::getRoleName, dto -> dto));
-
+        Map<String, RoleJdbcDto> dtoMap = new HashMap<>();
+        for (RoleJdbcDto dto : roleDtoList) {
+            String parentRoleName = dto.getParentRoleName();
+            if (nonNull(parentRoleName)) {
+                Long parentId = nameIdMap.get(parentRoleName);
+                dto.setParentId(parentId);
+            }
+            dtoMap.put(dto.getRoleName(), dto);
+        }
 
         for (RoleJdbcDto findDto : findRoleDto) {
             String roleName = findDto.getRoleName();
             if (dtoMap.containsKey(roleName)) {
                 RoleJdbcDto dto = dtoMap.get(roleName);
-                String parentRoleName = dto.getParentRoleName();
-                if (nonNull(parentRoleName)) {
-                    Long parentId = nameIdMap.get(parentRoleName);
-                    dto.setParentId(parentId);
-                }
 
                 if (findDto.sameAs(dto)) continue;
 
-                findDto.setParentId(dto.getParentId());
+                if (!roleName.equals(role.name())) {
+                    findDto.setParentId(dto.getParentId());
+                }
+
                 findDto.setDescription(dto.getDescription());
             } else {
                 findDto.setParentId(null);
@@ -182,6 +192,11 @@ class RoleJdbcTemplateRepository {
             params.add(findDto);
         }
 
+        if (params.stream()
+                .map(RoleJdbcDto::getRoleId)
+                .anyMatch(id -> id.equals(ancestorId))) {
+            throw new InfiniteLoopException();
+        }
 
         String sql = """
                      UPDATE ROLE_
@@ -207,7 +222,8 @@ class RoleJdbcTemplateRepository {
                      WHERE ROLE_NAME = :roleName
                      """;
 
-        jdbcTemplate.update(sql, Map.of("roleName", role.name()));
+        Map<String, String> paramMap = Map.of("roleName", role.name());
+        jdbcTemplate.update(sql, paramMap);
     }
 
     private List<RoleJdbcDto> findInRoles(Collection<String> roleNames) {

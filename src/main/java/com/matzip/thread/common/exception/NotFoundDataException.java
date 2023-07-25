@@ -7,7 +7,7 @@ public class NotFoundDataException extends ApplicationException {
     private static final String msg = "Doesn't exists data: ";
 
     public NotFoundDataException(String message) {
-        super(message);
+        super(msg + message);
     }
 
 
