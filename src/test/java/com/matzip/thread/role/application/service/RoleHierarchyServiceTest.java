@@ -16,10 +16,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-class RoleServiceTest {
+class RoleHierarchyServiceTest {
 
     @InjectMocks
-    private RoleService roleService;
+    private RoleHierarchyService roleHierarchyService;
     @Mock
     private RolePersistencePort rolePersistencePort;
 
@@ -34,7 +34,7 @@ class RoleServiceTest {
         given(rolePersistencePort.findAll()).willReturn(List.of(admin, vip));
 
         // when
-        String hierarchyString = roleService.getHierarchy();
+        String hierarchyString = roleHierarchyService.getHierarchy();
 
         // then
         assertThat(hierarchyString).isEqualTo("""
@@ -50,7 +50,7 @@ class RoleServiceTest {
         given(rolePersistencePort.findAll()).willReturn(List.of());
 
         // when
-        String concatenateRoles = roleService.getHierarchy();
+        String concatenateRoles = roleHierarchyService.getHierarchy();
 
         // then
         assertThat(concatenateRoles).isEmpty();
@@ -67,9 +67,10 @@ class RoleServiceTest {
         given(rolePersistencePort.findAll()).willReturn(List.of(admin, manager, vip, user));
 
         // when
-        String concatenateRoles = roleService.getHierarchy();
+        String concatenateRoles = roleHierarchyService.getHierarchy();
 
         // then
         assertThat(concatenateRoles).isEmpty();
     }
+
 }

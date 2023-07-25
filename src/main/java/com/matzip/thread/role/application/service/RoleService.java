@@ -1,6 +1,8 @@
 package com.matzip.thread.role.application.service;
 
-import com.matzip.thread.role.application.prot.in.RoleHierarchyPort;
+import com.matzip.thread.common.annotation.PublishEvent;
+import com.matzip.thread.common.annotation.Retry;
+import com.matzip.thread.role.application.event.RoleChangedEvent;
 import com.matzip.thread.role.application.prot.in.RoleWebPort;
 import com.matzip.thread.role.application.prot.out_.RolePersistencePort;
 import com.matzip.thread.role.domain.Role;
@@ -11,12 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-class RoleService implements RoleWebPort, RoleHierarchyPort {
+class RoleService implements RoleWebPort {
 
     private final RolePersistencePort rolePersistencePort;
 
@@ -31,25 +32,22 @@ class RoleService implements RoleWebPort, RoleHierarchyPort {
     }
 
     @Override
-    public String getHierarchy() {
-        return rolePersistencePort.findAll().stream()
-                .map(RoleEntity::getHierarchyString)
-                .collect(Collectors.joining());
-    }
-
-    @Override
+    @PublishEvent(RoleChangedEvent.class)
     @Transactional
     public void save(RoleEntity roleEntity) {
         rolePersistencePort.save(roleEntity);
     }
 
     @Override
+    @PublishEvent(RoleChangedEvent.class)
+    @Retry
     @Transactional
     public void update(Role role, RoleEntity roleEntity) {
         rolePersistencePort.update(role, roleEntity);
     }
 
     @Override
+    @PublishEvent(RoleChangedEvent.class)
     @Transactional
     public void delete(Role role) {
         rolePersistencePort.delete(role);

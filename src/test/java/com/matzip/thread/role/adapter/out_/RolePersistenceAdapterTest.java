@@ -1,6 +1,5 @@
 package com.matzip.thread.role.adapter.out_;
 
-import com.matzip.thread.common.aop.ValidationAspect;
 import com.matzip.thread.common.exception.UpdateFailureException;
 import com.matzip.thread.common.exception.UpdateTargetMismatchException;
 import com.matzip.thread.role.application.prot.out_.RolePersistencePort;
@@ -9,7 +8,6 @@ import org.assertj.core.api.BDDAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -24,8 +22,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataJpaTest
 @Import({RolePersistenceAdapter.class,
-        AopAutoConfiguration.class,
-        ValidationAspect.class,
         RoleJdbcTemplateRepository.class})
 class RolePersistenceAdapterTest {
 

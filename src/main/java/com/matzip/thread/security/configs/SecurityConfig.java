@@ -2,6 +2,7 @@ package com.matzip.thread.security.configs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.matzip.thread.ipaddress.application.port.in.IpAddressQueryInPort;
+import com.matzip.thread.role.application.event.RoleChangedEventHandler;
 import com.matzip.thread.role.application.prot.in.RoleHierarchyPort;
 import com.matzip.thread.security.filter.ApiAuthenticationProcessingFilter;
 import com.matzip.thread.security.handler.ApiAccessDeniedHandler;
@@ -132,4 +133,12 @@ public class SecurityConfig {
         roleHierarchy.setHierarchy(roleHierarchyPort.getHierarchy());
         return roleHierarchy;
     }
+
+    @Bean
+    public RoleChangedEventHandler roleChangedEventHandler() {
+        return new RoleChangedEventHandler(roleHierarchy(), roleHierarchyPort);
+    }
+
+
+
 }
