@@ -1,6 +1,6 @@
 package com.matzip.thread.role.adapter.out_;
 
-import com.matzip.thread.common.exception.UpdateFailureException;
+import com.matzip.thread.common.exception.NotFoundDataException;
 import com.matzip.thread.common.exception.UpdateTargetMismatchException;
 import com.matzip.thread.role.application.prot.out_.RolePersistencePort;
 import com.matzip.thread.role.domain.RoleEntity;
@@ -131,6 +131,50 @@ class RolePersistenceAdapterTest {
     }
 
     @Test
+    @Sql("/sql/role/role-table.sql")
+    @DisplayName("자식 추가 갱신")
+    void update_children() {
+        // given
+        RoleEntity user = new RoleEntity(ROLE_USER, "ROLE_USER", List.of());
+        RoleEntity vip = new RoleEntity(ROLE_VIP, "ROLE_VIP", List.of());
+        RoleEntity manager = new RoleEntity(ROLE_MANAGER, "ROLE_MANAGER", List.of());
+        RoleEntity admin = new RoleEntity(ROLE_ADMIN, "ROLE_ADMIN", List.of());
+        rolePersistenceAdapter.save(admin);
+        rolePersistenceAdapter.save(manager);
+        rolePersistenceAdapter.save(vip);
+        rolePersistenceAdapter.save(user);
+
+        // when
+        admin.addChild(manager);
+        manager.addChild(vip);
+        manager.addChild(user);
+        rolePersistenceAdapter.update(ROLE_ADMIN, admin);
+
+        // then
+        RoleEntity entity = rolePersistenceAdapter.findByRole(ROLE_ADMIN).orElseThrow(() -> new RuntimeException("해당 권한을 찾을 수 없습니다."));
+        assertThat(entity.getRole()).isEqualTo(ROLE_ADMIN);
+        assertThat(entity.getChildren().get(0).getRole()).isEqualTo(ROLE_MANAGER);
+        assertThat(entity.getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_VIP);
+        assertThat(entity.getChildren().get(0).getChildren().get(1).getRole()).isEqualTo(ROLE_USER);
+    }
+
+    @Test
+    @Sql("/sql/role/role-data.sql")
+    @DisplayName("자식 삭제 갱신")
+    void update_children_remove() {
+        // given
+        RoleEntity admin = new RoleEntity(ROLE_ADMIN, "ROLE_ADMIN", List.of());
+
+        // when
+        rolePersistenceAdapter.update(ROLE_ADMIN, admin);
+
+        // then
+        RoleEntity entity = rolePersistenceAdapter.findByRole(ROLE_ADMIN).orElseThrow(() -> new RuntimeException("해당 권한을 찾을 수 없습니다."));
+        assertThat(entity.getRole()).isEqualTo(ROLE_ADMIN);
+        assertThat(entity.getChildren()).isEmpty();
+    }
+
+    @Test
     @Sql("/sql/role/role-data.sql")
     @DisplayName("업데이트 대상과 다른 권한 갱신")
     void update_exist_role() {
@@ -150,18 +194,9 @@ class RolePersistenceAdapterTest {
         // given
         RoleEntity admin = new RoleEntity(ROLE_ADMIN, "관리자 권한", List.of());
 
-        /*
-         * ENUM Role 권한은 전부 다 DB에 저장되어 있어야 함.
-         * DB에 저장되어 있지 않은 권한은 업데이트 안됨.
-         * 업데이트 시도한 권한 개수보다 업데이트 된 권한 개수가 적어서 낙관적 락 재시도를 위한 예외가 발생함.
-         */
-        // when
+        // expected
         BDDAssertions.thenThrownBy(() -> rolePersistenceAdapter.update(ROLE_ADMIN, admin))
-                .isInstanceOf(UpdateFailureException.class);
-
-        // then
-        List<RoleEntity> entities = rolePersistenceAdapter.findAll();
-        assertThat(entities).isEmpty();
+                .isInstanceOf(NotFoundDataException.class);
     }
 
     @Test
@@ -175,20 +210,8 @@ class RolePersistenceAdapterTest {
         RoleEntity user = new RoleEntity(ROLE_USER, "ROLE_USER", List.of());
         RoleEntity admin = new RoleEntity(ROLE_ADMIN, "ROLE_ADMIN", List.of(user));
 
-        /*
-         * ENUM Role 권한은 전부 다 DB에 저장되어 있어야 함.
-         * DB에 저장되어 있지 않은 권한은 자식으로 추가 안됨.
-         * 다른 속성은 변경됨.
-         * 업데이트 시도한 권한 개수보다 업데이트 된 권한 개수가 적어서 낙관적 락 재시도를 위한 예외가 발생함.
-         */
-        // when
-        assertThatThrownBy(() -> rolePersistenceAdapter.update(ROLE_ADMIN, admin)).isInstanceOf(UpdateFailureException.class);
-
-        // then
-        List<RoleEntity> entities = rolePersistenceAdapter.findAll();
-        assertThat(entities.get(0).getRole()).isEqualTo(ROLE_ADMIN);
-        assertThat(entities.get(0).getDescription()).isEqualTo("ROLE_ADMIN");
-        assertThat(entities.get(0).getChildren()).isEmpty();
+        // expected
+        assertThatThrownBy(() -> rolePersistenceAdapter.update(ROLE_ADMIN, admin)).isInstanceOf(NotFoundDataException.class);
     }
 
     @Test
