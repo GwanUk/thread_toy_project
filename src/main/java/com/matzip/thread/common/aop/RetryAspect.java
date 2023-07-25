@@ -29,6 +29,7 @@ public class RetryAspect {
                 return joinPoint.proceed();
             } catch (UpdateFailureException exception) {
                 exceptionHolder = exception;
+                Thread.sleep(50);
             }
         }
 

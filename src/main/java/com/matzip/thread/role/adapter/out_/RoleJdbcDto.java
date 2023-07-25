@@ -4,11 +4,13 @@ import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.role.domain.RoleEntity;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static java.util.Objects.hash;
+import static java.util.Objects.nonNull;
 
 @Getter
 @Setter
@@ -34,7 +36,7 @@ class RoleJdbcDto{
 
     static List<RoleJdbcDto> from(RoleEntity roleEntity) {
         ArrayList<RoleJdbcDto> dtoList = new ArrayList<>();
-        RoleJdbcDto roleJdbcDto = new RoleJdbcDto(roleEntity.getName(), roleEntity.getDescription(), roleEntity.getName());
+        RoleJdbcDto roleJdbcDto = new RoleJdbcDto(roleEntity.getName(), roleEntity.getDescription(), null);
         dtoList.add(roleJdbcDto);
 
         Queue<RoleEntity> queue = new LinkedList<>();
@@ -60,16 +62,18 @@ class RoleJdbcDto{
         return new RoleEntity(Role.valueOf(roleName), description, List.of());
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        RoleJdbcDto that = (RoleJdbcDto) o;
-        return Objects.equals(roleName, that.roleName) && Objects.equals(description, that.description) && Objects.equals(parentRoleName, that.parentRoleName);
+    public boolean sameAs(RoleJdbcDto dto) {
+        if (this == dto) return true;
+        if (dto == null || getClass() != dto.getClass()) return false;
+        return Objects.equals(description, dto.description) && Objects.equals(parentId, dto.parentId);
     }
 
-    @Override
-    public int hashCode() {
-        return hash(roleName, description, parentRoleName);
+    public void fillUserName() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (nonNull(authentication)) {
+            String username = authentication.getName();
+            setCreatedBy(username);
+            setLastModifiedBy(username);
+        }
     }
 }
