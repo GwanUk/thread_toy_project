@@ -19,6 +19,9 @@ spring:
 logging:
   level:
     org:
+    springframework:
+      transaction:
+        interceptor: trace
       hibernate:
         SQL: debug
         type:

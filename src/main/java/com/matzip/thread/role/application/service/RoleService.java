@@ -1,6 +1,7 @@
 package com.matzip.thread.role.application.service;
 
 import com.matzip.thread.common.annotation.PublishEvent;
+import com.matzip.thread.common.annotation.Retry;
 import com.matzip.thread.role.application.event.RoleChangedEvent;
 import com.matzip.thread.role.application.prot.in.RoleWebPort;
 import com.matzip.thread.role.application.prot.out_.RolePersistencePort;
@@ -39,6 +40,7 @@ class RoleService implements RoleWebPort {
 
     @Override
     @PublishEvent(RoleChangedEvent.class)
+    @Retry
     @Transactional
     public void update(Role role, RoleEntity roleEntity) {
         rolePersistencePort.update(role, roleEntity);
