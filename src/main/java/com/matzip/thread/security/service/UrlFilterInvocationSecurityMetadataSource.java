@@ -1,7 +1,7 @@
 package com.matzip.thread.security.service;
 
-import com.matzip.thread.uri.application.event.UriAuthorizationChangedEvent;
-import com.matzip.thread.uri.application.port.in.UriQueryInPort;
+import com.matzip.thread.uri.application.event.UriChangedEvent;
+import com.matzip.thread.uri.application.port.in.UriAllPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -17,7 +17,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource {
 
-    private final UriQueryInPort uriQueryInPort;
+    private final UriAllPort uriAllPort;
 
     private final Map<RequestMatcher, List<ConfigAttribute>> requestMap = new LinkedHashMap<>();
 
@@ -27,7 +27,7 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
     }
 
     @EventListener
-    public void reload(UriAuthorizationChangedEvent uriAuthorizationChangedEvent) {
+    public void reload(UriChangedEvent uriChangedEvent) {
         requestMap.clear();
         loadRequestMap();
     }
@@ -55,8 +55,8 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
     }
 
     private void loadRequestMap() {
-        uriQueryInPort.findAll().forEach(u -> requestMap.put(
-                new AntPathRequestMatcher(u.getUriName()),
+        uriAllPort.findAll().forEach(u -> requestMap.put(
+                new AntPathRequestMatcher(u.getUri()),
                 u.getRoles().stream()
                         .<ConfigAttribute>map(r -> new SecurityConfig(r.name()))
                         .toList()

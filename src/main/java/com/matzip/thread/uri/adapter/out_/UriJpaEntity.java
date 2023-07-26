@@ -22,33 +22,33 @@ class UriJpaEntity extends JpaBaseEntity {
     private Long id;
 
     @Column(name = "URI_NAME")
-    private String uriName;
+    private String uri;
 
     @Column(name = "URI_ORDER")
-    private int uriOrder;
+    private int order;
 
-    @OneToMany(mappedBy = "uriJpaEntity")
+    @OneToMany(mappedBy = "uriJpaEntity",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
     private final List<UriRoleJpaEntity> uriRolesJpaEntities = new ArrayList<>();
 
-    UriJpaEntity(String uriName, int uriOrder) {
-        this.uriName = uriName;
-        this.uriOrder = uriOrder;
-    }
-
-    void addResourcesRolesJpaEntity(UriRoleJpaEntity rolesJpaEntity) {
-        uriRolesJpaEntities.add(rolesJpaEntity);
+    UriJpaEntity(String uri, int order, List<UriRoleJpaEntity> uriRolesJpaEntities) {
+        this.uri = uri;
+        this.order = order;
+        addAll(uriRolesJpaEntities);
     }
 
     UriEntity toEntity() {
         return new UriEntity(
-                uriName,
-                uriOrder,
+                uri,
+                order,
                 uriRolesJpaEntities.stream()
-                        .map(ur -> ur.getRoleJpaEntity().getRole())
+                        .map(UriRoleJpaEntity::getRole)
                         .toList());
     }
 
-    static UriJpaEntity fromEntity(UriEntity uriEntity) {
-        return new UriJpaEntity(uriEntity.getUriName(), uriEntity.getUriOrder());
+    private void addAll(List<UriRoleJpaEntity> uriRolesJpaEntities) {
+        this.uriRolesJpaEntities.addAll(uriRolesJpaEntities);
+        uriRolesJpaEntities.forEach(ur -> ur.setUri(this));
     }
 }

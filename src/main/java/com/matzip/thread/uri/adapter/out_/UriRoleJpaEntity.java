@@ -2,6 +2,7 @@ package com.matzip.thread.uri.adapter.out_;
 
 import com.matzip.thread.common.JpaEntity.JpaBaseEntity;
 import com.matzip.thread.role.adapter.out_.RoleJpaEntity;
+import com.matzip.thread.role.domain.Role;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,13 +27,15 @@ class UriRoleJpaEntity extends JpaBaseEntity {
     @JoinColumn(name = "ROLE_ID")
     private RoleJpaEntity roleJpaEntity;
 
-    UriRoleJpaEntity(UriJpaEntity uriJpaEntity, RoleJpaEntity roleJpaEntity) {
-        setUri(uriJpaEntity);
+    UriRoleJpaEntity(RoleJpaEntity roleJpaEntity) {
         this.roleJpaEntity = roleJpaEntity;
     }
 
-    void setUri(UriJpaEntity uriJpaEntity) {
+    public void setUri(UriJpaEntity uriJpaEntity) {
         this.uriJpaEntity = uriJpaEntity;
-        uriJpaEntity.addResourcesRolesJpaEntity(this);
+    }
+
+    public Role getRole() {
+        return roleJpaEntity.getRole();
     }
 }

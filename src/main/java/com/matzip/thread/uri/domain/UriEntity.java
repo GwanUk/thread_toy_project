@@ -8,13 +8,13 @@ import java.util.List;
 
 @Getter
 public class UriEntity {
-    private final String uriName;
-    private final int uriOrder;
+    private final String uri;
+    private final int order;
     private final List<Role> roles = new ArrayList<>();
 
-    public UriEntity(String uriName, int uriOrder, List<Role> roles) {
-        this.uriName = uriName;
-        this.uriOrder = uriOrder;
+    public UriEntity(String uri, int order, List<Role> roles) {
+        this.uri = uri;
+        this.order = order;
         this.roles.addAll(roles);
     }
 }

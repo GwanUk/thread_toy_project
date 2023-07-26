@@ -10,11 +10,11 @@ import java.util.List;
 @Getter
 @RequiredArgsConstructor
 public class UriResponse {
-    private final String uriName;
-    private final int uriOrder;
+    private final String uri;
+    private final int order;
     private final List<Role> roles;
 
-    static UriResponse fromEntity(UriEntity uriEntity) {
-        return new UriResponse(uriEntity.getUriName(), uriEntity.getUriOrder(), uriEntity.getRoles());
+    static UriResponse from(UriEntity uriEntity) {
+        return new UriResponse(uriEntity.getUri(), uriEntity.getOrder(), uriEntity.getRoles());
     }
 }
