@@ -172,6 +172,7 @@ class RoleJdbcTemplateRepository {
             dtoMap.put(dto.getRoleName(), dto);
         }
 
+        // 업데이트 데이터 생성
         for (RoleJdbcDto findDto : findRoleDto) {
             String roleName = findDto.getRoleName();
             if (dtoMap.containsKey(roleName)) {
@@ -192,6 +193,7 @@ class RoleJdbcTemplateRepository {
             params.add(findDto);
         }
 
+        // 순환 참조 방지
         if (params.stream()
                 .map(RoleJdbcDto::getRoleId)
                 .anyMatch(id -> id.equals(ancestorId))) {
