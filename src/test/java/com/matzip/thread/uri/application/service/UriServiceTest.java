@@ -1,7 +1,6 @@
 package com.matzip.thread.uri.application.service;
 
 import com.matzip.thread.role.domain.Role;
-import com.matzip.thread.role.domain.RoleEntity;
 import com.matzip.thread.uri.application.port.out_.UriOutPort;
 import com.matzip.thread.uri.domain.UriEntity;
 import org.assertj.core.api.BDDAssertions;
@@ -36,11 +35,11 @@ class UriServiceTest {
         List<UriEntity> findUriEntities = uriService.findAll();
 
         // then
-        BDDAssertions.then(findUriEntities.get(0).getUriName()).isEqualTo("/api/user/**");
-        BDDAssertions.then(findUriEntities.get(0).getUriOrder()).isEqualTo(1);
+        BDDAssertions.then(findUriEntities.get(0).getUri()).isEqualTo("/api/user/**");
+        BDDAssertions.then(findUriEntities.get(0).getOrder()).isEqualTo(1);
         BDDAssertions.then(findUriEntities.get(0).getRoles().get(0)).isEqualTo(Role.ROLE_USER);
-        BDDAssertions.then(findUriEntities.get(1).getUriName()).isEqualTo("/api/admin/**");
-        BDDAssertions.then(findUriEntities.get(1).getUriOrder()).isEqualTo(2);
+        BDDAssertions.then(findUriEntities.get(1).getUri()).isEqualTo("/api/admin/**");
+        BDDAssertions.then(findUriEntities.get(1).getOrder()).isEqualTo(2);
         BDDAssertions.then(findUriEntities.get(1).getRoles().get(0)).isEqualTo(Role.ROLE_ADMIN);
     }
 
@@ -56,8 +55,8 @@ class UriServiceTest {
         // then
         ArgumentCaptor<UriEntity> uriEntityArgumentCaptor = ArgumentCaptor.forClass(UriEntity.class);
         BDDMockito.then(uriOutPort).should(Mockito.times(1)).save(uriEntityArgumentCaptor.capture());
-        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getUriName()).isEqualTo("/api/user/**");
-        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getUriOrder()).isEqualTo(1);
+        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getUri()).isEqualTo("/api/user/**");
+        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getOrder()).isEqualTo(1);
         BDDAssertions.then(uriEntityArgumentCaptor.getValue().getRoles()).isEmpty();
     }
 
@@ -73,8 +72,8 @@ class UriServiceTest {
         // then
         ArgumentCaptor<UriEntity> uriEntityArgumentCaptor = ArgumentCaptor.forClass(UriEntity.class);
         BDDMockito.then(uriOutPort).should(Mockito.times(1)).save(uriEntityArgumentCaptor.capture());
-        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getUriName()).isEqualTo("/api/user/**");
-        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getUriOrder()).isEqualTo(1);
+        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getUri()).isEqualTo("/api/user/**");
+        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getOrder()).isEqualTo(1);
         BDDAssertions.then(uriEntityArgumentCaptor.getValue().getRoles().get(0)).isEqualTo(Role.ROLE_USER);
     }
 }

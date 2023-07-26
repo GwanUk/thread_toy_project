@@ -2,7 +2,6 @@ package com.matzip.thread.uri.adapter.in;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.matzip.thread.role.domain.Role;
-import com.matzip.thread.role.domain.RoleEntity;
 import com.matzip.thread.uri.application.port.in.UriInPort;
 import com.matzip.thread.uri.domain.UriEntity;
 import org.assertj.core.api.BDDAssertions;
@@ -70,8 +69,8 @@ class UriWebAdapterTest {
         // then
         ArgumentCaptor<UriEntity> uriEntityArgumentCaptor = ArgumentCaptor.forClass(UriEntity.class);
         BDDMockito.then(uriInPort).should(Mockito.times(1)).save(uriEntityArgumentCaptor.capture());
-        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getUriName()).isEqualTo("/api/admin/**");
-        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getUriOrder()).isEqualTo(1);
+        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getUri()).isEqualTo("/api/admin/**");
+        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getOrder()).isEqualTo(1);
         BDDAssertions.then(uriEntityArgumentCaptor.getValue().getRoles()).isEmpty();
     }
 
@@ -91,8 +90,8 @@ class UriWebAdapterTest {
         // then
         ArgumentCaptor<UriEntity> uriEntityArgumentCaptor = ArgumentCaptor.forClass(UriEntity.class);
         BDDMockito.then(uriInPort).should(Mockito.times(1)).save(uriEntityArgumentCaptor.capture());
-        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getUriName()).isEqualTo("/api/admin/**");
-        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getUriOrder()).isEqualTo(1);
+        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getUri()).isEqualTo("/api/admin/**");
+        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getOrder()).isEqualTo(1);
         BDDAssertions.then(uriEntityArgumentCaptor.getValue().getRoles().get(0)).isEqualTo(Role.ROLE_USER);
     }
 }

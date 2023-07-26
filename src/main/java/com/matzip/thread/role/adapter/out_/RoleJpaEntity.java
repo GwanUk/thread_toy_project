@@ -2,14 +2,11 @@ package com.matzip.thread.role.adapter.out_;
 
 import com.matzip.thread.common.JpaEntity.JpaBaseEntity;
 import com.matzip.thread.role.domain.Role;
-import com.matzip.thread.role.domain.RoleEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -33,17 +30,4 @@ public class RoleJpaEntity extends JpaBaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PARENT_ID")
     private RoleJpaEntity parent;
-
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.PERSIST)
-    private final List<RoleJpaEntity> children = new ArrayList<>();
-
-    public RoleEntity toEntity() {
-        return new RoleEntity(
-                role,
-                description,
-                children.stream()
-                        .map(RoleJpaEntity::toEntity)
-                        .toList()
-        );
-    }
 }

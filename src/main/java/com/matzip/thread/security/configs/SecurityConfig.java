@@ -13,7 +13,7 @@ import com.matzip.thread.security.service.ApiAuthenticationProvider;
 import com.matzip.thread.security.service.IpAddressVoter;
 import com.matzip.thread.security.service.UrlFilterInvocationSecurityMetadataSource;
 import com.matzip.thread.security.service.UserDetailsServiceImpl;
-import com.matzip.thread.uri.application.port.in.UriQueryInPort;
+import com.matzip.thread.uri.application.port.in.UriAllPort;
 import com.matzip.thread.user.application.port.in.UserQueryInPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -44,7 +44,7 @@ public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
     private final PasswordEncoder passwordEncoder;
     private final UserQueryInPort userQueryInPort;
-    private final UriQueryInPort uriQueryInPort;
+    private final UriAllPort uriAllPort;
     private final RoleHierarchyPort roleHierarchyPort;
     private final IpAddressQueryInPort ipAddressQueryInPort;
 
@@ -105,7 +105,7 @@ public class SecurityConfig {
 
     @Bean
     public UrlFilterInvocationSecurityMetadataSource urlFilterInvocationSecurityMetadataSource() {
-        return new UrlFilterInvocationSecurityMetadataSource(uriQueryInPort);
+        return new UrlFilterInvocationSecurityMetadataSource(uriAllPort);
     }
 
     private AffirmativeBased affirmativeBased() {

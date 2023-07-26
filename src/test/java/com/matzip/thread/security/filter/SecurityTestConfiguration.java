@@ -4,7 +4,7 @@ import com.matzip.thread.ipaddress.application.port.in.IpAddressQueryInPort;
 import com.matzip.thread.role.application.prot.in.RoleHierarchyPort;
 import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.security.configs.SecurityConfig;
-import com.matzip.thread.uri.application.port.in.UriQueryInPort;
+import com.matzip.thread.uri.application.port.in.UriAllPort;
 import com.matzip.thread.uri.domain.UriEntity;
 import com.matzip.thread.user.application.port.in.UserQueryInPort;
 import com.matzip.thread.user.domain.PasswordEncoderFactoryBean;
@@ -52,8 +52,8 @@ class SecurityTestConfiguration {
     }
 
     @Bean
-    public UriQueryInPort uriInPort() {
-        return new UriQueryInPort() {
+    public UriAllPort uriInPort() {
+        return new UriAllPort() {
             @Override
             public List<UriEntity> findAll() {
                 UriEntity user = new UriEntity("/api/user", 1, List.of(Role.ROLE_USER));

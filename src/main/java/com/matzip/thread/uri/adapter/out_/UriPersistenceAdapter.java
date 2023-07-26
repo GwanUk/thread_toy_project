@@ -7,6 +7,7 @@ import com.matzip.thread.uri.domain.UriEntity;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @PersistenceAdapter
@@ -23,13 +24,12 @@ class UriPersistenceAdapter implements UriOutPort {
     }
 
     @Override
+    public Optional<UriEntity> findByUriWithRoles(String uri) {
+        return uriJpaRepository.findByUri(uri).map(UriJpaEntity::toEntity);
+    }
+
+    @Override
     public void save(UriEntity uriEntity) {
-        UriJpaEntity uriJpaEntity = UriJpaEntity.fromEntity(uriEntity);
 
-        uriJpaRepository.save(uriJpaEntity);
-
-        roleJpaRepository.findInRoles(uriEntity.getRoles()).stream()
-                .map(roleJpaEntity -> new UriRoleJpaEntity(uriJpaEntity, roleJpaEntity))
-                .forEach(uriRoleJpaRepository::save);
     }
 }
