@@ -132,9 +132,6 @@ class UriWebAdapterTest {
     @Test
     @DisplayName("body 에 null 전송")
     void findByUri_body_null() throws Exception {
-        // given
-        String json = objectMapper.writeValueAsString(new UriFindRequest(null));
-
         // expected
         mockMvc.perform(get("/api/uri")
                         .accept(APPLICATION_JSON)
@@ -149,12 +146,9 @@ class UriWebAdapterTest {
     @Test
     @DisplayName("body 에 빈 문자열 전송")
     void findByUri_body_empty() throws Exception {
-        // given
-        String json = objectMapper.writeValueAsString(new UriFindRequest(null));
-
         // expected
         mockMvc.perform(get("/api/uri")
-                        .accept(APPLICATION_JSON)g
+                        .accept(APPLICATION_JSON)
                         .contentType(APPLICATION_JSON)
                         .content(""))
                 .andExpect(status().isBadRequest())
