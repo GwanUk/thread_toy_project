@@ -47,7 +47,7 @@ class UriWebAdapterTest {
                 new UriEntity("/api/**", 2, List.of(ROLE_MANAGER, ROLE_ADMIN))));
 
         // when
-        mockMvc.perform(get("/api/uri")
+        mockMvc.perform(get("/api/uri/all")
                 .accept(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].uri").value("/api/uri/**"))
@@ -71,9 +71,13 @@ class UriWebAdapterTest {
         Optional<UriEntity> entityOptional = Optional.of(new UriEntity("/api/uri/**", 1, List.of(ROLE_USER, ROLE_VIP)));
         given(uriInPort.findByUri(anyString())).willReturn(entityOptional);
 
+        String json = objectMapper.writeValueAsString(new UriFindRequest("/api/uri/**"));
+
         // when
-        mockMvc.perform(get("/api/uri/{uri}", "$api$**")
-                        .accept(APPLICATION_JSON))
+        mockMvc.perform(get("/api/uri")
+                        .accept(APPLICATION_JSON)
+                        .contentType(APPLICATION_JSON)
+                        .content(json))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.uri").value("/api/uri/**"))
                 .andExpect(jsonPath("$.order").value(1))
@@ -84,7 +88,79 @@ class UriWebAdapterTest {
         // then
         ArgumentCaptor<String> ac = ArgumentCaptor.forClass(String.class);
         then(uriInPort).should(times(1)).findByUri(ac.capture());
-        assertThat(ac.getValue()).isEqualTo("/api/**");
+        assertThat(ac.getValue()).isEqualTo("/api/uri/**");
+    }
+
+    @Test
+    @DisplayName("uri 단건 빈 문자열 조회")
+    void findByUri_empty() throws Exception {
+        // given
+        String json = objectMapper.writeValueAsString(new UriFindRequest(""));
+
+        // expected
+        mockMvc.perform(get("/api/uri")
+                        .accept(APPLICATION_JSON)
+                        .contentType(APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Invalid argument value"))
+                .andExpect(jsonPath("$.fieldErrors[0].field").value("uri"))
+                .andExpect(jsonPath("$.fieldErrors[0].errorMessage").value("must not be blank"))
+                .andExpect(jsonPath("$.fieldErrors[0].rejectedValue").isEmpty())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("uri 단건 널 조회")
+    void findByUri_null() throws Exception {
+        // given
+        String json = objectMapper.writeValueAsString(new UriFindRequest(null));
+
+        // expected
+        mockMvc.perform(get("/api/uri")
+                        .accept(APPLICATION_JSON)
+                        .contentType(APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Invalid argument value"))
+                .andExpect(jsonPath("$.fieldErrors[0].field").value("uri"))
+                .andExpect(jsonPath("$.fieldErrors[0].errorMessage").value("must not be blank"))
+                .andExpect(jsonPath("$.fieldErrors[0].rejectedValue").isEmpty())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("body 에 null 전송")
+    void findByUri_body_null() throws Exception {
+        // given
+        String json = objectMapper.writeValueAsString(new UriFindRequest(null));
+
+        // expected
+        mockMvc.perform(get("/api/uri")
+                        .accept(APPLICATION_JSON)
+                        .contentType(APPLICATION_JSON)
+                        .content("null"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Http message not readable"))
+                .andExpect(jsonPath("$.fieldErrors").isEmpty())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("body 에 빈 문자열 전송")
+    void findByUri_body_empty() throws Exception {
+        // given
+        String json = objectMapper.writeValueAsString(new UriFindRequest(null));
+
+        // expected
+        mockMvc.perform(get("/api/uri")
+                        .accept(APPLICATION_JSON)g
+                        .contentType(APPLICATION_JSON)
+                        .content(""))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Http message not readable"))
+                .andExpect(jsonPath("$.fieldErrors").isEmpty())
+                .andDo(print());
     }
 
 
