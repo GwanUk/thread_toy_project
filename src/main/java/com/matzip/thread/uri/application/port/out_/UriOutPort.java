@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface UriOutPort {
     List<UriEntity> findAllWithRoles();
 
-    void save(UriEntity uriEntity);
-
     Optional<UriEntity> findByUriWithRoles(String uri);
+
+    void save(UriEntity uriEntity);
 }

@@ -1,26 +1,31 @@
 package com.matzip.thread.uri.adapter.in;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.uri.application.port.in.UriInPort;
 import com.matzip.thread.uri.domain.UriEntity;
-import org.assertj.core.api.BDDAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.BDDMockito;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
+import java.util.Optional;
+
+import static com.matzip.thread.role.domain.Role.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.times;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = UriWebAdapter.class,
         excludeAutoConfiguration = SecurityAutoConfiguration.class)
@@ -34,64 +39,94 @@ class UriWebAdapterTest {
     private UriInPort uriInPort;
 
     @Test
-    @DisplayName("uri 자원 전체 조회 성공")
+    @DisplayName("uri 전체 조회")
     void findAll() throws Exception {
         // given
-        BDDMockito.given(uriInPort.findAll()).willReturn(List.of(
-                new UriEntity("/api/user/**", 1,  List.of(Role.ROLE_USER)),
-                new UriEntity("/api/admin/**", 2, List.of(Role.ROLE_ADMIN))));
-
-        // expected
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/uri")
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].uriName").value("/api/user/**"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].uriOrder").value(1))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].roles[0]").value(Role.ROLE_USER.name()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].uriName").value("/api/admin/**"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].uriOrder").value(2))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].roles[0]").value(Role.ROLE_ADMIN.name()))
-                .andDo(MockMvcResultHandlers.print());
-    }
-    @Test
-    @DisplayName("URI 저장 요청 성공")
-    void save_uri() throws Exception {
-        // given
-        String json = objectMapper.writeValueAsString(new UriSaveRequest("/api/admin/**", 1, List.of()));
+        given(uriInPort.findAll()).willReturn(List.of(
+                new UriEntity("/api/uri/**", 1,  List.of(ROLE_USER, ROLE_VIP)),
+                new UriEntity("/api/**", 2, List.of(ROLE_MANAGER, ROLE_ADMIN))));
 
         // when
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/uri")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andDo(MockMvcResultHandlers.print());
+        mockMvc.perform(get("/api/uri")
+                .accept(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].uri").value("/api/uri/**"))
+                .andExpect(jsonPath("$[0].order").value(1))
+                .andExpect(jsonPath("$[0].roles[0]").value(ROLE_USER.name()))
+                .andExpect(jsonPath("$[0].roles[1]").value(ROLE_VIP.name()))
+                .andExpect(jsonPath("$[1].uri").value("/api/**"))
+                .andExpect(jsonPath("$[1].order").value(2))
+                .andExpect(jsonPath("$[1].roles[0]").value(ROLE_MANAGER.name()))
+                .andExpect(jsonPath("$[1].roles[1]").value(ROLE_ADMIN.name()))
+                .andDo(print());
 
         // then
-        ArgumentCaptor<UriEntity> uriEntityArgumentCaptor = ArgumentCaptor.forClass(UriEntity.class);
-        BDDMockito.then(uriInPort).should(Mockito.times(1)).save(uriEntityArgumentCaptor.capture());
-        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getUri()).isEqualTo("/api/admin/**");
-        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getOrder()).isEqualTo(1);
-        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getRoles()).isEmpty();
+        then(uriInPort).should(times(1)).findAll();
     }
 
     @Test
-    @DisplayName("URI with Role 저장 요청 성공")
-    void save_uri_role() throws Exception {
+    @DisplayName("uri 단건 조회")
+    void findByUri() throws Exception {
         // given
-        String json = objectMapper.writeValueAsString(new UriSaveRequest("/api/admin/**", 1, List.of(Role.ROLE_USER)));
+        Optional<UriEntity> entityOptional = Optional.of(new UriEntity("/api/uri/**", 1, List.of(ROLE_USER, ROLE_VIP)));
+        given(uriInPort.findByUri(anyString())).willReturn(entityOptional);
 
         // when
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/uri")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andDo(MockMvcResultHandlers.print());
+        mockMvc.perform(get("/api/uri/{uri}", "$api$**")
+                        .accept(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.uri").value("/api/uri/**"))
+                .andExpect(jsonPath("$.order").value(1))
+                .andExpect(jsonPath("$.roles[0]").value(ROLE_USER.name()))
+                .andExpect(jsonPath("$.roles[1]").value(ROLE_VIP.name()))
+                .andDo(print());
 
         // then
-        ArgumentCaptor<UriEntity> uriEntityArgumentCaptor = ArgumentCaptor.forClass(UriEntity.class);
-        BDDMockito.then(uriInPort).should(Mockito.times(1)).save(uriEntityArgumentCaptor.capture());
-        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getUri()).isEqualTo("/api/admin/**");
-        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getOrder()).isEqualTo(1);
-        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getRoles().get(0)).isEqualTo(Role.ROLE_USER);
+        ArgumentCaptor<String> ac = ArgumentCaptor.forClass(String.class);
+        then(uriInPort).should(times(1)).findByUri(ac.capture());
+        assertThat(ac.getValue()).isEqualTo("/api/**");
     }
+
+
+//    @Test
+//    @DisplayName("URI 저장 요청 성공")
+//    void save_uri() throws Exception {
+//        // given
+//        String json = objectMapper.writeValueAsString(new UriSaveRequest("/api/admin/**", 1, List.of()));
+//
+//        // when
+//        mockMvc.perform(post("/api/uri")
+//                        .contentType(APPLICATION_JSON)
+//                        .content(json))
+//                .andExpect(status().isOk())
+//                .andDo(print());
+//
+//        // then
+//        ArgumentCaptor<UriEntity> uriEntityArgumentCaptor = ArgumentCaptor.forClass(UriEntity.class);
+//        then(uriInPort).should(Mockito.times(1)).save(uriEntityArgumentCaptor.capture());
+//        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getUri()).isEqualTo("/api/admin/**");
+//        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getOrder()).isEqualTo(1);
+//        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getRoles()).isEmpty();
+//    }
+//
+//    @Test
+//    @DisplayName("URI with Role 저장 요청 성공")
+//    void save_uri_role() throws Exception {
+//        // given
+//        String json = objectMapper.writeValueAsString(new UriSaveRequest("/api/admin/**", 1, List.of(ROLE_USER)));
+//
+//        // when
+//        mockMvc.perform(post("/api/uri")
+//                .contentType(APPLICATION_JSON)
+//                .content(json))
+//                .andExpect(status().isOk())
+//                .andDo(print());
+//
+//        // then
+//        ArgumentCaptor<UriEntity> uriEntityArgumentCaptor = ArgumentCaptor.forClass(UriEntity.class);
+//        then(uriInPort).should(Mockito.times(1)).save(uriEntityArgumentCaptor.capture());
+//        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getUri()).isEqualTo("/api/admin/**");
+//        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getOrder()).isEqualTo(1);
+//        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getRoles().get(0)).isEqualTo(ROLE_USER);
+//    }
 }

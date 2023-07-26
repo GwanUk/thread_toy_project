@@ -25,7 +25,7 @@ class UriService implements UriInPort {
     }
 
     @Override
-    public Optional<UriEntity> findByuRi(String uri) {
+    public Optional<UriEntity> findByUri(String uri) {
         return uriOutPort.findByUriWithRoles(uri);
     }
 

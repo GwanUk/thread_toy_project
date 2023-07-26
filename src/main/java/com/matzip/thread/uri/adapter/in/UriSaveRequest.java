@@ -4,11 +4,13 @@ import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.uri.domain.UriEntity;
 import lombok.Getter;
 
+import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 class UriSaveRequest {
+    @NotBlank
     private final String uri;
     private final int order;
     private final List<Role> roles = new ArrayList<>();

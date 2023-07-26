@@ -73,7 +73,7 @@ class RoleWebAdapterTest {
 
         // expected
         mockMvc.perform(get("/api/role/{role}", ROLE_USER)
-                .accept(APPLICATION_JSON))
+                        .accept(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.role").value(ROLE_USER.name()))
                 .andExpect(jsonPath("$.description").value("유저 권한"))

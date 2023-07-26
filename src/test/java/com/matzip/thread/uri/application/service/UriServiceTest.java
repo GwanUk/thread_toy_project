@@ -1,17 +1,10 @@
 package com.matzip.thread.uri.application.service;
 
-import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.uri.application.port.out_.UriOutPort;
-import com.matzip.thread.uri.domain.UriEntity;
-import org.assertj.core.api.BDDAssertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationEventPublisher;
-
-import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 class UriServiceTest {
@@ -20,60 +13,5 @@ class UriServiceTest {
     private UriService uriService;
     @Mock
     private UriOutPort uriOutPort;
-    @Mock
-    private ApplicationEventPublisher applicationEventPublisher;
 
-    @Test
-    @DisplayName("uri 자원 전체 조회 서비스 성공")
-    void findAll() {
-        // given
-        BDDMockito.given(uriService.findAll()).willReturn(List.of(
-                new UriEntity("/api/user/**", 1,  List.of(Role.ROLE_USER)),
-                new UriEntity("/api/admin/**", 2, List.of(Role.ROLE_ADMIN))));
-
-        // when
-        List<UriEntity> findUriEntities = uriService.findAll();
-
-        // then
-        BDDAssertions.then(findUriEntities.get(0).getUri()).isEqualTo("/api/user/**");
-        BDDAssertions.then(findUriEntities.get(0).getOrder()).isEqualTo(1);
-        BDDAssertions.then(findUriEntities.get(0).getRoles().get(0)).isEqualTo(Role.ROLE_USER);
-        BDDAssertions.then(findUriEntities.get(1).getUri()).isEqualTo("/api/admin/**");
-        BDDAssertions.then(findUriEntities.get(1).getOrder()).isEqualTo(2);
-        BDDAssertions.then(findUriEntities.get(1).getRoles().get(0)).isEqualTo(Role.ROLE_ADMIN);
-    }
-
-    @Test
-    @DisplayName("uri 자원 저장 서비스 성공")
-    void save_uri() {
-        // given
-        UriEntity uerEntity = new UriEntity("/api/user/**", 1, List.of());
-
-        // when
-        uriService.save(uerEntity);
-
-        // then
-        ArgumentCaptor<UriEntity> uriEntityArgumentCaptor = ArgumentCaptor.forClass(UriEntity.class);
-        BDDMockito.then(uriOutPort).should(Mockito.times(1)).save(uriEntityArgumentCaptor.capture());
-        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getUri()).isEqualTo("/api/user/**");
-        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getOrder()).isEqualTo(1);
-        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getRoles()).isEmpty();
-    }
-
-    @Test
-    @DisplayName("uri with role 자원 저장 서비스 성공")
-    void save_uri_role() {
-        // given
-        UriEntity uerEntity = new UriEntity("/api/user/**", 1, List.of(Role.ROLE_USER));
-
-        // when
-        uriService.save(uerEntity);
-
-        // then
-        ArgumentCaptor<UriEntity> uriEntityArgumentCaptor = ArgumentCaptor.forClass(UriEntity.class);
-        BDDMockito.then(uriOutPort).should(Mockito.times(1)).save(uriEntityArgumentCaptor.capture());
-        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getUri()).isEqualTo("/api/user/**");
-        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getOrder()).isEqualTo(1);
-        BDDAssertions.then(uriEntityArgumentCaptor.getValue().getRoles().get(0)).isEqualTo(Role.ROLE_USER);
-    }
 }

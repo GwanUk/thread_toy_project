@@ -19,12 +19,13 @@ public class UriWebAdapter {
 
     @GetMapping
     List<UriResponse> findAll() {
-        return uriInPort.findAll().stream().map(UriResponse::fromEntity).toList();
+        return uriInPort.findAll().stream().map(UriResponse::from).toList();
     }
 
     @GetMapping("/{uri}")
     Optional<UriResponse> findByUri(@PathVariable String uri) {
-        return uriInPort.findByuRi(uri).map(UriResponse::fromEntity);
+        uri = uri.replace('$', '/');
+        return uriInPort.findByUri(uri).map(UriResponse::from);
     }
 
     @PostMapping
