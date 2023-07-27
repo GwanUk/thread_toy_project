@@ -129,72 +129,74 @@ class RoleJdbcTemplateRepository {
     }
 
     void update(Role role, List<RoleJdbcDto> roleDtoList) throws UpdateFailureException {
-        ArrayList<RoleJdbcDto> params = new ArrayList<>();
+        String rootName = role.name();
+        List<RoleJdbcDto> updateParams = new ArrayList<>();
+        List<RoleJdbcDto> removeChildren = new ArrayList<>();
 
-        List<RoleJdbcDto> findRoleDto = findByRoleWithChildren(role);
+        Map<String, RoleJdbcDto> originDtoMap = findByRoleWithChildren(role).stream()
+                .collect(Collectors.toMap(RoleJdbcDto::getRoleName, dto -> dto));
 
-        if (findRoleDto.isEmpty()) {
-            throw new NotFoundDataException(role.name());
+        if (originDtoMap.isEmpty()) {
+            throw new NotFoundDataException(rootName);
         }
 
-        Long ancestorId = findRoleDto.get(0).getParentId();
-
-        Set<String> roleSet = findRoleDto.stream()
+        // 업데이트 목록중 기존에 없는 데이터 목록
+        List<String> willFindList = roleDtoList.stream()
                 .map(RoleJdbcDto::getRoleName)
-                .collect(Collectors.toSet());
-
-        List<String> toFind = roleDtoList.stream()
-                .map(RoleJdbcDto::getRoleName)
-                .filter(n -> !roleSet.contains(n))
+                .filter(n -> !originDtoMap.containsKey(n))
                 .toList();
 
-        if (toFind.size() != 0) {
-            List<RoleJdbcDto> inRoles = findInRoles(toFind);
-
-            int notFoundCnt = toFind.size() - inRoles.size();
-            if (notFoundCnt > 0) {
-                throw new NotFoundDataException(notFoundCnt + " data");
-            }
-
-            findRoleDto.addAll(inRoles);
+        // 기존에 없는 데이터 원본 찾아서 원본맵에 추가
+        if (willFindList.size() != 0) {
+            Map<String, RoleJdbcDto> dtoMap = getDtoMap(willFindList);
+            originDtoMap.putAll(dtoMap);
         }
 
-        Map<String, Long> nameIdMap = findRoleDto.stream()
-                .collect(Collectors.toMap(RoleJdbcDto::getRoleName, RoleJdbcDto::getRoleId));
-
-        Map<String, RoleJdbcDto> dtoMap = new HashMap<>();
+        // 업데이트 데이터의 부모 키 세팅
+        Map<String, RoleJdbcDto> updateDtoMap = new HashMap<>();
         for (RoleJdbcDto dto : roleDtoList) {
             String parentRoleName = dto.getParentRoleName();
             if (nonNull(parentRoleName)) {
-                Long parentId = nameIdMap.get(parentRoleName);
+                RoleJdbcDto parentDto = originDtoMap.get(parentRoleName);
+                Long parentId = parentDto.getRoleId();
                 dto.setParentId(parentId);
             }
-            dtoMap.put(dto.getRoleName(), dto);
+            updateDtoMap.put(dto.getRoleName(), dto);
         }
 
-        for (RoleJdbcDto findDto : findRoleDto) {
-            String roleName = findDto.getRoleName();
-            if (dtoMap.containsKey(roleName)) {
-                RoleJdbcDto dto = dtoMap.get(roleName);
+        // 원본 데이터를 업데이트 데이터로 변경
+        for (RoleJdbcDto origin : originDtoMap.values()) {
+            origin.fillUserName();
 
-                if (findDto.sameAs(dto)) continue;
-
-                if (!roleName.equals(role.name())) {
-                    findDto.setParentId(dto.getParentId());
-                }
-
-                findDto.setDescription(dto.getDescription());
-            } else {
-                findDto.setParentId(null);
+            String roleName = origin.getRoleName();
+            if (!updateDtoMap.containsKey(roleName)) {
+                removeChildren.add(origin);
+                continue;
             }
 
-            findDto.fillUserName();
-            params.add(findDto);
+            RoleJdbcDto dto = updateDtoMap.get(roleName);
+
+            if (origin.sameAs(dto)) continue;
+
+            if (!roleName.equals(rootName)) {
+                origin.setParentId(dto.getParentId());
+            }
+
+            origin.setDescription(dto.getDescription());
+
+            updateParams.add(origin);
         }
 
-        if (params.stream()
+        // 계층에서 빠진 자식들 중에서 서브 노드의 루트만 삭제
+        List<RoleJdbcDto> removeDtoList = getRemoveDto(removeChildren);
+        updateParams.addAll(removeDtoList);
+
+
+        // 순환 참조 체크
+        Long rootParentId = originDtoMap.get(rootName).getParentId();
+        if (updateParams.stream()
                 .map(RoleJdbcDto::getRoleId)
-                .anyMatch(id -> id.equals(ancestorId))) {
+                .anyMatch(id -> id.equals(rootParentId))) {
             throw new InfiniteLoopException();
         }
 
@@ -208,11 +210,11 @@ class RoleJdbcTemplateRepository {
                      AND LAST_MODIFIED_DATE = :lastModifiedDate
                      """;
 
-        BeanPropertySqlParameterSource[] parameterSources = parametersMapper(params);
+        BeanPropertySqlParameterSource[] parameterSources = parametersMapper(updateParams);
 
         int[] result = jdbcTemplate.batchUpdate(sql, parameterSources);
         int count = Arrays.stream(result).sum();
-        int size = params.size();
+        int size = updateParams.size();
         if (count < size) throw new UpdateFailureException();
     }
 
@@ -224,6 +226,18 @@ class RoleJdbcTemplateRepository {
 
         Map<String, String> paramMap = Map.of("roleName", role.name());
         jdbcTemplate.update(sql, paramMap);
+    }
+
+    private Map<String, RoleJdbcDto> getDtoMap(List<String> willFindList) {
+        List<RoleJdbcDto> findList = findInRoles(willFindList);
+
+        int notFoundCnt = willFindList.size() - findList.size();
+        if (notFoundCnt > 0) {
+            throw new NotFoundDataException(notFoundCnt + " data");
+        }
+
+        return findList.stream()
+                .collect(Collectors.toMap(RoleJdbcDto::getRoleName, dto -> dto));
     }
 
     private List<RoleJdbcDto> findInRoles(Collection<String> roleNames) {
@@ -244,6 +258,22 @@ class RoleJdbcTemplateRepository {
                 .addValue("roleNames", roleNames);
 
         return jdbcTemplate.query(sql, param, rowMapper());
+    }
+
+    private List<RoleJdbcDto> getRemoveDto(List<RoleJdbcDto> removeChildren) {
+        Set<Long> dtoSet = removeChildren.stream()
+                .map(RoleJdbcDto::getRoleId)
+                .collect(Collectors.toSet());
+
+        return removeChildren.stream()
+                .filter(child -> {
+                    Long parentId = child.getParentId();
+                    boolean setParentNull = !dtoSet.contains(parentId);
+                    if (setParentNull) {
+                        child.setParentId(null);
+                    }
+                    return setParentNull;
+                }).toList();
     }
 
     private BeanPropertySqlParameterSource[] parametersMapper(List<RoleJdbcDto> params) {

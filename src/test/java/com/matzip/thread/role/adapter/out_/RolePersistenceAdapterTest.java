@@ -18,8 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.matzip.thread.role.domain.Role.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest
 @Import({RolePersistenceAdapter.class,
@@ -201,15 +200,35 @@ class RolePersistenceAdapterTest {
     @DisplayName("자식 삭제 갱신")
     void update_children_remove() {
         // given
-        RoleEntity admin = new RoleEntity(ROLE_ADMIN, "ROLE_ADMIN", List.of());
+        RoleEntity admin = new RoleEntity(ROLE_ADMIN, "관리자 권한", List.of());
 
         // when
         rolePersistenceAdapter.update(ROLE_ADMIN, admin);
 
         // then
-        RoleEntity entity = rolePersistenceAdapter.findByRole(ROLE_ADMIN).orElseThrow(() -> new RuntimeException("해당 권한을 찾을 수 없습니다."));
-        assertThat(entity.getRole()).isEqualTo(ROLE_ADMIN);
-        assertThat(entity.getChildren()).isEmpty();
+        List<RoleEntity> entities = rolePersistenceAdapter.findAll();
+        assertWith(entities.size()).isEqualTo(2);
+        assertThat(entities.get(0).getRole()).isEqualTo(ROLE_ADMIN);
+        assertThat(entities.get(1).getRole()).isEqualTo(ROLE_MANAGER);
+    }
+
+    @Test
+    @Sql("/sql/role/role-data.sql")
+    @DisplayName("자손 삭제 갱신")
+    void update_descendants_remove() {
+        // given
+        RoleEntity manager = new RoleEntity(ROLE_MANAGER, "매니저 권한", List.of());
+
+        // when
+        rolePersistenceAdapter.update(ROLE_MANAGER, manager);
+
+        // then
+        List<RoleEntity> entities = rolePersistenceAdapter.findAll();
+        assertWith(entities.size()).isEqualTo(2);
+        assertThat(entities.get(0).getRole()).isEqualTo(ROLE_ADMIN);
+        assertThat(entities.get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_MANAGER);
+        assertThat(entities.get(1).getRole()).isEqualTo(ROLE_VIP);
+        assertThat(entities.get(1).getChildren().get(0).getRole()).isEqualTo(ROLE_USER);
     }
 
     @Test
