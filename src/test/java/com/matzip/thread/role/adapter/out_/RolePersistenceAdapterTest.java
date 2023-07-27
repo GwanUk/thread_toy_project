@@ -214,6 +214,25 @@ class RolePersistenceAdapterTest {
 
     @Test
     @Sql("/sql/role/role-data.sql")
+    @DisplayName("자손 삭제 갱신")
+    void update_descendants_remove() {
+        // given
+        RoleEntity manager = new RoleEntity(ROLE_MANAGER, "매니저 권한", List.of());
+
+        // when
+        rolePersistenceAdapter.update(ROLE_MANAGER, manager);
+
+        // then
+        List<RoleEntity> entities = rolePersistenceAdapter.findAll();
+        assertWith(entities.size()).isEqualTo(2);
+        assertThat(entities.get(0).getRole()).isEqualTo(ROLE_ADMIN);
+        assertThat(entities.get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_MANAGER);
+        assertThat(entities.get(1).getRole()).isEqualTo(ROLE_VIP);
+        assertThat(entities.get(1).getChildren().get(0).getRole()).isEqualTo(ROLE_USER);
+    }
+
+    @Test
+    @Sql("/sql/role/role-data.sql")
     @DisplayName("업데이트 대상과 다른 권한 갱신")
     void update_exist_role() {
         // given
