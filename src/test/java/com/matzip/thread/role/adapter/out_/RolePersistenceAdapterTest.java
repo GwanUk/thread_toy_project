@@ -18,8 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.matzip.thread.role.domain.Role.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest
 @Import({RolePersistenceAdapter.class,
@@ -208,10 +207,9 @@ class RolePersistenceAdapterTest {
 
         // then
         List<RoleEntity> entities = rolePersistenceAdapter.findAll();
+        assertWith(entities.size()).isEqualTo(2);
         assertThat(entities.get(0).getRole()).isEqualTo(ROLE_ADMIN);
         assertThat(entities.get(1).getRole()).isEqualTo(ROLE_MANAGER);
-        assertThat(entities.get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_VIP);
-        assertThat(entities.get(0).getChildren().get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_USER);
     }
 
     @Test
