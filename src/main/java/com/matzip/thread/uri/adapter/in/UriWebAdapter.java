@@ -29,7 +29,7 @@ public class UriWebAdapter {
     }
 
     @PostMapping
-    void save(@RequestBody UriSaveRequest uriSaveRequest) {
+    void save(@Validated @RequestBody UriSaveRequest uriSaveRequest) {
         uriInPort.save(uriSaveRequest.toEntity());
     }
 }

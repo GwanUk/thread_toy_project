@@ -1,5 +1,6 @@
 package com.matzip.thread.uri.adapter.in;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
 
 import javax.validation.constraints.NotBlank;
@@ -7,11 +8,9 @@ import javax.validation.constraints.NotBlank;
 @Getter
 class UriFindRequest {
     @NotBlank
-    private String uri;
+    private final String uri;
 
-    UriFindRequest() {
-    }
-
+    @JsonCreator
     UriFindRequest(String uri) {
         this.uri = uri;
     }

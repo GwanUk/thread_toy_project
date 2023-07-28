@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.Optional;
 
 interface UriJpaRepository extends JpaRepository<UriJpaEntity, Long> {
-    @Query("select u from UriJpaEntity u " +
+    @Query("select distinct u from UriJpaEntity u " +
             "left join fetch u.uriRolesJpaEntities ur " +
             "left join fetch ur.roleJpaEntity r " +
             "order by u.order")
     List<UriJpaEntity> findAllWithRoles();
 
-    @Query("select u from UriJpaEntity u " +
+    @Query("select distinct u from UriJpaEntity u " +
             "left join fetch u.uriRolesJpaEntities ur " +
             "left join fetch ur.roleJpaEntity r " +
             "where u.uri = :uri")
