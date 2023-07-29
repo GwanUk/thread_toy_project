@@ -11,4 +11,6 @@ public interface UriInPort extends UriAllPort {
     void save(@NonNull UriEntity uriEntity);
 
     void update(@NonNull UriEntity uriEntity);
+
+    void delete(@NonNull String uri);
 }

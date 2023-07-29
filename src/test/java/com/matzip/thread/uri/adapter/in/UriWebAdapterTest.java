@@ -24,8 +24,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -74,7 +73,7 @@ class UriWebAdapterTest {
         Optional<UriEntity> entityOptional = Optional.of(new UriEntity("/api/uri/**", 1, List.of(ROLE_USER, ROLE_VIP)));
         given(uriInPort.findByUri(anyString())).willReturn(entityOptional);
 
-        String json = objectMapper.writeValueAsString(new UriFindRequest("/api/uri/**"));
+        String json = objectMapper.writeValueAsString(new UriRequest("/api/uri/**"));
 
         // when
         mockMvc.perform(get("/api/uri")
@@ -98,7 +97,7 @@ class UriWebAdapterTest {
     @DisplayName("uri 단건 빈 문자열 조회")
     void findByUri_empty() throws Exception {
         // given
-        String json = objectMapper.writeValueAsString(new UriFindRequest(""));
+        String json = objectMapper.writeValueAsString(new UriRequest(""));
 
         // expected
         mockMvc.perform(get("/api/uri")
@@ -117,7 +116,7 @@ class UriWebAdapterTest {
     @DisplayName("uri 단건 널 조회")
     void findByUri_null() throws Exception {
         // given
-        String json = objectMapper.writeValueAsString(new UriFindRequest(null));
+        String json = objectMapper.writeValueAsString(new UriRequest(null));
 
         // expected
         mockMvc.perform(get("/api/uri")
@@ -210,6 +209,42 @@ class UriWebAdapterTest {
                         .content(json))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("Invalid argument value"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("삭제")
+    void delete_uri() throws Exception {
+        String json = objectMapper.writeValueAsString(new UriRequest("/api/uri"));
+
+        // expected
+        mockMvc.perform(delete("/api/uri")
+                        .contentType(APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        ArgumentCaptor<String> ac = ArgumentCaptor.forClass(String.class);
+        then(uriInPort).should(times(1)).delete(ac.capture());
+        assertThat(ac.getValue()).isEqualTo("/api/uri");
+    }
+
+    @Test
+    @DisplayName("uri 단건 널 조회")
+    void delete_uri_null() throws Exception {
+        // given
+        String json = objectMapper.writeValueAsString(new UriRequest(null));
+
+        // expected
+        mockMvc.perform(delete("/api/uri")
+                        .accept(APPLICATION_JSON)
+                        .contentType(APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Invalid argument value"))
+                .andExpect(jsonPath("$.fieldErrors[0].field").value("uri"))
+                .andExpect(jsonPath("$.fieldErrors[0].errorMessage").value("must not be blank"))
+                .andExpect(jsonPath("$.fieldErrors[0].rejectedValue").isEmpty())
                 .andDo(print());
     }
 }

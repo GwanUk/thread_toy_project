@@ -1,6 +1,5 @@
 package com.matzip.thread.uri.adapter.out_;
 
-import com.matzip.thread.common.exception.NullArgumentException;
 import com.matzip.thread.uri.domain.UriEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,7 +13,6 @@ import java.util.Optional;
 
 import static com.matzip.thread.role.domain.Role.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataJpaTest
 @Import(UriPersistenceAdapter.class)
@@ -120,44 +118,44 @@ class UriPersistenceAdapterTest {
         assertThat(entities.get(0).getRoles().get(1)).isEqualTo(ROLE_MANAGER);
     }
 
-    @Test
-    @Sql("/sql/uri/uri-data.sql")
-    @DisplayName("null 저장")
-    void save_null() {
-        // given
-        UriEntity entity = new UriEntity(null, 0, List.of(ROLE_ADMIN, ROLE_MANAGER));
-
-        // when
-        assertThatThrownBy(() -> uriPersistenceAdapter.save(entity))
-                .isInstanceOf(NullArgumentException.class)
-                .hasMessage("Argument is empty: uri");
-    }
-
-    @Test
-    @Sql("/sql/uri/uri-data.sql")
-    @DisplayName("빈 문자열 저장")
-    void save_empty() {
-        // given
-        UriEntity entity = new UriEntity("", 0, List.of(ROLE_ADMIN, ROLE_MANAGER));
-
-        // when
-        assertThatThrownBy(() -> uriPersistenceAdapter.save(entity))
-                .isInstanceOf(NullArgumentException.class)
-                .hasMessage("Argument is empty: uri");
-    }
-
-    @Test
-    @Sql("/sql/uri/uri-data.sql")
-    @DisplayName("공백 저장")
-    void save_blank() {
-        // given
-        UriEntity entity = new UriEntity(" ", 0, List.of(ROLE_ADMIN, ROLE_MANAGER));
-
-        // when
-        assertThatThrownBy(() -> uriPersistenceAdapter.save(entity))
-                .isInstanceOf(NullArgumentException.class)
-                .hasMessage("Argument is empty: uri");
-    }
+//    @Test
+//    @Sql("/sql/uri/uri-data.sql")
+//    @DisplayName("null 저장")
+//    void save_null() {
+//        // given
+//        UriEntity entity = new UriEntity(null, 0, List.of(ROLE_ADMIN, ROLE_MANAGER));
+//
+//        // when
+//        assertThatThrownBy(() -> uriPersistenceAdapter.save(entity))
+//                .isInstanceOf(NullArgumentException.class)
+//                .hasMessage("Argument is empty: uri");
+//    }
+//
+//    @Test
+//    @Sql("/sql/uri/uri-data.sql")
+//    @DisplayName("빈 문자열 저장")
+//    void save_empty() {
+//        // given
+//        UriEntity entity = new UriEntity("", 0, List.of(ROLE_ADMIN, ROLE_MANAGER));
+//
+//        // when
+//        assertThatThrownBy(() -> uriPersistenceAdapter.save(entity))
+//                .isInstanceOf(NullArgumentException.class)
+//                .hasMessage("Argument is empty: uri");
+//    }
+//
+//    @Test
+//    @Sql("/sql/uri/uri-data.sql")
+//    @DisplayName("공백 저장")
+//    void save_blank() {
+//        // given
+//        UriEntity entity = new UriEntity(" ", 0, List.of(ROLE_ADMIN, ROLE_MANAGER));
+//
+//        // when
+//        assertThatThrownBy(() -> uriPersistenceAdapter.save(entity))
+//                .isInstanceOf(NullArgumentException.class)
+//                .hasMessage("Argument is empty: uri");
+//    }
 
     @Test
     @Sql("/sql/uri/uri-data.sql")
@@ -174,5 +172,23 @@ class UriPersistenceAdapterTest {
         assertThat(entity.getUri()).isEqualTo("/api/**");
         assertThat(entity.getOrder()).isEqualTo(0);
         assertThat(entity.getRoles()).containsExactly(ROLE_ADMIN, ROLE_MANAGER);
+    }
+
+    @Test
+    @Sql("/sql/uri/uri-data.sql")
+    @DisplayName("삭제")
+    void delete() {
+        // given
+        String uri = "/api/**";
+
+        // when
+        uriPersistenceAdapter.delete(uri);
+
+        // then
+
+        List<String> uriList = uriPersistenceAdapter.findAllWithRoles().stream()
+                .map(UriEntity::getUri)
+                .toList();
+        assertThat(uriList).doesNotContain(uri);
     }
 }

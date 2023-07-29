@@ -18,4 +18,6 @@ interface UriJpaRepository extends JpaRepository<UriJpaEntity, Long> {
             "left join fetch ur.roleJpaEntity r " +
             "where u.uri = :uri")
     Optional<UriJpaEntity> findByUri(String uri);
+
+    void deleteByUri(String uri);
 }

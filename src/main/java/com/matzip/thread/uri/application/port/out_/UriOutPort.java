@@ -14,4 +14,6 @@ public interface UriOutPort {
     void save(@NonNull UriEntity uriEntity);
 
     void update(@NonNull String uri, @NonNull UriEntity uriEntity);
+
+    void delete(@NonNull String uri);
 }

@@ -4,10 +4,7 @@ import com.matzip.thread.common.annotation.WebAdapter;
 import com.matzip.thread.uri.application.port.in.UriInPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,8 +21,8 @@ public class UriWebAdapter {
     }
 
     @GetMapping
-    Optional<UriResponse> findByUri(@Validated @RequestBody UriFindRequest uriFindRequest) {
-        String uri = uriFindRequest.getUri();
+    Optional<UriResponse> findByUri(@Validated @RequestBody UriRequest uriRequest) {
+        String uri = uriRequest.getUri();
         return uriInPort.findByUri(uri).map(UriResponse::from);
     }
 
@@ -35,8 +32,14 @@ public class UriWebAdapter {
     }
 
     @PutMapping
-    void update(@RequestBody UriUpdateRequest uriUpdateRequest) {
+    void update(@Validated @RequestBody UriUpdateRequest uriUpdateRequest) {
         uriInPort.update(uriUpdateRequest.toEntity());
+    }
+
+    @DeleteMapping
+    void delete(@Validated @RequestBody UriRequest uriRequest) {
+        String uri = uriRequest.getUri();
+        uriInPort.delete(uri);
     }
 }
 

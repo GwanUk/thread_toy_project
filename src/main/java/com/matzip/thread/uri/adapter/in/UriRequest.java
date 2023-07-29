@@ -6,12 +6,12 @@ import lombok.Getter;
 import javax.validation.constraints.NotBlank;
 
 @Getter
-class UriFindRequest {
+class UriRequest {
     @NotBlank
     private final String uri;
 
     @JsonCreator
-    UriFindRequest(String uri) {
+    UriRequest(String uri) {
         this.uri = uri;
     }
 }

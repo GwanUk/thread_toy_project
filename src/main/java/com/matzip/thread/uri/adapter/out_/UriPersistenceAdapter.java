@@ -62,4 +62,9 @@ class UriPersistenceAdapter implements UriOutPort {
                 .toList();
         findUriEntity.changeUriRoles(uriRoleJpaEntities);
     }
+
+    @Override
+    public void delete(@NonNull String uri) {
+        uriJpaRepository.deleteByUri(uri);
+    }
 }
