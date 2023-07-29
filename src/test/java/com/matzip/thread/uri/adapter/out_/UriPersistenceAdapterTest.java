@@ -159,4 +159,20 @@ class UriPersistenceAdapterTest {
                 .hasMessage("Argument is empty: uri");
     }
 
+    @Test
+    @Sql("/sql/uri/uri-data.sql")
+    @DisplayName("갱신")
+    void update() {
+        // given
+        UriEntity saveEntity = new UriEntity("/api/**", 0, List.of(ROLE_ADMIN, ROLE_MANAGER));
+
+        // when
+        uriPersistenceAdapter.update("/api/**", saveEntity);
+
+        // then
+        UriEntity entity = uriPersistenceAdapter.findByUriWithRoles("/api/**").orElseThrow(() -> new RuntimeException("데이터를 찾을 수 없습니다"));
+        assertThat(entity.getUri()).isEqualTo("/api/**");
+        assertThat(entity.getOrder()).isEqualTo(0);
+        assertThat(entity.getRoles()).containsExactly(ROLE_ADMIN, ROLE_MANAGER);
+    }
 }

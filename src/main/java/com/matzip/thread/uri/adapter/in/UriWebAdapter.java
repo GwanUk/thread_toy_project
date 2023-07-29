@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
@@ -31,6 +32,11 @@ public class UriWebAdapter {
     @PostMapping
     void save(@Validated @RequestBody UriSaveRequest uriSaveRequest) {
         uriInPort.save(uriSaveRequest.toEntity());
+    }
+
+    @PutMapping
+    void update(@RequestBody UriUpdateRequest uriUpdateRequest) {
+        uriInPort.update(uriUpdateRequest.toEntity());
     }
 }
 

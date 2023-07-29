@@ -1,7 +1,7 @@
 package com.matzip.thread.uri.application.port.out_;
 
 import com.matzip.thread.uri.domain.UriEntity;
-import org.springframework.lang.NonNull;
+import lombok.NonNull;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,4 +12,6 @@ public interface UriOutPort {
     Optional<UriEntity> findByUriWithRoles(String uri);
 
     void save(@NonNull UriEntity uriEntity);
+
+    void update(@NonNull String uri, @NonNull UriEntity uriEntity);
 }
