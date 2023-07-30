@@ -1,23 +1,30 @@
 package com.matzip.thread.role.domain;
 
+import com.matzip.thread.common.exception.InvalidEntityException;
+import com.matzip.thread.common.validator.Validator;
 import lombok.Getter;
-import org.springframework.lang.NonNull;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
+
+import static java.util.Objects.*;
 
 @Getter
-public class RoleEntity{
+public class RoleEntity implements Validator {
     private final Role role;
     private final String description;
     private final List<RoleEntity> children = new ArrayList<>();
 
-    public RoleEntity(@NonNull Role role, String description, List<RoleEntity> children) {
+    public RoleEntity(Role role, String description, List<RoleEntity> children) {
         this.role = role;
         this.description = description;
         this.children.addAll(children);
+    }
+
+    @Override
+    public void validate() {
+        if (isNull(role)) {
+            throw new InvalidEntityException("role is null", "RoleEntity", "role", null);
+        }
     }
 
     public String getHierarchyString() {

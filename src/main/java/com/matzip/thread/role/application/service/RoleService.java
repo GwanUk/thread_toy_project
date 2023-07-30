@@ -1,5 +1,6 @@
 package com.matzip.thread.role.application.service;
 
+import com.matzip.thread.common.annotation.ArgumentValidation;
 import com.matzip.thread.common.annotation.PublishEvent;
 import com.matzip.thread.common.annotation.Retry;
 import com.matzip.thread.role.application.event.RoleChangedEvent;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@ArgumentValidation
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 class RoleService implements RoleWebPort {
