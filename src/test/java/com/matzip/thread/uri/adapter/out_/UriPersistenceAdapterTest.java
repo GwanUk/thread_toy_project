@@ -28,6 +28,8 @@ class UriPersistenceAdapterTest {
         List<UriEntity> entities = uriPersistenceAdapter.findAllWithRoles();
 
         // then
+        assertThat(entities.size()).isEqualTo(5);
+
         assertThat(entities.get(0).getUri()).isEqualTo("/api/users/**");
         assertThat(entities.get(0).getOrder()).isEqualTo(1);
         assertThat(entities.get(0).getRoles().get(0)).isEqualTo(ROLE_ADMIN);
@@ -47,6 +49,7 @@ class UriPersistenceAdapterTest {
         assertThat(entities.get(4).getUri()).isEqualTo("/api/**");
         assertThat(entities.get(4).getOrder()).isEqualTo(5);
         assertThat(entities.get(4).getRoles().get(0)).isEqualTo(ROLE_USER);
+        assertThat(entities.get(4).getRoles().get(1)).isEqualTo(ROLE_VIP);
     }
 
     @Test
@@ -95,39 +98,97 @@ class UriPersistenceAdapterTest {
         assertThat(entityOptional).isEqualTo(Optional.empty());
     }
 
-//
-//    @Test
-//    @DisplayName("uri 자원 디비 저장 성공")
-//    void save_uri() {
-//        // given
-//        UriEntity uriEntity1 = new UriEntity("/api/user/**", 1, List.of());
-//
-//        // when
-//        uriPersistenceAdapter.save(uriEntity1);
-//
-//        // then
-//        List<UriEntity> findUriEntities = uriPersistenceAdapter.findAllWithRoles();
-//        BDDAssertions.then(findUriEntities.get(0).getUri()).isEqualTo("/api/user/**");
-//        BDDAssertions.then(findUriEntities.get(0).getOrder()).isEqualTo(1);
-//        BDDAssertions.then(findUriEntities.get(0).getRoles()).isEmpty();
-//    }
-//
-//    @Test
-//    @Sql("/sql/role/role-data.sql")
-//    @DisplayName("uri with role 자원 디비 저장 성공")
-//    void save_uri_role() {
-//        // given
-//        UriEntity uriEntity1 = new UriEntity("/api/user/**", 1, List.of(Role.ROLE_USER, Role.ROLE_VIP));
-//
-//        // when
-//        uriPersistenceAdapter.save(uriEntity1);
-//
-//        // then
-//        List<UriEntity> findUriEntities = uriPersistenceAdapter.findAllWithRoles();
-//        BDDAssertions.then(findUriEntities.get(0).getUri()).isEqualTo("/api/user/**");
-//        BDDAssertions.then(findUriEntities.get(0).getOrder()).isEqualTo(1);
-//        BDDAssertions.then(findUriEntities.get(0).getRoles().get(0)).isEqualTo(Role.ROLE_USER);
-//    }
-//
 
+    @Test
+    @Sql("/sql/uri/uri-data.sql")
+    @DisplayName("uri 저장")
+    void save_uri() {
+        // given
+        UriEntity entity = new UriEntity("/api/uri/test", 0, List.of(ROLE_ADMIN, ROLE_MANAGER));
+
+        // when
+        uriPersistenceAdapter.save(entity);
+
+        // then
+        List<UriEntity> entities = uriPersistenceAdapter.findAllWithRoles();
+        assertThat(entities.size()).isEqualTo(6);
+        assertThat(entities.get(0).getUri()).isEqualTo("/api/uri/test");
+        assertThat(entities.get(0).getOrder()).isEqualTo(0);
+        assertThat(entities.get(0).getRoles().get(0)).isEqualTo(ROLE_ADMIN);
+        assertThat(entities.get(0).getRoles().get(1)).isEqualTo(ROLE_MANAGER);
+    }
+
+//    @Test
+//    @Sql("/sql/uri/uri-data.sql")
+//    @DisplayName("null 저장")
+//    void save_null() {
+//        // given
+//        UriEntity entity = new UriEntity(null, 0, List.of(ROLE_ADMIN, ROLE_MANAGER));
+//
+//        // when
+//        assertThatThrownBy(() -> uriPersistenceAdapter.save(entity))
+//                .isInstanceOf(NullArgumentException.class)
+//                .hasMessage("Argument is empty: uri");
+//    }
+//
+//    @Test
+//    @Sql("/sql/uri/uri-data.sql")
+//    @DisplayName("빈 문자열 저장")
+//    void save_empty() {
+//        // given
+//        UriEntity entity = new UriEntity("", 0, List.of(ROLE_ADMIN, ROLE_MANAGER));
+//
+//        // when
+//        assertThatThrownBy(() -> uriPersistenceAdapter.save(entity))
+//                .isInstanceOf(NullArgumentException.class)
+//                .hasMessage("Argument is empty: uri");
+//    }
+//
+//    @Test
+//    @Sql("/sql/uri/uri-data.sql")
+//    @DisplayName("공백 저장")
+//    void save_blank() {
+//        // given
+//        UriEntity entity = new UriEntity(" ", 0, List.of(ROLE_ADMIN, ROLE_MANAGER));
+//
+//        // when
+//        assertThatThrownBy(() -> uriPersistenceAdapter.save(entity))
+//                .isInstanceOf(NullArgumentException.class)
+//                .hasMessage("Argument is empty: uri");
+//    }
+
+    @Test
+    @Sql("/sql/uri/uri-data.sql")
+    @DisplayName("갱신")
+    void update() {
+        // given
+        UriEntity saveEntity = new UriEntity("/api/**", 0, List.of(ROLE_ADMIN, ROLE_MANAGER));
+
+        // when
+        uriPersistenceAdapter.update("/api/**", saveEntity);
+
+        // then
+        UriEntity entity = uriPersistenceAdapter.findByUriWithRoles("/api/**").orElseThrow(() -> new RuntimeException("데이터를 찾을 수 없습니다"));
+        assertThat(entity.getUri()).isEqualTo("/api/**");
+        assertThat(entity.getOrder()).isEqualTo(0);
+        assertThat(entity.getRoles()).containsExactly(ROLE_ADMIN, ROLE_MANAGER);
+    }
+
+    @Test
+    @Sql("/sql/uri/uri-data.sql")
+    @DisplayName("삭제")
+    void delete() {
+        // given
+        String uri = "/api/**";
+
+        // when
+        uriPersistenceAdapter.delete(uri);
+
+        // then
+
+        List<String> uriList = uriPersistenceAdapter.findAllWithRoles().stream()
+                .map(UriEntity::getUri)
+                .toList();
+        assertThat(uriList).doesNotContain(uri);
+    }
 }

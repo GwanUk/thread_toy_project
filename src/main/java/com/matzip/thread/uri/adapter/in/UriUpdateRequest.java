@@ -10,13 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-class UriSaveRequest {
+class UriUpdateRequest {
     @NotBlank
     private final String uri;
     private final int order;
     private final List<Role> roles = new ArrayList<>();
 
-    public UriSaveRequest(@NonNull String uri, int order, List<Role> roles) {
+    public UriUpdateRequest(@NonNull String uri, int order, List<Role> roles) {
         this.uri = uri;
         this.order = order;
         this.roles.addAll(roles);

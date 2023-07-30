@@ -268,11 +268,11 @@ class RoleJdbcTemplateRepository {
         return removeChildren.stream()
                 .filter(child -> {
                     Long parentId = child.getParentId();
-                    boolean setParentNull = !dtoSet.contains(parentId);
-                    if (setParentNull) {
+                    boolean isRemoving = !dtoSet.contains(parentId);
+                    if (isRemoving) {
                         child.setParentId(null);
                     }
-                    return setParentNull;
+                    return isRemoving;
                 }).toList();
     }
 

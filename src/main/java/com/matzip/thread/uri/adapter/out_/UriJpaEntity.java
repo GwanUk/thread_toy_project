@@ -5,6 +5,7 @@ import com.matzip.thread.uri.domain.UriEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -21,10 +22,13 @@ class UriJpaEntity extends JpaBaseEntity {
     @Column(name = "URI_ID")
     private Long id;
 
-    @Column(name = "URI_NAME")
+    @Column(name = "URI_NAME",
+            nullable = false,
+            unique = true)
     private String uri;
 
-    @Column(name = "URI_ORDER")
+    @Column(name = "URI_ORDER",
+            nullable = false)
     private int order;
 
     @OneToMany(mappedBy = "uriJpaEntity",
@@ -38,6 +42,12 @@ class UriJpaEntity extends JpaBaseEntity {
         addAll(uriRolesJpaEntities);
     }
 
+    public static UriJpaEntity from(UriEntity uriEntity, List<UriRoleJpaEntity> uriRoleJpaEntities) {
+        return new UriJpaEntity(uriEntity.getUri(),
+                uriEntity.getOrder(),
+                uriRoleJpaEntities);
+    }
+
     UriEntity toEntity() {
         return new UriEntity(
                 uri,
@@ -48,7 +58,18 @@ class UriJpaEntity extends JpaBaseEntity {
     }
 
     private void addAll(List<UriRoleJpaEntity> uriRolesJpaEntities) {
+        this.uriRolesJpaEntities.forEach(ur -> ur.setUri(null));
+        this.uriRolesJpaEntities.clear();
+
         this.uriRolesJpaEntities.addAll(uriRolesJpaEntities);
-        uriRolesJpaEntities.forEach(ur -> ur.setUri(this));
+        this.uriRolesJpaEntities.forEach(ur -> ur.setUri(this));
+    }
+
+    public void changeOrder(int order) {
+        this.order = order;
+    }
+
+    public void changeUriRoles(@NonNull List<UriRoleJpaEntity> uriRolesJpaEntities) {
+        addAll(uriRolesJpaEntities);
     }
 }
