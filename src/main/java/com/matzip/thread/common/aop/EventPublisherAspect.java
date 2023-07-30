@@ -14,7 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 
 @Slf4j
 @Aspect
-@Order(1)
+@Order(2)
 @Component
 @RequiredArgsConstructor
 public class EventPublisherAspect {
