@@ -13,4 +13,8 @@ public interface UserPersistencePort {
     Optional<UserEntity> findByUsername(String username);
 
     void save(@NonNull UserEntity userEntity);
+
+    void update(String username, UserEntity userEntity);
+
+    void delete(String username);
 }

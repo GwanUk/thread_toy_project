@@ -36,4 +36,20 @@ class UserPersistenceAdapter implements UserPersistencePort {
         RoleJpaEntity roleJpaEntity = roleJpaRepository.findByRole(role).orElseThrow(() -> new NotFoundDataException(role.name()));
         userJpaRepository.save(UserJpaEntity.from(userEntity, roleJpaEntity));
     }
+
+    @Override
+    public void update(String username, UserEntity userEntity) {
+        UserJpaEntity userJpaEntity = userJpaRepository.findByUsernameWithRoleLocking(username)
+                .orElseThrow(() -> new NotFoundDataException(username));
+
+        Role role = userEntity.getRole();
+        RoleJpaEntity roleJpaEntity = roleJpaRepository.findByRole(role).orElseThrow(() -> new NotFoundDataException(role.name()));
+
+        userJpaEntity.update(userEntity, roleJpaEntity);
+    }
+
+    @Override
+    public void delete(String username) {
+        userJpaRepository.deleteByUsername(username);
+    }
 }

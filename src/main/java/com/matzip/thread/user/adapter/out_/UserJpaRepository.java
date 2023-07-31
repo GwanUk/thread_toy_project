@@ -1,8 +1,10 @@
 package com.matzip.thread.user.adapter.out_;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 
+import javax.persistence.LockModeType;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,4 +15,10 @@ interface UserJpaRepository extends JpaRepository<UserJpaEntity, Long> {
 
     @Query("select u from UserJpaEntity u left join fetch u.roleJpaEntity where u.username = :username")
     Optional<UserJpaEntity> findByUsernameWithRole(String username);
+
+    @Lock(LockModeType.OPTIMISTIC)
+    @Query("select u from UserJpaEntity u left join fetch u.roleJpaEntity where u.username = :username")
+    Optional<UserJpaEntity> findByUsernameWithRoleLocking(String username);
+
+    void deleteByUsername(String username);
 }

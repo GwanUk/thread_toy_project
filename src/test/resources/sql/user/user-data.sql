@@ -23,6 +23,7 @@ CREATE TABLE USER_
     NICKNAME           VARCHAR(255) NOT NULL,
     PASSWORD           VARCHAR(255) NOT NULL,
     ROLE_ID            BIGINT       NOT NULL,
+    VERSION            BIGINT       NOT NULL DEFAULT 1,
     CREATED_DATE       TIMESTAMP,
     LAST_MODIFIED_DATE TIMESTAMP,
     CONSTRAINT USER_PK PRIMARY KEY (USER_ID),
@@ -47,5 +48,3 @@ insert into USER_ (USERNAME, NICKNAME, PASSWORD, ROLE_ID, CREATED_DATE, LAST_MOD
 values ('user03', '특', '1234', 3, now(), now());
 insert into USER_ (USERNAME, NICKNAME, PASSWORD, ROLE_ID, CREATED_DATE, LAST_MODIFIED_DATE)
 values ('user04', '유저', '1234', 4, now(), now());
-insert into USER_ (USERNAME, NICKNAME, PASSWORD, ROLE_ID, CREATED_DATE, LAST_MODIFIED_DATE)
-values ('user05', '익명', '1234', null, now(), now());

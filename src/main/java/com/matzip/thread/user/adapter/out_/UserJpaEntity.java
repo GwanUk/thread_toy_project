@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @Entity
 @Getter
@@ -27,6 +28,8 @@ class UserJpaEntity extends JpaBaseTimeEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ROLE_ID")
     private RoleJpaEntity roleJpaEntity;
+    @Version
+    private Long version;
 
     UserJpaEntity(String username, String nickname, String password, RoleJpaEntity roleJpaEntity) {
         this.username = username;
@@ -51,5 +54,16 @@ class UserJpaEntity extends JpaBaseTimeEntity {
                 userEntity.getPassword(),
                 roleJpaEntity
         );
+    }
+
+    public void update(UserEntity userEntity, RoleJpaEntity roleJpaEntity) {
+        this.nickname = userEntity.getNickname();
+
+        String password = userEntity.getPassword();
+        if (nonNull(password)) {
+            this.password = password;
+        }
+
+        this.roleJpaEntity = roleJpaEntity;
     }
 }

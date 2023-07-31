@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 
 @Getter
 @RequiredArgsConstructor
-class SignUpRequest {
+class UserSaveRequest {
     @NotBlank
     private final String username;
     @NotBlank

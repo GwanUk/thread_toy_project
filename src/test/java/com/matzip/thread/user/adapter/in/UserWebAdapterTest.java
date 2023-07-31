@@ -21,13 +21,13 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.matzip.thread.role.domain.Role.ROLE_ADMIN;
+import static com.matzip.thread.role.domain.Role.ROLE_USER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -85,12 +85,12 @@ class UserWebAdapterTest {
 
     @Test
     @DisplayName("회원 가입 요청 성공")
-    void signUp() throws Exception {
+    void save() throws Exception {
         // given
-        String json = objectMapper.writeValueAsString(new SignUpRequest("user", "kim", "1234"));
+        String json = objectMapper.writeValueAsString(new UserSaveRequest("user", "kim", "1234"));
 
         // when
-        mockMvc.perform(post("/api/users/sign_up")
+        mockMvc.perform(post("/api/users")
                         .contentType(APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
@@ -98,7 +98,7 @@ class UserWebAdapterTest {
 
         // then
         ArgumentCaptor<UserEntity> userArgumentCaptor = ArgumentCaptor.forClass(UserEntity.class);
-        then(userWebPort).should(Mockito.times(1)).signUp(userArgumentCaptor.capture());
+        then(userWebPort).should(Mockito.times(1)).save(userArgumentCaptor.capture());
         BDDAssertions.then(userArgumentCaptor.getValue().getUsername()).isEqualTo("user");
         BDDAssertions.then(userArgumentCaptor.getValue().getNickname()).isEqualTo("kim");
         BDDAssertions.then(passwordEncoder.matches("1234", userArgumentCaptor.getValue().getPassword())).isTrue();
@@ -106,12 +106,12 @@ class UserWebAdapterTest {
 
     @Test
     @DisplayName("회원 가입 요청 실패: username null")
-    void signUp_fail_username_null() throws Exception {
+    void save_fail_username_null() throws Exception {
         // given
-        String json = objectMapper.writeValueAsString(new SignUpRequest(null, "kim", "1234"));
+        String json = objectMapper.writeValueAsString(new UserSaveRequest(null, "kim", "1234"));
 
         // expected
-        mockMvc.perform(post("/api/users/sign_up")
+        mockMvc.perform(post("/api/users")
                         .contentType(APPLICATION_JSON)
                         .accept(APPLICATION_JSON)
                         .content(json))
@@ -125,12 +125,12 @@ class UserWebAdapterTest {
 
     @Test
     @DisplayName("회원 가입 요청 실패: username empty")
-    void signUp_fail_username_empty() throws Exception {
+    void save_fail_username_empty() throws Exception {
         // given
-        String json = objectMapper.writeValueAsString(new SignUpRequest("", "kim", "1234"));
+        String json = objectMapper.writeValueAsString(new UserSaveRequest("", "kim", "1234"));
 
         // expected
-        mockMvc.perform(post("/api/users/sign_up")
+        mockMvc.perform(post("/api/users")
                         .contentType(APPLICATION_JSON)
                         .accept(APPLICATION_JSON)
                         .content(json))
@@ -144,12 +144,12 @@ class UserWebAdapterTest {
 
     @Test
     @DisplayName("회원 가입 요청 실패: username blank")
-    void signUp_fail_username_blank() throws Exception {
+    void save_fail_username_blank() throws Exception {
         // given
-        String json = objectMapper.writeValueAsString(new SignUpRequest(" ", "kim", "1234"));
+        String json = objectMapper.writeValueAsString(new UserSaveRequest(" ", "kim", "1234"));
 
         // expected
-        mockMvc.perform(post("/api/users/sign_up")
+        mockMvc.perform(post("/api/users")
                         .contentType(APPLICATION_JSON)
                         .accept(APPLICATION_JSON)
                         .content(json))
@@ -159,5 +159,44 @@ class UserWebAdapterTest {
                 .andExpect(jsonPath("$.fieldErrors[0].errorMessage").value("must not be blank"))
                 .andExpect(jsonPath("$.fieldErrors[0].rejectedValue").value(" "))
                 .andDo(print());
+    }
+
+    @Test
+    @DisplayName("갱신")
+    void update() throws Exception {
+        // given
+        String json = objectMapper.writeValueAsString(new UserUpdateRequest("user", "kim", ROLE_USER));
+
+        // when
+        mockMvc.perform(put("/api/users/{username}", "user01")
+                        .contentType(APPLICATION_JSON)
+                        .accept(APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        // then
+        ArgumentCaptor<String> acStr = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<UserEntity> ac = ArgumentCaptor.forClass(UserEntity.class);
+        then(userWebPort).should().update(acStr.capture(), ac.capture());
+        assertThat(acStr.getValue()).isEqualTo("user01");
+        assertThat(ac.getValue().getNickname()).isEqualTo("user");
+        assertThat(passwordEncoder.matches("kim", ac.getValue().getPassword())).isTrue();
+        assertThat(ac.getValue().getRole()).isEqualTo(ROLE_USER);
+    }
+
+    @Test
+    @DisplayName("삭제")
+    void delete_user() throws Exception {
+        // when
+        mockMvc.perform(delete("/api/users/{username}", "user01")
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        // then
+        ArgumentCaptor<String> ac = ArgumentCaptor.forClass(String.class);
+        then(userWebPort).should().delete(ac.capture());
+        assertThat(ac.getValue()).isEqualTo("user01");
     }
 }

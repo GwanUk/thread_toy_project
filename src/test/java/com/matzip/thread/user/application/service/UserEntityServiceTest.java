@@ -50,7 +50,7 @@ class UserEntityServiceTest {
         UserEntity userEntity = new UserEntity("user", "kim", "1234", null);
 
         // when
-        userService.signUp(userEntity);
+        userService.save(userEntity);
 
         // then
         ArgumentCaptor<UserEntity> userArgumentCaptor = ArgumentCaptor.forClass(UserEntity.class);
@@ -62,12 +62,12 @@ class UserEntityServiceTest {
 
     @Test
     @DisplayName("회원가입시 권한은 유저 권한")
-    void signUp_role_user() {
+    void save_role_user() {
         // given
         UserEntity entity = new UserEntity("user01", "유저", "1234", null);
 
         // when
-        userService.signUp(entity);
+        userService.save(entity);
 
         // then
         ArgumentCaptor<UserEntity> ac = ArgumentCaptor.forClass(UserEntity.class);

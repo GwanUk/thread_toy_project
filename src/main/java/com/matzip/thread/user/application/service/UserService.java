@@ -1,5 +1,6 @@
 package com.matzip.thread.user.application.service;
 
+import com.matzip.thread.common.annotation.Retry;
 import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.user.application.port.in.UserWebPort;
 import com.matzip.thread.user.application.port.out_.UserPersistencePort;
@@ -32,10 +33,23 @@ class UserService implements UserWebPort {
 
     @Override
     @Transactional
-    public void signUp(UserEntity userEntity) {
+    public void save(UserEntity userEntity) {
         if (isNull(userEntity.getRole())) {
             userEntity = userEntity.changeRole(Role.ROLE_USER);
         }
         userPersistencePort.save(userEntity);
+    }
+
+    @Override
+    @Retry
+    @Transactional
+    public void update(String username, UserEntity userEntity) {
+        userPersistencePort.update(username, userEntity);
+    }
+
+    @Override
+    @Transactional
+    public void delete(String username) {
+        userPersistencePort.delete(username);
     }
 }
