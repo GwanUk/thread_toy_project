@@ -6,7 +6,7 @@ import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.security.configs.SecurityConfig;
 import com.matzip.thread.uri.application.port.in.UriAllPort;
 import com.matzip.thread.uri.domain.UriEntity;
-import com.matzip.thread.user.application.port.in.UserQueryInPort;
+import com.matzip.thread.user.application.port.in.UserSecurityPort;
 import com.matzip.thread.user.domain.PasswordEncoderFactoryBean;
 import com.matzip.thread.user.domain.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +36,8 @@ class SecurityTestConfiguration {
     }
 
     @Bean
-    public UserQueryInPort userQueryInPort() {
-        return new UserQueryInPort() {
+    public UserSecurityPort userQueryInPort() {
+        return new UserSecurityPort() {
             @Override
             public Optional<UserEntity> findByUsername(String username) {
                 return switch (username) {

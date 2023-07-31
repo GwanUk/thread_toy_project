@@ -9,14 +9,12 @@ import lombok.RequiredArgsConstructor;
 class UserResponse {
     private final String username;
     private final String nickname;
-    private final String password;
     private final String role;
 
-    static UserResponse fromEntity(UserEntity userEntity) {
+    static UserResponse from(UserEntity userEntity) {
         return new UserResponse(
                 userEntity.getUsername(),
                 userEntity.getNickname(),
-                userEntity.getPassword(),
                 userEntity.getRole().name()
         );
     }

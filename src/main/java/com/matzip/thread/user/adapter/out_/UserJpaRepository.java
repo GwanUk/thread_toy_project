@@ -1,10 +1,16 @@
 package com.matzip.thread.user.adapter.out_;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 interface UserJpaRepository extends JpaRepository<UserJpaEntity, Long> {
 
-    Optional<UserJpaEntity> findByUsername(String username);
+    @Query("select u from UserJpaEntity u left join fetch u.roleJpaEntity")
+    List<UserJpaEntity> findAllWithRole();
+
+    @Query("select u from UserJpaEntity u left join fetch u.roleJpaEntity where u.username = :username")
+    Optional<UserJpaEntity> findByUsernameWithRole(String username);
 }

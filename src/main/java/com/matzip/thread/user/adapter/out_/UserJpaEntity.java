@@ -3,17 +3,22 @@ package com.matzip.thread.user.adapter.out_;
 import com.matzip.thread.common.JpaEntity.JpaBaseTimeEntity;
 import com.matzip.thread.role.adapter.out_.RoleJpaEntity;
 import com.matzip.thread.user.domain.UserEntity;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+import static java.util.Objects.isNull;
+
 @Entity
-@Table(name = "USER_")
 @Getter
+@Table(name = "USER_")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 class UserJpaEntity extends JpaBaseTimeEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USER_ID")
     private Long id;
     private String username;
@@ -35,11 +40,11 @@ class UserJpaEntity extends JpaBaseTimeEntity {
                 username,
                 nickname,
                 password,
-                roleJpaEntity.getRole()
+                isNull(roleJpaEntity) ? null : roleJpaEntity.getRole()
         );
     }
 
-    static UserJpaEntity fromEntity(UserEntity userEntity, RoleJpaEntity roleJpaEntity) {
+    static UserJpaEntity from(UserEntity userEntity, RoleJpaEntity roleJpaEntity) {
         return new UserJpaEntity(
                 userEntity.getUsername(),
                 userEntity.getNickname(),
