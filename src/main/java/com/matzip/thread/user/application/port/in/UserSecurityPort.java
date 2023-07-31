@@ -4,6 +4,6 @@ import com.matzip.thread.user.domain.UserEntity;
 
 import java.util.Optional;
 
-public interface UserQueryInPort {
+public interface UserSecurityPort {
     Optional<UserEntity> findByUsername(String username);
 }

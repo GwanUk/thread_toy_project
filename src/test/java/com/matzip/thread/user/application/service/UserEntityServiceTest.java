@@ -1,8 +1,7 @@
 package com.matzip.thread.user.application.service;
 
 import com.matzip.thread.role.domain.Role;
-import com.matzip.thread.role.domain.RoleEntity;
-import com.matzip.thread.user.application.port.out_.UserOutPort;
+import com.matzip.thread.user.application.port.out_.UserPersistencePort;
 import com.matzip.thread.user.domain.UserEntity;
 import org.assertj.core.api.BDDAssertions;
 import org.junit.jupiter.api.DisplayName;
@@ -19,14 +18,14 @@ class UserEntityServiceTest {
     @InjectMocks
     private UserService userService;
     @Mock
-    private UserOutPort userOutPort;
+    private UserPersistencePort userPersistencePort;
 
     @Test
     @DisplayName("username 으로 회원 단일 조회 서비스 성공")
     void findByUsername() {
         // given
         Optional<UserEntity> user = Optional.of(new UserEntity("user", "kim", "1234", Role.ROLE_USER));
-        BDDMockito.given(userOutPort.findByUsername(Mockito.anyString())).willReturn(user);
+        BDDMockito.given(userPersistencePort.findByUsername(Mockito.anyString())).willReturn(user);
 
         // when
         UserEntity findUserEntity = userService.findByUsername("user").orElseThrow(() -> new RuntimeException("유저가 존재하지 않습니다."));
@@ -50,7 +49,7 @@ class UserEntityServiceTest {
         // then
         ArgumentCaptor<UserEntity> userArgumentCaptor = ArgumentCaptor.forClass(UserEntity.class);
         ArgumentCaptor<Role> roleArgumentCaptor = ArgumentCaptor.forClass(Role.class);
-        BDDMockito.then(userOutPort).should(Mockito.times(1)).save(userArgumentCaptor.capture(), roleArgumentCaptor.capture());
+        BDDMockito.then(userPersistencePort).should(Mockito.times(1)).save(userArgumentCaptor.capture(), roleArgumentCaptor.capture());
         BDDAssertions.then(userArgumentCaptor.getValue().getUsername()).isEqualTo("user");
         BDDAssertions.then(userArgumentCaptor.getValue().getNickname()).isEqualTo("kim");
         BDDAssertions.then(userArgumentCaptor.getValue().getPassword()).isEqualTo("1234");

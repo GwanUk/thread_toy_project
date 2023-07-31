@@ -5,26 +5,33 @@ import com.matzip.thread.common.exception.NotFoundDataException;
 import com.matzip.thread.role.adapter.out_.RoleJpaEntity;
 import com.matzip.thread.role.adapter.out_.RoleJpaRepository;
 import com.matzip.thread.role.domain.Role;
-import com.matzip.thread.user.application.port.out_.UserOutPort;
+import com.matzip.thread.user.application.port.out_.UserPersistencePort;
 import com.matzip.thread.user.domain.UserEntity;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
 import java.util.Optional;
 
 @PersistenceAdapter
 @RequiredArgsConstructor
-class UserPersistenceAdapter implements UserOutPort {
+class UserPersistenceAdapter implements UserPersistencePort {
 
     private final UserJpaRepository userJpaRepository;
     private final RoleJpaRepository roleJpaRepository;
+
+    @Override
+    public List<UserEntity> findAll() {
+        return userJpaRepository.findAllWithRole().stream().map(UserJpaEntity::toEntity).toList();
+    }
+
     @Override
     public Optional<UserEntity> findByUsername(String username) {
-        return userJpaRepository.findByUsername(username).map(UserJpaEntity::toEntity);
+        return userJpaRepository.findByUsernameWithRole(username).map(UserJpaEntity::toEntity);
     }
 
     @Override
     public void save(UserEntity userEntity, Role role) {
         RoleJpaEntity roleJpaEntity = roleJpaRepository.findByRole(role).orElseThrow(() -> new NotFoundDataException(role.name()));
-        userJpaRepository.save(UserJpaEntity.fromEntity(userEntity, roleJpaEntity));
+        userJpaRepository.save(UserJpaEntity.from(userEntity, roleJpaEntity));
     }
 }

@@ -14,7 +14,7 @@ import com.matzip.thread.security.service.IpAddressVoter;
 import com.matzip.thread.security.service.UrlFilterInvocationSecurityMetadataSource;
 import com.matzip.thread.security.service.UserDetailsServiceImpl;
 import com.matzip.thread.uri.application.port.in.UriAllPort;
-import com.matzip.thread.user.application.port.in.UserQueryInPort;
+import com.matzip.thread.user.application.port.in.UserSecurityPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,7 +43,7 @@ public class SecurityConfig {
     private final ObjectMapper objectMapper;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final PasswordEncoder passwordEncoder;
-    private final UserQueryInPort userQueryInPort;
+    private final UserSecurityPort userSecurityPort;
     private final UriAllPort uriAllPort;
     private final RoleHierarchyPort roleHierarchyPort;
     private final IpAddressQueryInPort ipAddressQueryInPort;
@@ -82,7 +82,7 @@ public class SecurityConfig {
     }
     @Bean
     public UserDetailsService userDetailsService() {
-        return new UserDetailsServiceImpl(userQueryInPort);
+        return new UserDetailsServiceImpl(userSecurityPort);
     }
 
     @Bean

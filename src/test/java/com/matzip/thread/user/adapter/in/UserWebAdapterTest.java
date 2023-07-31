@@ -2,7 +2,7 @@ package com.matzip.thread.user.adapter.in;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.matzip.thread.role.domain.Role;
-import com.matzip.thread.user.application.port.in.UserInPort;
+import com.matzip.thread.user.application.port.in.UserWebPort;
 import com.matzip.thread.user.domain.PasswordEncoderFactoryBean;
 import com.matzip.thread.user.domain.UserEntity;
 import org.assertj.core.api.BDDAssertions;
@@ -35,7 +35,7 @@ class UserWebAdapterTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
     @MockBean
-    private UserInPort userInPort;
+    private UserWebPort userWebPort;
 
     @Test
     @DisplayName("회원 가입 요청 성공")
@@ -53,7 +53,7 @@ class UserWebAdapterTest {
         // then
         ArgumentCaptor<UserEntity> userArgumentCaptor = ArgumentCaptor.forClass(UserEntity.class);
         ArgumentCaptor<Role> roleArgumentCaptor = ArgumentCaptor.forClass(Role.class);
-        BDDMockito.then(userInPort).should(Mockito.times(1)).signUp(userArgumentCaptor.capture(), roleArgumentCaptor.capture());
+        BDDMockito.then(userWebPort).should(Mockito.times(1)).signUp(userArgumentCaptor.capture(), roleArgumentCaptor.capture());
         BDDAssertions.then(userArgumentCaptor.getValue().getUsername()).isEqualTo("user");
         BDDAssertions.then(userArgumentCaptor.getValue().getNickname()).isEqualTo("kim");
         BDDAssertions.then(passwordEncoder.matches("1234", userArgumentCaptor.getValue().getPassword())).isTrue();
