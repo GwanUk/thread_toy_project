@@ -11,6 +11,7 @@ import org.springframework.test.context.jdbc.Sql;
 import java.util.List;
 
 import static com.matzip.thread.role.domain.Role.ROLE_ADMIN;
+import static com.matzip.thread.role.domain.Role.ROLE_USER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -57,5 +58,38 @@ class UserPersistenceAdapterTest {
         assertThat(entity.getNickname()).isEqualTo("관리자");
         assertThat(entity.getPassword()).isEqualTo("1234");
         assertThat(entity.getRole()).isEqualTo(ROLE_ADMIN);
+    }
+
+    @Test
+    @Sql("/sql/user/user-table.sql")
+    @DisplayName("저장")
+    void save() {
+        // given
+        UserEntity entity = new UserEntity("user01", "관리자", "1234", null);
+
+        // when
+        userPersistenceAdapter.save(entity);
+
+        // then
+        List<UserEntity> entities = userPersistenceAdapter.findAll();
+        assertThat(entities).hasSize(1);
+    }
+
+    @Test
+    @Sql("/sql/user/user-table.sql")
+    @DisplayName("저장")
+    void save_check() {
+        // given
+        UserEntity entity = new UserEntity("user01", "관리자", "1234", ROLE_USER);
+
+        // when
+        userPersistenceAdapter.save(entity);
+
+        // then
+        List<UserEntity> entities = userPersistenceAdapter.findAll();
+        assertThat(entities.get(0).getUsername()).isEqualTo("user01");
+        assertThat(entities.get(0).getNickname()).isEqualTo("관리자");
+        assertThat(entities.get(0).getPassword()).isEqualTo("1234");
+        assertThat(entities.get(0).getRole()).isEqualTo(ROLE_USER);
     }
 }

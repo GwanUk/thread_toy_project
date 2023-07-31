@@ -1,7 +1,6 @@
 package com.matzip.thread.user.adapter.in;
 
 import com.matzip.thread.common.annotation.WebAdapter;
-import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.user.application.port.in.UserWebPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,6 +33,6 @@ class UserWebAdapter {
 
     @PostMapping("/sign_up")
     void signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
-        userWebPort.signUp(signUpRequest.toEntity(passwordEncoder), Role.ROLE_USER);
+        userWebPort.signUp(signUpRequest.toEntity(passwordEncoder));
     }
 }

@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Objects.isNull;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -30,7 +32,10 @@ class UserService implements UserWebPort {
 
     @Override
     @Transactional
-    public void signUp(UserEntity userEntity, Role role) {
-        userPersistencePort.save(userEntity, role);
+    public void signUp(UserEntity userEntity) {
+        if (isNull(userEntity.getRole())) {
+            userEntity = userEntity.changeRole(Role.ROLE_USER);
+        }
+        userPersistencePort.save(userEntity);
     }
 }
