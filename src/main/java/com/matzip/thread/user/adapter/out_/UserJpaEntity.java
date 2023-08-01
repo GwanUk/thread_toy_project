@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 
 @Entity
 @Getter
@@ -58,12 +57,7 @@ class UserJpaEntity extends JpaBaseTimeEntity {
 
     public void update(UserEntity userEntity, RoleJpaEntity roleJpaEntity) {
         this.nickname = userEntity.getNickname();
-
-        String password = userEntity.getPassword();
-        if (nonNull(password)) {
-            this.password = password;
-        }
-
+        this.password = userEntity.getPassword();
         this.roleJpaEntity = roleJpaEntity;
     }
 }

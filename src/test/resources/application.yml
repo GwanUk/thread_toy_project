@@ -16,6 +16,8 @@ spring:
 logging:
   level:
     org:
+      springframework:
+        jdbc: debug
       hibernate:
         type:
           descriptor:

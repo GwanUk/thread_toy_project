@@ -47,6 +47,7 @@ class UserPersistenceAdapterTest {
         assertThat(entities.get(0).getRole()).isEqualTo(ROLE_ADMIN);
     }
 
+
     @Test
     @Sql("/sql/user/user-data.sql")
     @DisplayName("단건 조회")

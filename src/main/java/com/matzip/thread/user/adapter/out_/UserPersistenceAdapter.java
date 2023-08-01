@@ -39,7 +39,7 @@ class UserPersistenceAdapter implements UserPersistencePort {
 
     @Override
     public void update(String username, UserEntity userEntity) {
-        UserJpaEntity userJpaEntity = userJpaRepository.findByUsernameWithRoleLocking(username)
+        UserJpaEntity userJpaEntity = userJpaRepository.findByUsernameWithRole(username)
                 .orElseThrow(() -> new NotFoundDataException(username));
 
         Role role = userEntity.getRole();
