@@ -19,7 +19,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 @ExtendWith(MockitoExtension.class)
-class UserEntityServiceTest {
+class UserServiceTest {
 
     @InjectMocks
     private UserService userService;
