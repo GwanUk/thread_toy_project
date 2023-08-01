@@ -27,6 +27,8 @@ class UserJpaEntity extends JpaBaseTimeEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ROLE_ID")
     private RoleJpaEntity roleJpaEntity;
+    @Version
+    private Long version;
 
     UserJpaEntity(String username, String nickname, String password, RoleJpaEntity roleJpaEntity) {
         this.username = username;
@@ -51,5 +53,11 @@ class UserJpaEntity extends JpaBaseTimeEntity {
                 userEntity.getPassword(),
                 roleJpaEntity
         );
+    }
+
+    public void update(UserEntity userEntity, RoleJpaEntity roleJpaEntity) {
+        this.nickname = userEntity.getNickname();
+        this.password = userEntity.getPassword();
+        this.roleJpaEntity = roleJpaEntity;
     }
 }

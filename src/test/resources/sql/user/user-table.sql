@@ -32,19 +32,4 @@ CREATE TABLE USER_
 );
 
 insert into ROLE_ (ROLE_NAME, DESCRIPTION, PARENT_ID, CREATED_DATE, LAST_MODIFIED_DATE, CREATED_BY, LAST_MODIFIED_BY)
-values ('ROLE_ADMIN', '관리자 권한', null, now(), now(), 'system', 'system');
-insert into ROLE_ (ROLE_NAME, DESCRIPTION, PARENT_ID, CREATED_DATE, LAST_MODIFIED_DATE, CREATED_BY, LAST_MODIFIED_BY)
-values ('ROLE_MANAGER', '매니저 권한', 1, now(), now(), 'system', 'system');
-insert into ROLE_ (ROLE_NAME, DESCRIPTION, PARENT_ID, CREATED_DATE, LAST_MODIFIED_DATE, CREATED_BY, LAST_MODIFIED_BY)
-values ('ROLE_VIP', '특급 권한', 2, now(), now(), 'system', 'system');
-insert into ROLE_ (ROLE_NAME, DESCRIPTION, PARENT_ID, CREATED_DATE, LAST_MODIFIED_DATE, CREATED_BY, LAST_MODIFIED_BY)
-values ('ROLE_USER', '유저 권한', 3, now(), now(), 'system', 'system');
-
-insert into USER_ (USERNAME, NICKNAME, PASSWORD, ROLE_ID, CREATED_DATE, LAST_MODIFIED_DATE)
-values ('user01', '관리자', '1234', 1, now(), now());
-insert into USER_ (USERNAME, NICKNAME, PASSWORD, ROLE_ID, CREATED_DATE, LAST_MODIFIED_DATE)
-values ('user02', '매니저', '1234', 2, now(), now());
-insert into USER_ (USERNAME, NICKNAME, PASSWORD, ROLE_ID, CREATED_DATE, LAST_MODIFIED_DATE)
-values ('user03', '특', '1234', 3, now(), now());
-insert into USER_ (USERNAME, NICKNAME, PASSWORD, ROLE_ID, CREATED_DATE, LAST_MODIFIED_DATE)
-values ('user04', '유저', '1234', 4, now(), now());
+values ('ROLE_USER', '유저 권한', null, now(), now(), 'system', 'system');

@@ -17,7 +17,9 @@ public class RoleEntity implements Validator {
     public RoleEntity(Role role, String description, List<RoleEntity> children) {
         this.role = role;
         this.description = description;
-        this.children.addAll(children);
+        if (nonNull(children)) {
+            this.children.addAll(children);
+        }
     }
 
     @Override

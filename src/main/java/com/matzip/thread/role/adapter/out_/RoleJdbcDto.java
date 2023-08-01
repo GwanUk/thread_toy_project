@@ -70,10 +70,11 @@ class RoleJdbcDto{
 
     public void fillUserName() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = "anonymousUser";
         if (nonNull(authentication)) {
-            String username = authentication.getName();
-            setCreatedBy(username);
-            setLastModifiedBy(username);
+            username = authentication.getName();
         }
+        setCreatedBy(username);
+        setLastModifiedBy(username);
     }
 }
