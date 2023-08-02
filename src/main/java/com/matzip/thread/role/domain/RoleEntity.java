@@ -55,4 +55,9 @@ public class RoleEntity implements Validator {
     public String getName() {
         return role.name();
     }
+
+    public boolean equalsRole(Role role) {
+        return this.role.equals(role);
+    }
+
 }

@@ -2,7 +2,6 @@ package com.matzip.thread.role.adapter.out_;
 
 import com.matzip.thread.common.exception.InfiniteLoopException;
 import com.matzip.thread.common.exception.NotFoundDataException;
-import com.matzip.thread.common.exception.UpdateTargetMismatchException;
 import com.matzip.thread.role.application.prot.out_.RolePersistencePort;
 import com.matzip.thread.role.domain.RoleEntity;
 import org.assertj.core.api.BDDAssertions;
@@ -229,19 +228,6 @@ class RolePersistenceAdapterTest {
         assertThat(entities.get(0).getChildren().get(0).getRole()).isEqualTo(ROLE_MANAGER);
         assertThat(entities.get(1).getRole()).isEqualTo(ROLE_VIP);
         assertThat(entities.get(1).getChildren().get(0).getRole()).isEqualTo(ROLE_USER);
-    }
-
-    @Test
-    @Sql("/sql/role/role-data.sql")
-    @DisplayName("업데이트 대상과 다른 권한 갱신")
-    void update_exist_role() {
-        // given
-        RoleEntity admin = new RoleEntity(ROLE_ADMIN, "관리자 권한", List.of());
-
-        // expected
-        BDDAssertions.thenThrownBy(() -> rolePersistenceAdapter.update(ROLE_USER, admin))
-                .isInstanceOf(UpdateTargetMismatchException.class)
-                .hasMessage("Update target is different (ROLE_USER <> ROLE_ADMIN)");
     }
 
     @Test

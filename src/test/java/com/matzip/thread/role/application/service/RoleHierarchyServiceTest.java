@@ -72,5 +72,4 @@ class RoleHierarchyServiceTest {
         // then
         assertThat(concatenateRoles).isEmpty();
     }
-
 }

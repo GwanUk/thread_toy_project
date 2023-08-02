@@ -7,7 +7,6 @@ import com.matzip.thread.uri.application.event.UriChangedEvent;
 import com.matzip.thread.uri.application.port.in.UriWebPort;
 import com.matzip.thread.uri.application.port.out_.UriPersistencePort;
 import com.matzip.thread.uri.domain.UriEntity;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,7 +58,7 @@ class UriService implements UriWebPort {
     }
 
     @Override
-    public void delete(@NonNull String uri) {
+    public void delete(String uri) {
         uriPersistencePort.delete(uri);
     }
 }

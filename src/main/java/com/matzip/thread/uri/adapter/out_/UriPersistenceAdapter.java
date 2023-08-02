@@ -7,7 +7,6 @@ import com.matzip.thread.role.adapter.out_.RoleJpaRepository;
 import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.uri.application.port.out_.UriPersistencePort;
 import com.matzip.thread.uri.domain.UriEntity;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -32,7 +31,7 @@ class UriPersistenceAdapter implements UriPersistencePort {
     }
 
     @Override
-    public void save(@NonNull UriEntity uriEntity) {
+    public void save(UriEntity uriEntity) {
         List<Role> roles = uriEntity.getRoles();
         List<UriRoleJpaEntity> uriRoleJpaEntities = null;
         if (!roles.isEmpty()) {
@@ -47,7 +46,7 @@ class UriPersistenceAdapter implements UriPersistencePort {
     }
 
     @Override
-    public void update(@NonNull String uri, @NonNull UriEntity uriEntity) {
+    public void update(String uri, UriEntity uriEntity) {
 
         UriJpaEntity findUriEntity = uriJpaRepository.findByUri(uri)
                 .orElseThrow(() -> new NotFoundDataException(uri));
@@ -64,7 +63,7 @@ class UriPersistenceAdapter implements UriPersistencePort {
     }
 
     @Override
-    public void delete(@NonNull String uri) {
+    public void delete(String uri) {
         uriJpaRepository.deleteByUri(uri);
     }
 }
