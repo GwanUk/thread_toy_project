@@ -75,22 +75,22 @@ class SecurityTestConfiguration {
     @RequestMapping("/api")
     static class SecurityTestController {
 
-        @GetMapping(value = "/user/test", produces = MediaType.APPLICATION_JSON_VALUE)
+        @GetMapping(value = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
         String user() {
             return "user";
         }
 
-        @GetMapping(value = "/vip/test", produces = MediaType.APPLICATION_JSON_VALUE)
+        @GetMapping(value = "/vip", produces = MediaType.APPLICATION_JSON_VALUE)
         String vip() {
             return "vip";
         }
 
-        @GetMapping(value = "/manager/test", produces = MediaType.APPLICATION_JSON_VALUE)
+        @GetMapping(value = "/manager", produces = MediaType.APPLICATION_JSON_VALUE)
         String manager() {
             return "manager";
         }
 
-        @GetMapping(value = "/admin/test", produces = MediaType.APPLICATION_JSON_VALUE)
+        @GetMapping(value = "/admin", produces = MediaType.APPLICATION_JSON_VALUE)
         String admin() {
             return "admin";
         }
