@@ -1,7 +1,6 @@
 package com.matzip.thread.role.adapter.out_;
 
 import com.matzip.thread.common.annotation.PersistenceAdapter;
-import com.matzip.thread.common.exception.UpdateTargetMismatchException;
 import com.matzip.thread.role.application.prot.out_.RolePersistencePort;
 import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.role.domain.RoleEntity;
@@ -74,12 +73,6 @@ class RolePersistenceAdapter implements RolePersistencePort {
      */
     @Override
     public void update(Role role, RoleEntity roleEntity) {
-        String roleName = role.name();
-        String updateRoleName = roleEntity.getName();
-        if (!roleName.equals(updateRoleName)) {
-            throw new UpdateTargetMismatchException(" (" + roleName + " <> " + updateRoleName + ")");
-        }
-
         roleJdbcTemplateRepository.update(role, RoleJdbcDto.from(roleEntity));
     }
 

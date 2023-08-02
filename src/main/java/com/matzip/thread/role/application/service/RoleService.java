@@ -1,8 +1,8 @@
 package com.matzip.thread.role.application.service;
 
-import com.matzip.thread.common.annotation.ArgumentValidation;
 import com.matzip.thread.common.annotation.PublishEvent;
 import com.matzip.thread.common.annotation.Retry;
+import com.matzip.thread.common.exception.UpdateTargetMismatchException;
 import com.matzip.thread.role.application.event.RoleChangedEvent;
 import com.matzip.thread.role.application.prot.in.RoleWebPort;
 import com.matzip.thread.role.application.prot.out_.RolePersistencePort;
@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@ArgumentValidation
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 class RoleService implements RoleWebPort {
@@ -45,6 +44,9 @@ class RoleService implements RoleWebPort {
     @Retry
     @Transactional
     public void update(Role role, RoleEntity roleEntity) {
+        if (!roleEntity.equalsRole(role)) {
+            throw new UpdateTargetMismatchException(" (" + role.name() + " <> " + roleEntity.getName() + ")");
+        }
         rolePersistencePort.update(role, roleEntity);
     }
 

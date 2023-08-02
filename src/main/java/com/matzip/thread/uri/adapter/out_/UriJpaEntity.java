@@ -5,7 +5,6 @@ import com.matzip.thread.uri.domain.UriEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -73,7 +72,7 @@ class UriJpaEntity extends JpaBaseEntity {
         this.order = order;
     }
 
-    public void changeUriRoles(@NonNull List<UriRoleJpaEntity> uriRolesJpaEntities) {
+    public void changeUriRoles(List<UriRoleJpaEntity> uriRolesJpaEntities) {
         addAll(uriRolesJpaEntities);
     }
 }
