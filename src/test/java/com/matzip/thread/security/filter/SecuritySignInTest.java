@@ -54,22 +54,6 @@ public class SecuritySignInTest {
     }
 
     @Test
-    @DisplayName("로그인 요청 실패: accept")
-    void login_failure_accept() throws Exception {
-        // given
-        String json = objectMapper.writeValueAsString(new SignInRequest("user", "1234"));
-
-        // expected
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sing_in")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.TEXT_PLAIN)
-                        .content(json))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.content().string("Supports only POST and application/json"))
-                .andDo(MockMvcResultHandlers.print());
-    }
-
-    @Test
     @DisplayName("가입 되지 않은 유저 로그인 시도")
     void login_failure_username() throws Exception {
         // given

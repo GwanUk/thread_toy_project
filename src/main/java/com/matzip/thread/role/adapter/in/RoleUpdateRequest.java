@@ -9,13 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-class RoleSave {
+class RoleUpdateRequest {
     @NotNull
     private final Role role;
     private final String description;
-    private final List<RoleSave> children = new ArrayList<>();
+    private final List<RoleUpdateRequest> children = new ArrayList<>();
 
-    RoleSave(Role role, String description, List<RoleSave> children) {
+    RoleUpdateRequest(Role role, String description, List<RoleUpdateRequest> children) {
         this.role = role;
         this.description = description;
         this.children.addAll(children);
@@ -25,7 +25,7 @@ class RoleSave {
         return new RoleEntity(role,
                 description,
                 children.stream()
-                        .map(RoleSave::toEntity)
+                        .map(RoleUpdateRequest::toEntity)
                         .toList());
     }
 }

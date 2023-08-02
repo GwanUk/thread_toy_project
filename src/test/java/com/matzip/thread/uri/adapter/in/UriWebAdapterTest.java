@@ -1,7 +1,7 @@
 package com.matzip.thread.uri.adapter.in;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.matzip.thread.uri.application.port.in.UriInPort;
+import com.matzip.thread.uri.application.port.in.UriWebPort;
 import com.matzip.thread.uri.domain.UriEntity;
 import org.assertj.core.api.BDDAssertions;
 import org.junit.jupiter.api.DisplayName;
@@ -38,13 +38,13 @@ class UriWebAdapterTest {
     @Autowired
     private ObjectMapper objectMapper;
     @MockBean
-    private UriInPort uriInPort;
+    private UriWebPort uriWebPort;
 
     @Test
     @DisplayName("uri 전체 조회")
     void findAll() throws Exception {
         // given
-        given(uriInPort.findAll()).willReturn(List.of(
+        given(uriWebPort.findAll()).willReturn(List.of(
                 new UriEntity("/api/uri/**", 1,  List.of(ROLE_USER, ROLE_VIP)),
                 new UriEntity("/api/**", 2, List.of(ROLE_MANAGER, ROLE_ADMIN))));
 
@@ -63,7 +63,7 @@ class UriWebAdapterTest {
                 .andDo(print());
 
         // then
-        then(uriInPort).should(times(1)).findAll();
+        then(uriWebPort).should(times(1)).findAll();
     }
 
     @Test
@@ -71,7 +71,7 @@ class UriWebAdapterTest {
     void findByUri() throws Exception {
         // given
         Optional<UriEntity> entityOptional = Optional.of(new UriEntity("/api/uri/**", 1, List.of(ROLE_USER, ROLE_VIP)));
-        given(uriInPort.findByUri(anyString())).willReturn(entityOptional);
+        given(uriWebPort.findByUri(anyString())).willReturn(entityOptional);
 
         String json = objectMapper.writeValueAsString(new UriRequest("/api/uri/**"));
 
@@ -89,7 +89,7 @@ class UriWebAdapterTest {
 
         // then
         ArgumentCaptor<String> ac = ArgumentCaptor.forClass(String.class);
-        then(uriInPort).should(times(1)).findByUri(ac.capture());
+        then(uriWebPort).should(times(1)).findByUri(ac.capture());
         assertThat(ac.getValue()).isEqualTo("/api/uri/**");
     }
 
@@ -175,7 +175,7 @@ class UriWebAdapterTest {
 
         // then
         ArgumentCaptor<UriEntity> ac = ArgumentCaptor.forClass(UriEntity.class);
-        then(uriInPort).should(Mockito.times(1)).save(ac.capture());
+        then(uriWebPort).should(Mockito.times(1)).save(ac.capture());
         BDDAssertions.then(ac.getValue().getUri()).isEqualTo("/api/uri/**");
         BDDAssertions.then(ac.getValue().getOrder()).isEqualTo(1);
         BDDAssertions.then(ac.getValue().getRoles().get(0)).isEqualTo(ROLE_ADMIN);
@@ -225,7 +225,7 @@ class UriWebAdapterTest {
                 .andDo(print());
 
         ArgumentCaptor<String> ac = ArgumentCaptor.forClass(String.class);
-        then(uriInPort).should(times(1)).delete(ac.capture());
+        then(uriWebPort).should(times(1)).delete(ac.capture());
         assertThat(ac.getValue()).isEqualTo("/api/uri");
     }
 

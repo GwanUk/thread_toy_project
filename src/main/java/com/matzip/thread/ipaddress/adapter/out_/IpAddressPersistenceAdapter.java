@@ -1,6 +1,6 @@
 package com.matzip.thread.ipaddress.adapter.out_;
 
-import com.matzip.thread.ipaddress.application.port.out_.IpAddressOutPort;
+import com.matzip.thread.ipaddress.application.port.out_.IpAddressPersistencePort;
 import com.matzip.thread.ipaddress.domain.IpAddressEntity;
 import com.matzip.thread.common.annotation.PersistenceAdapter;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @PersistenceAdapter
 @RequiredArgsConstructor
-class IpAddressPersistenceAdapterAddress implements IpAddressOutPort {
+class IpAddressPersistenceAdapter implements IpAddressPersistencePort {
 
     private final IpAddressJpaRepository ipAddressJpaRepository;
 
@@ -28,7 +28,7 @@ class IpAddressPersistenceAdapterAddress implements IpAddressOutPort {
     }
 
     @Override
-    public void save(String ipAddress) {
-        ipAddressJpaRepository.save(new IpAddressJpaEntity(ipAddress));
+    public void save(IpAddressEntity ipAddressEntity) {
+        ipAddressJpaRepository.save(IpAddressJpaEntity.from(ipAddressEntity));
     }
 }

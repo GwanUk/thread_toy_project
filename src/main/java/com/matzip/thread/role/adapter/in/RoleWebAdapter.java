@@ -27,13 +27,13 @@ class RoleWebAdapter {
     }
 
     @PostMapping
-    void save(@RequestBody @Validated RoleSave roleSave) {
-        roleWebPort.save(roleSave.toEntity());
+    void save(@RequestBody @Validated RoleSaveRequest roleSaveRequest) {
+        roleWebPort.save(roleSaveRequest.toEntity());
     }
 
     @PutMapping("/{role}")
-    void update(@PathVariable Role role, @RequestBody @Validated RoleUpdate roleUpdate) {
-        roleWebPort.update(role, roleUpdate.toEntity());
+    void update(@PathVariable Role role, @RequestBody @Validated RoleUpdateRequest roleUpdateRequest) {
+        roleWebPort.update(role, roleUpdateRequest.toEntity());
     }
 
     @DeleteMapping("/{role}")

@@ -4,6 +4,6 @@ import com.matzip.thread.uri.domain.UriEntity;
 
 import java.util.List;
 
-public interface UriAllPort {
+public interface UriSecurityPort {
     List<UriEntity> findAll();
 }

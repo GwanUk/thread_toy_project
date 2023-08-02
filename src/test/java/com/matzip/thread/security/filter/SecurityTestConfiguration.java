@@ -1,10 +1,10 @@
 package com.matzip.thread.security.filter;
 
-import com.matzip.thread.ipaddress.application.port.in.IpAddressQueryInPort;
-import com.matzip.thread.role.application.prot.in.RoleHierarchyPort;
+import com.matzip.thread.ipaddress.application.port.in.IpAddressSecurityPort;
+import com.matzip.thread.role.application.prot.in.RoleSecurityPort;
 import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.security.configs.SecurityConfig;
-import com.matzip.thread.uri.application.port.in.UriAllPort;
+import com.matzip.thread.uri.application.port.in.UriSecurityPort;
 import com.matzip.thread.uri.domain.UriEntity;
 import com.matzip.thread.user.application.port.in.UserSecurityPort;
 import com.matzip.thread.user.domain.PasswordEncoderFactoryBean;
@@ -37,54 +37,38 @@ class SecurityTestConfiguration {
 
     @Bean
     public UserSecurityPort userQueryInPort() {
-        return new UserSecurityPort() {
-            @Override
-            public Optional<UserEntity> findByUsername(String username) {
-                return switch (username) {
-                    case "user" -> Optional.of(new UserEntity("user", "user", passwordEncoder.encode("1234"), Role.ROLE_USER));
-                    case "vip" -> Optional.of(new UserEntity("vip", "vip", passwordEncoder.encode("1234"), Role.ROLE_VIP));
-                    case "manager" -> Optional.of(new UserEntity("manager", "manager", passwordEncoder.encode("1234"), Role.ROLE_MANAGER));
-                    case "admin" -> Optional.of(new UserEntity("admin", "admin", passwordEncoder.encode("1234"), Role.ROLE_ADMIN));
-                    default -> Optional.empty();
-                };
-            }
+        return username -> switch (username) {
+            case "user" -> Optional.of(new UserEntity("user", "user", passwordEncoder.encode("1234"), Role.ROLE_USER));
+            case "vip" -> Optional.of(new UserEntity("vip", "vip", passwordEncoder.encode("1234"), Role.ROLE_VIP));
+            case "manager" -> Optional.of(new UserEntity("manager", "manager", passwordEncoder.encode("1234"), Role.ROLE_MANAGER));
+            case "admin" -> Optional.of(new UserEntity("admin", "admin", passwordEncoder.encode("1234"), Role.ROLE_ADMIN));
+            default -> Optional.empty();
         };
     }
 
     @Bean
-    public UriAllPort uriInPort() {
-        return new UriAllPort() {
-            @Override
-            public List<UriEntity> findAll() {
-                UriEntity user = new UriEntity("/api/user", 1, List.of(Role.ROLE_USER));
-                UriEntity vip = new UriEntity("/api/vip", 2, List.of(Role.ROLE_VIP));
-                UriEntity manger = new UriEntity("/api/manger", 3, List.of(Role.ROLE_MANAGER));
-                UriEntity admin = new UriEntity("/api/admin", 4, List.of(Role.ROLE_ADMIN));
-                return List.of(user, vip, manger, admin);
-            }
+    public UriSecurityPort uriInPort() {
+        return () -> {
+            UriEntity user = new UriEntity("/api/user", 1, List.of(Role.ROLE_USER));
+            UriEntity vip = new UriEntity("/api/vip", 2, List.of(Role.ROLE_VIP));
+            UriEntity manger = new UriEntity("/api/manger", 3, List.of(Role.ROLE_MANAGER));
+            UriEntity admin = new UriEntity("/api/admin", 4, List.of(Role.ROLE_ADMIN));
+            return List.of(user, vip, manger, admin);
         };
     }
 
     @Bean
-    public RoleHierarchyPort roleHierarchyInPort() {
-        return new RoleHierarchyPort() {
-            @Override
-            public String getHierarchy() {
-                return "ROLE_VIP > ROLE_USER\n" +
-                        "ROLE_ADMIN > ROLE_VIP\n" +
-                        "ROLE_ADMIN > ROLE_MANAGER\n";
-            }
-        };
+    public RoleSecurityPort roleHierarchyInPort() {
+        return () -> """
+                ROLE_VIP > ROLE_USER
+                ROLE_ADMIN > ROLE_VIP
+                ROLE_ADMIN > ROLE_MANAGER
+                """;
     }
 
     @Bean
-    public IpAddressQueryInPort ipAddressQueryInPort() {
-        return new IpAddressQueryInPort() {
-            @Override
-            public List<String> getIpAddresses() {
-                return List.of("0:0:0:0:0:0:0:1");
-            }
-        };
+    public IpAddressSecurityPort ipAddressQueryInPort() {
+        return () -> List.of("0:0:0:0:0:0:0:1");
     }
 
     @ResponseBody

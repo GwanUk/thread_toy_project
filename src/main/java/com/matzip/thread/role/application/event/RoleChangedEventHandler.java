@@ -1,6 +1,6 @@
 package com.matzip.thread.role.application.event;
 
-import com.matzip.thread.role.application.prot.in.RoleHierarchyPort;
+import com.matzip.thread.role.application.prot.in.RoleSecurityPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
@@ -9,10 +9,10 @@ import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 public class RoleChangedEventHandler {
 
     private final RoleHierarchyImpl roleHierarchy;
-    private final RoleHierarchyPort roleHierarchyPort;
+    private final RoleSecurityPort roleSecurityPort;
 
     @EventListener
-    public synchronized void loadRoleHierarchy(RoleChangedEvent roleChangedEvent) {
-        roleHierarchy.setHierarchy(roleHierarchyPort.getHierarchy());
+    public void loadRoleHierarchy(RoleChangedEvent roleChangedEvent) {
+        roleHierarchy.setHierarchy(roleSecurityPort.getHierarchy());
     }
 }
