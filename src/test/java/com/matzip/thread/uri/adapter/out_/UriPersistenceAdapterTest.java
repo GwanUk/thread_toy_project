@@ -185,10 +185,10 @@ class UriPersistenceAdapterTest {
         uriPersistenceAdapter.delete(uri);
 
         // then
-
         List<String> uriList = uriPersistenceAdapter.findAllWithRoles().stream()
                 .map(UriEntity::getUri)
                 .toList();
+
         assertThat(uriList).doesNotContain(uri);
     }
 }

@@ -5,7 +5,7 @@ import com.matzip.thread.common.exception.NotFoundDataException;
 import com.matzip.thread.role.adapter.out_.RoleJpaEntity;
 import com.matzip.thread.role.adapter.out_.RoleJpaRepository;
 import com.matzip.thread.role.domain.Role;
-import com.matzip.thread.uri.application.port.out_.UriOutPort;
+import com.matzip.thread.uri.application.port.out_.UriPersistencePort;
 import com.matzip.thread.uri.domain.UriEntity;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @PersistenceAdapter
 @RequiredArgsConstructor
-class UriPersistenceAdapter implements UriOutPort {
+class UriPersistenceAdapter implements UriPersistencePort {
 
     private final UriJpaRepository uriJpaRepository;
     private final RoleJpaRepository roleJpaRepository;

@@ -1,7 +1,7 @@
 package com.matzip.thread.security.service;
 
 import com.matzip.thread.common.exception.securityexception.AccessDeniedIpAddressException;
-import com.matzip.thread.ipaddress.application.port.in.IpAddressQueryInPort;
+import com.matzip.thread.ipaddress.application.port.in.IpAddressSecurityPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.ConfigAttribute;
@@ -14,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class IpAddressVoter implements AccessDecisionVoter<Object> {
 
-    private final IpAddressQueryInPort ipAddressQueryInPort;
+    private final IpAddressSecurityPort ipAddressSecurityPort;
 
     @Override
     public boolean supports(ConfigAttribute attribute) {
@@ -37,7 +37,7 @@ public class IpAddressVoter implements AccessDecisionVoter<Object> {
     public int vote(Authentication authentication, Object object, Collection<ConfigAttribute> attributes) {
         WebAuthenticationDetails details = (WebAuthenticationDetails) authentication.getDetails();
         String remoteAddress = details.getRemoteAddress();
-        List<String> ipAddresses = ipAddressQueryInPort.getIpAddresses();
+        List<String> ipAddresses = ipAddressSecurityPort.getIpAddresses();
 
         if (ipAddresses.stream()
                 .noneMatch(remoteAddress::equals)) {

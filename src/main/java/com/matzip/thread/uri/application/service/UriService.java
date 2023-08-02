@@ -1,10 +1,11 @@
 package com.matzip.thread.uri.application.service;
 
 import com.matzip.thread.common.annotation.PublishEvent;
+import com.matzip.thread.common.annotation.Retry;
 import com.matzip.thread.common.exception.NullArgumentException;
 import com.matzip.thread.uri.application.event.UriChangedEvent;
-import com.matzip.thread.uri.application.port.in.UriInPort;
-import com.matzip.thread.uri.application.port.out_.UriOutPort;
+import com.matzip.thread.uri.application.port.in.UriWebPort;
+import com.matzip.thread.uri.application.port.out_.UriPersistencePort;
 import com.matzip.thread.uri.domain.UriEntity;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -18,18 +19,18 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-class UriService implements UriInPort {
+class UriService implements UriWebPort {
 
-    private final UriOutPort uriOutPort;
+    private final UriPersistencePort uriPersistencePort;
 
     @Override
     public List<UriEntity> findAll() {
-        return uriOutPort.findAllWithRoles();
+        return uriPersistencePort.findAllWithRoles();
     }
 
     @Override
     public Optional<UriEntity> findByUri(String uri) {
-        return uriOutPort.findByUriWithRoles(uri);
+        return uriPersistencePort.findByUriWithRoles(uri);
     }
 
     @Override
@@ -41,10 +42,11 @@ class UriService implements UriInPort {
             throw new NullArgumentException("uri");
         }
 
-        uriOutPort.save(uriEntity);
+        uriPersistencePort.save(uriEntity);
     }
 
     @Override
+    @Retry
     @PublishEvent(UriChangedEvent.class)
     @Transactional
     public void update(UriEntity uriEntity) {
@@ -53,11 +55,11 @@ class UriService implements UriInPort {
             throw new NullArgumentException("uri");
         }
 
-        uriOutPort.update(uri, uriEntity);
+        uriPersistencePort.update(uri, uriEntity);
     }
 
     @Override
     public void delete(@NonNull String uri) {
-        uriOutPort.delete(uri);
+        uriPersistencePort.delete(uri);
     }
 }

@@ -5,7 +5,7 @@ import lombok.NonNull;
 
 import java.util.Optional;
 
-public interface UriInPort extends UriAllPort {
+public interface UriWebPort extends UriSecurityPort {
     Optional<UriEntity> findByUri(String uri);
 
     void save(@NonNull UriEntity uriEntity);

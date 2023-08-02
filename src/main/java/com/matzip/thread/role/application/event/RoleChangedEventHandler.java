@@ -12,7 +12,7 @@ public class RoleChangedEventHandler {
     private final RoleHierarchyPort roleHierarchyPort;
 
     @EventListener
-    public synchronized void loadRoleHierarchy(RoleChangedEvent roleChangedEvent) {
+    public void loadRoleHierarchy(RoleChangedEvent roleChangedEvent) {
         roleHierarchy.setHierarchy(roleHierarchyPort.getHierarchy());
     }
 }

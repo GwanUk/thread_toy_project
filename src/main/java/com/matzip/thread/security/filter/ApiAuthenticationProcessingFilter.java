@@ -5,9 +5,11 @@ import com.matzip.thread.security.token.ApiAuthenticationToken;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +21,9 @@ import java.util.Objects;
  * POST, application/json 요청 인증처리를 담당하는 필터
  */
 public class ApiAuthenticationProcessingFilter extends AbstractAuthenticationProcessingFilter {
+
+    protected AuthenticationDetailsSource<HttpServletRequest, ?> authenticationDetailsSource = new WebAuthenticationDetailsSource();
+
     private final ObjectMapper objectMapper;
 
     public ApiAuthenticationProcessingFilter(ObjectMapper objectMapper) {
@@ -37,7 +42,7 @@ public class ApiAuthenticationProcessingFilter extends AbstractAuthenticationPro
      */
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException {
-        if (!isPostAndJson(request, response)) {
+        if (!isPostAndJson(request)) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             response.getWriter().print("Supports only POST and application/json");
             return null;
@@ -50,13 +55,17 @@ public class ApiAuthenticationProcessingFilter extends AbstractAuthenticationPro
             return null;
         }
 
-        ApiAuthenticationToken authenticationToken = new ApiAuthenticationToken(signInRequest.getUsername(), signInRequest.getPassword());
-        return getAuthenticationManager().authenticate(authenticationToken);
+        ApiAuthenticationToken authRequest = new ApiAuthenticationToken(signInRequest.getUsername(), signInRequest.getPassword());
+        setDetails(request, authRequest);
+        return getAuthenticationManager().authenticate(authRequest);
     }
 
-    private boolean isPostAndJson(HttpServletRequest request, HttpServletResponse response) {
+    private boolean isPostAndJson(HttpServletRequest request) {
         return Objects.equals(request.getMethod(), HttpMethod.POST.toString())
-                && Objects.equals(request.getContentType(), MediaType.APPLICATION_JSON_VALUE)
-                && Objects.equals(request.getHeader("accept"), MediaType.APPLICATION_JSON_VALUE);
+                && Objects.equals(request.getContentType(), MediaType.APPLICATION_JSON_VALUE);
+    }
+
+    protected void setDetails(HttpServletRequest request, ApiAuthenticationToken authRequest) {
+        authRequest.setDetails(this.authenticationDetailsSource.buildDetails(request));
     }
 }

@@ -1,7 +1,7 @@
 package com.matzip.thread.security.configs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.matzip.thread.ipaddress.application.port.in.IpAddressQueryInPort;
+import com.matzip.thread.ipaddress.application.port.in.IpAddressSecurityPort;
 import com.matzip.thread.role.application.event.RoleChangedEventHandler;
 import com.matzip.thread.role.application.prot.in.RoleHierarchyPort;
 import com.matzip.thread.security.filter.ApiAuthenticationProcessingFilter;
@@ -13,7 +13,7 @@ import com.matzip.thread.security.service.ApiAuthenticationProvider;
 import com.matzip.thread.security.service.IpAddressVoter;
 import com.matzip.thread.security.service.UrlFilterInvocationSecurityMetadataSource;
 import com.matzip.thread.security.service.UserDetailsServiceImpl;
-import com.matzip.thread.uri.application.port.in.UriAllPort;
+import com.matzip.thread.uri.application.port.in.UriSecurityPort;
 import com.matzip.thread.user.application.port.in.UserSecurityPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -44,9 +44,9 @@ public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
     private final PasswordEncoder passwordEncoder;
     private final UserSecurityPort userSecurityPort;
-    private final UriAllPort uriAllPort;
+    private final UriSecurityPort uriSecurityPort;
     private final RoleHierarchyPort roleHierarchyPort;
-    private final IpAddressQueryInPort ipAddressQueryInPort;
+    private final IpAddressSecurityPort ipAddressSecurityPort;
 
     @Bean
     public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
@@ -105,7 +105,7 @@ public class SecurityConfig {
 
     @Bean
     public UrlFilterInvocationSecurityMetadataSource urlFilterInvocationSecurityMetadataSource() {
-        return new UrlFilterInvocationSecurityMetadataSource(uriAllPort);
+        return new UrlFilterInvocationSecurityMetadataSource(uriSecurityPort);
     }
 
     private AffirmativeBased affirmativeBased() {
@@ -119,7 +119,7 @@ public class SecurityConfig {
 
     @Bean
     public AccessDecisionVoter<?> ipAddressVoter() {
-        return new IpAddressVoter(ipAddressQueryInPort);
+        return new IpAddressVoter(ipAddressSecurityPort);
     }
 
     @Bean
@@ -138,7 +138,4 @@ public class SecurityConfig {
     public RoleChangedEventHandler roleChangedEventHandler() {
         return new RoleChangedEventHandler(roleHierarchy(), roleHierarchyPort);
     }
-
-
-
 }

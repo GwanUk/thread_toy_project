@@ -15,7 +15,7 @@ import javax.persistence.*;
 class IpAddressJpaEntity extends JpaBaseEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "IP_ADDRESS_ID")
     private Long id;
 
@@ -28,7 +28,11 @@ class IpAddressJpaEntity extends JpaBaseEntity {
         this.ipAddress = ipAddress;
     }
 
-    IpAddressEntity toEntity() {
+    public IpAddressEntity toEntity() {
         return new IpAddressEntity(ipAddress);
+    }
+
+    public static IpAddressJpaEntity from(IpAddressEntity ipAddressEntity) {
+        return new IpAddressJpaEntity(ipAddressEntity.getIpAddress());
     }
 }

@@ -1,10 +1,10 @@
 package com.matzip.thread.security.filter;
 
-import com.matzip.thread.ipaddress.application.port.in.IpAddressQueryInPort;
+import com.matzip.thread.ipaddress.application.port.in.IpAddressSecurityPort;
 import com.matzip.thread.role.application.prot.in.RoleHierarchyPort;
 import com.matzip.thread.role.domain.Role;
 import com.matzip.thread.security.configs.SecurityConfig;
-import com.matzip.thread.uri.application.port.in.UriAllPort;
+import com.matzip.thread.uri.application.port.in.UriSecurityPort;
 import com.matzip.thread.uri.domain.UriEntity;
 import com.matzip.thread.user.application.port.in.UserSecurityPort;
 import com.matzip.thread.user.domain.PasswordEncoderFactoryBean;
@@ -52,8 +52,8 @@ class SecurityTestConfiguration {
     }
 
     @Bean
-    public UriAllPort uriInPort() {
-        return new UriAllPort() {
+    public UriSecurityPort uriInPort() {
+        return new UriSecurityPort() {
             @Override
             public List<UriEntity> findAll() {
                 UriEntity user = new UriEntity("/api/user", 1, List.of(Role.ROLE_USER));
@@ -78,8 +78,8 @@ class SecurityTestConfiguration {
     }
 
     @Bean
-    public IpAddressQueryInPort ipAddressQueryInPort() {
-        return new IpAddressQueryInPort() {
+    public IpAddressSecurityPort ipAddressQueryInPort() {
+        return new IpAddressSecurityPort() {
             @Override
             public List<String> getIpAddresses() {
                 return List.of("0:0:0:0:0:0:0:1");

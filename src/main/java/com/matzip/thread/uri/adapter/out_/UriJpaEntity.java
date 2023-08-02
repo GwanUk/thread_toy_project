@@ -31,10 +31,14 @@ class UriJpaEntity extends JpaBaseEntity {
             nullable = false)
     private int order;
 
+    @Version
+    private Long version;
+
     @OneToMany(mappedBy = "uriJpaEntity",
             cascade = CascadeType.ALL,
             orphanRemoval = true)
     private final List<UriRoleJpaEntity> uriRolesJpaEntities = new ArrayList<>();
+
 
     UriJpaEntity(String uri, int order, List<UriRoleJpaEntity> uriRolesJpaEntities) {
         this.uri = uri;

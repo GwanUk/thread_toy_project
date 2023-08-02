@@ -6,7 +6,7 @@ import lombok.NonNull;
 import java.util.List;
 import java.util.Optional;
 
-public interface UriOutPort {
+public interface UriPersistencePort {
     List<UriEntity> findAllWithRoles();
 
     Optional<UriEntity> findByUriWithRoles(String uri);

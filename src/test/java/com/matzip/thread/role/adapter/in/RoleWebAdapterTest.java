@@ -128,7 +128,7 @@ class RoleWebAdapterTest {
     @DisplayName("role-null 값 저장 요청")
     void save_role_null() throws Exception {
         // given
-        String json = objectMapper.writeValueAsString(new RoleSave(null, "유저 권한", List.of()));
+        String json = objectMapper.writeValueAsString(new RoleSaveRequest(null, "유저 권한", List.of()));
 
         // expected
         mockMvc.perform(post("/api/role")
@@ -190,7 +190,7 @@ class RoleWebAdapterTest {
     @DisplayName("저장 성공")
     void save() throws Exception {
         // given
-        String json = objectMapper.writeValueAsString(new RoleSave(ROLE_VIP, "특급 권한", List.of(new RoleSave(ROLE_USER, "유저 권한", List.of()))));
+        String json = objectMapper.writeValueAsString(new RoleSaveRequest(ROLE_VIP, "특급 권한", List.of(new RoleSaveRequest(ROLE_USER, "유저 권한", List.of()))));
 
         // when
         mockMvc.perform(post("/api/role")
@@ -214,7 +214,7 @@ class RoleWebAdapterTest {
     @DisplayName("null 다른 권한으로 업데이트 시도")
     void update_null_to_role() throws Exception {
         // given
-        String json = objectMapper.writeValueAsString(new RoleUpdate(ROLE_VIP, "유저 권한", List.of()));
+        String json = objectMapper.writeValueAsString(new RoleUpdateRequest(ROLE_VIP, "유저 권한", List.of()));
 
         // expected
         mockMvc.perform(put("/api/role/{role}", "null")
@@ -232,7 +232,7 @@ class RoleWebAdapterTest {
     @DisplayName("틀린 타입을 다른 권한으로 업데이트 시도")
     void update_incorrect_to_role() throws Exception {
         // given
-        String json = objectMapper.writeValueAsString(new RoleUpdate(ROLE_VIP, "유저 권한", List.of()));
+        String json = objectMapper.writeValueAsString(new RoleUpdateRequest(ROLE_VIP, "유저 권한", List.of()));
 
         // expected
         mockMvc.perform(put("/api/role/{role}", "abc")
@@ -250,7 +250,7 @@ class RoleWebAdapterTest {
     @DisplayName("숫자를 다른 권한으로 업데이트 시도")
     void update_number_to_role() throws Exception {
         // given
-        String json = objectMapper.writeValueAsString(new RoleUpdate(ROLE_VIP, "유저 권한", List.of()));
+        String json = objectMapper.writeValueAsString(new RoleUpdateRequest(ROLE_VIP, "유저 권한", List.of()));
 
         // expected
         mockMvc.perform(put("/api/role/{role}", 1)
@@ -300,7 +300,7 @@ class RoleWebAdapterTest {
     @DisplayName("업데이트")
     void update() throws Exception {
         // given
-        String json = objectMapper.writeValueAsString(new RoleUpdate(ROLE_VIP, "유저 권한", List.of()));
+        String json = objectMapper.writeValueAsString(new RoleUpdateRequest(ROLE_VIP, "유저 권한", List.of()));
 
         // when
         mockMvc.perform(put("/api/role/{role}", ROLE_USER)
