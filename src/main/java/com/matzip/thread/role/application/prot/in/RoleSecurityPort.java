@@ -1,6 +1,6 @@
 package com.matzip.thread.role.application.prot.in;
 
-public interface RoleHierarchyPort {
+public interface RoleSecurityPort {
 
     String getHierarchy();
 }

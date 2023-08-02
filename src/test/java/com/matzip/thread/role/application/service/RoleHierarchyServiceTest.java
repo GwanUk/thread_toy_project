@@ -19,7 +19,7 @@ import static org.mockito.BDDMockito.given;
 class RoleHierarchyServiceTest {
 
     @InjectMocks
-    private RoleHierarchyService roleHierarchyService;
+    private RoleSecurityService roleHierarchyService;
     @Mock
     private RolePersistencePort rolePersistencePort;
 

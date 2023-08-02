@@ -3,7 +3,7 @@ package com.matzip.thread.security.configs;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.matzip.thread.ipaddress.application.port.in.IpAddressSecurityPort;
 import com.matzip.thread.role.application.event.RoleChangedEventHandler;
-import com.matzip.thread.role.application.prot.in.RoleHierarchyPort;
+import com.matzip.thread.role.application.prot.in.RoleSecurityPort;
 import com.matzip.thread.security.filter.ApiAuthenticationProcessingFilter;
 import com.matzip.thread.security.handler.ApiAccessDeniedHandler;
 import com.matzip.thread.security.handler.ApiAuthenticationEntryPoint;
@@ -45,7 +45,7 @@ public class SecurityConfig {
     private final PasswordEncoder passwordEncoder;
     private final UserSecurityPort userSecurityPort;
     private final UriSecurityPort uriSecurityPort;
-    private final RoleHierarchyPort roleHierarchyPort;
+    private final RoleSecurityPort roleSecurityPort;
     private final IpAddressSecurityPort ipAddressSecurityPort;
 
     @Bean
@@ -113,8 +113,7 @@ public class SecurityConfig {
     }
 
     private List<AccessDecisionVoter<?>> getAccessDecisionVoters() {
-        return List.of(ipAddressVoter(),
-                roleHierarchyVoter());
+        return List.of(ipAddressVoter(), roleHierarchyVoter());
     }
 
     @Bean
@@ -130,12 +129,12 @@ public class SecurityConfig {
     @Bean
     public RoleHierarchyImpl roleHierarchy() {
         RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-        roleHierarchy.setHierarchy(roleHierarchyPort.getHierarchy());
+        roleHierarchy.setHierarchy(roleSecurityPort.getHierarchy());
         return roleHierarchy;
     }
 
     @Bean
     public RoleChangedEventHandler roleChangedEventHandler() {
-        return new RoleChangedEventHandler(roleHierarchy(), roleHierarchyPort);
+        return new RoleChangedEventHandler(roleHierarchy(), roleSecurityPort);
     }
 }
